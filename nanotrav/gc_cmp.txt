@@ -1,0 +1,52 @@
+New gc:
+
+Garbage collections so far: 6
+Time for garbage collection: 1.26 sec
+Reorderings so far: 0
+Time for reordering: 0.00 sec
+Final size: 338
+total time = 47.26 sec
+
+==7176== 
+==7176== I   refs:      172,602,482
+==7176== I1  misses:        108,083
+==7176== L2i misses:         10,996
+==7176== I1  miss rate:         0.6%
+==7176== L2i miss rate:         0.0%
+==7176== 
+==7176== D   refs:       99,692,564  (64,640,782 rd + 35,051,782 wr)
+==7176== D1  misses:      2,160,241  ( 1,994,334 rd +    165,907 wr)
+==7176== L2d misses:        337,601  (   301,241 rd +     36,360 wr)
+==7176== D1  miss rate:         2.1% (       3.0%   +        0.4%  )
+==7176== L2d miss rate:         0.3% (       0.4%   +        0.1%  )
+==7176== 
+==7176== L2 refs:         2,268,324  ( 2,102,417 rd +    165,907 wr)
+==7176== L2 misses:         348,597  (   312,237 rd +     36,360 wr)
+==7176== L2 miss rate:          0.1% (       0.1%   +        0.1%  )
+
+Old gc:
+
+Garbage collections so far: 6
+Time for garbage collection: 2.26 sec
+Reorderings so far: 0
+Time for reordering: 0.00 sec
+Final size: 338
+total time = 48.32 sec
+
+==7219== 
+==7219== I   refs:      178,465,296
+==7219== I1  misses:        112,440
+==7219== L2i misses:         11,191
+==7219== I1  miss rate:         0.6%
+==7219== L2i miss rate:         0.0%
+==7219== 
+==7219== D   refs:      102,012,034  (65,821,488 rd + 36,190,546 wr)
+==7219== D1  misses:      2,286,068  ( 2,119,705 rd +    166,363 wr)
+==7219== L2d misses:        315,400  (   278,438 rd +     36,962 wr)
+==7219== D1  miss rate:         2.2% (       3.2%   +        0.4%  )
+==7219== L2d miss rate:         0.3% (       0.4%   +        0.1%  )
+==7219== 
+==7219== L2 refs:         2,398,508  ( 2,232,145 rd +    166,363 wr)
+==7219== L2 misses:         326,591  (   289,629 rd +     36,962 wr)
+==7219== L2 miss rate:          0.1% (       0.1%   +        0.1%  )
+
