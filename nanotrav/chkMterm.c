@@ -1,31 +1,58 @@
 /**CFile***********************************************************************
  
-   FileName    [chkMterm.c]
+  FileName    [chkMterm.c]
 
-   PackageName [ntr]
+  PackageName [ntr]
 
-   Synopsis    [Functions to check that the minterm counts have not
-   changed.]
+  Synopsis    [Functions to check that the minterm counts have not
+  changed.]
 
-   Description [Functions to check that the minterm counts have not
-   changed during reordering.<p>
-   Internal procedures included in this module:
+  Description [Functions to check that the minterm counts have not
+  changed during reordering.<p>
+  Internal procedures included in this module:
 		<ul>
 		<li> check_minterms()
 		</ul>
-   Static procedures included in this module:
+  Static procedures included in this module:
 		<ul>
 		<li> stFree()
 		</ul>]
 
-   SeeAlso     []
+  SeeAlso     []
 
-   Author      [Fabio Somenzi]
-		   
-   Copyright [ This file was created at the University of Colorado at
-   Boulder.  The University of Colorado at Boulder makes no warranty
-   about the suitability of this software for any purpose.  It is
-   presented on an AS IS basis.]
+  Author      [Fabio Somenzi]
+   
+  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
+
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  Neither the name of the University of Colorado nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.]
 
 ******************************************************************************/
 
@@ -48,7 +75,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: chkMterm.c,v 1.6 2004/01/01 07:06:06 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: chkMterm.c,v 1.7 2004/08/13 18:28:28 fabio Exp fabio $";
 #endif
 
 /*---------------------------------------------------------------------------*/

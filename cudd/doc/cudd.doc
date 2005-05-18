@@ -1492,10 +1492,10 @@ Cudd_CofMinterm(
 )
   Computes the fraction of minterms in the on-set of all the positive
   cofactors of DD. Returns the pointer to an array of doubles if successful;
-  NULL otherwise. The array hs as many positions as there are BDD variables in
-  the manager plus one. The last position of the array contains the fraction
-  of the minterms in the ON-set of the function represented by the BDD or ADD.
-  The other positions of the array hold the variable signatures.
+  NULL otherwise. The array has as many positions as there are BDD variables
+  in the manager plus one. The last position of the array contains the
+  fraction of the minterms in the ON-set of the function represented by the
+  BDD or ADD. The other positions of the array hold the variable signatures.
 
   Side Effects: None
 
@@ -1924,9 +1924,9 @@ Cudd_EstimateCofactor(
   et al. (ICCAD96). The refinement allows the procedure to account for part of
   the recombination that may occur in the part of the cofactor above the
   cofactoring variable. This procedure does no create any new node. It does
-  keep a small table of results; therefore itmay run out of memory. If this is
-  a concern, one should use Cudd_EstimateCofactorSimple, which is faster, does
-  not allocate any memory, but is less accurate.
+  keep a small table of results; therefore it may run out of memory. If this
+  is a concern, one should use Cudd_EstimateCofactorSimple, which is faster,
+  does not allocate any memory, but is less accurate.
 
   Side Effects: None
 
@@ -5067,7 +5067,7 @@ Cudd_bddCharToVect(
   Returns a pointer to an array containing the result if successful; NULL
   otherwise. The size of the array equals the number of variables in the
   manager. The components of the solution have their reference counts already
-  incremented (unlike the results of most other functions in the package.
+  incremented (unlike the results of most other functions in the package).
 
   Side Effects: None
 

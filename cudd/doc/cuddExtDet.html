@@ -590,7 +590,7 @@ double * <i></i>
   DdNode * <b>node</b> <i></i>
 )
 </pre>
-<dd> Computes the fraction of minterms in the on-set of all the positive cofactors of DD. Returns the pointer to an array of doubles if successful; NULL otherwise. The array hs as many positions as there are BDD variables in the manager plus one. The last position of the array contains the fraction of the minterms in the ON-set of the function represented by the BDD or ADD. The other positions of the array hold the variable signatures.
+<dd> Computes the fraction of minterms in the on-set of all the positive cofactors of DD. Returns the pointer to an array of doubles if successful; NULL otherwise. The array has as many positions as there are BDD variables in the manager plus one. The last position of the array contains the fraction of the minterms in the ON-set of the function represented by the BDD or ADD. The other positions of the array hold the variable signatures.
 <p>
 
 <dd> <b>Side Effects</b> None
@@ -1161,7 +1161,7 @@ int <i></i>
   int  <b>phase</b> <i>1: positive; 0: negative</i>
 )
 </pre>
-<dd> Estimates the number of nodes in a cofactor of a DD. Returns an estimate of the number of nodes in a cofactor of the graph rooted at node with respect to the variable whose index is i. In case of failure, returns CUDD_OUT_OF_MEM. This function uses a refinement of the algorithm of Cabodi et al. (ICCAD96). The refinement allows the procedure to account for part of the recombination that may occur in the part of the cofactor above the cofactoring variable. This procedure does no create any new node. It does keep a small table of results; therefore itmay run out of memory. If this is a concern, one should use Cudd_EstimateCofactorSimple, which is faster, does not allocate any memory, but is less accurate.
+<dd> Estimates the number of nodes in a cofactor of a DD. Returns an estimate of the number of nodes in a cofactor of the graph rooted at node with respect to the variable whose index is i. In case of failure, returns CUDD_OUT_OF_MEM. This function uses a refinement of the algorithm of Cabodi et al. (ICCAD96). The refinement allows the procedure to account for part of the recombination that may occur in the part of the cofactor above the cofactoring variable. This procedure does no create any new node. It does keep a small table of results; therefore it may run out of memory. If this is a concern, one should use Cudd_EstimateCofactorSimple, which is faster, does not allocate any memory, but is less accurate.
 <p>
 
 <dd> <b>Side Effects</b> None
@@ -5454,7 +5454,7 @@ DdNode ** <i></i>
   DdNode * <b>f</b> <i></i>
 )
 </pre>
-<dd> Computes a vector of BDDs whose image equals a non-zero function. The result depends on the variable order. The i-th component of the vector depends only on the first i variables in the order. Each BDD in the vector is not larger than the BDD of the given characteristic function. This function is based on the description of char-to-vect in "Verification of Sequential Machines Using Boolean Functional Vectors" by O. Coudert, C. Berthet and J. C. Madre. Returns a pointer to an array containing the result if successful; NULL otherwise. The size of the array equals the number of variables in the manager. The components of the solution have their reference counts already incremented (unlike the results of most other functions in the package.
+<dd> Computes a vector of BDDs whose image equals a non-zero function. The result depends on the variable order. The i-th component of the vector depends only on the first i variables in the order. Each BDD in the vector is not larger than the BDD of the given characteristic function. This function is based on the description of char-to-vect in "Verification of Sequential Machines Using Boolean Functional Vectors" by O. Coudert, C. Berthet and J. C. Madre. Returns a pointer to an array containing the result if successful; NULL otherwise. The size of the array equals the number of variables in the manager. The components of the solution have their reference counts already incremented (unlike the results of most other functions in the package).
 <p>
 
 <dd> <b>Side Effects</b> None
@@ -7451,6 +7451,6 @@ DdNode	* <i></i>
 
 <hr>
 
-Generated automatically by <code>extdoc</code> on 20040206
+Generated automatically by <code>extdoc</code> on 20050517
 
 </body></html>

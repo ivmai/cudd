@@ -69,7 +69,7 @@ XCFLAGS	= -mcpu=pentiumpro -malign-double -DHAVE_IEEE_754 -DBSD
 #XCFLAGS	= -ansi -align -ip -DHAVE_IEEE_754 -DBSD
 # Gcc on ia64.
 #XCFLAGS	= -DHAVE_IEEE_754 -DBSD -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8
-# Ecc on ia64.
+# Icc/ecc on ia64.
 #XCFLAGS = -ansi -DBSD -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8
 #
 #==========================

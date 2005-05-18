@@ -12,10 +12,37 @@
 
   Author      [Fabio Somenzi]
 
-  Copyright   [This file was created at the University of Colorado at
-  Boulder.  The University of Colorado at Boulder makes no warranty
-  about the suitability of this software for any purpose.  It is
-  presented on an AS IS basis.]
+  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
+
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  Neither the name of the University of Colorado nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.]
 
 ******************************************************************************/
 
@@ -26,7 +53,7 @@
 // ---------------------------------------------------------------------------
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: cuddObj.cc,v 1.6 2004/02/06 01:25:18 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: cuddObj.cc,v 1.9 2004/08/24 19:56:19 fabio Exp fabio $";
 #endif
 
 // ---------------------------------------------------------------------------
@@ -69,7 +96,7 @@ DD::DD(const DD &from) {
 
 inline DdManager *
 DD::checkSameManager(
-  const DD &other)
+  const DD &other) const
 {
     DdManager *mgr = ddMgr->p->manager;
     if (mgr != other.ddMgr->p->manager) {
@@ -82,7 +109,7 @@ DD::checkSameManager(
 
 inline void
 DD::checkReturnValue(
-  const DdNode *result)
+  const DdNode *result) const
 {
     if (result == 0) {
 	DdManager *mgr = ddMgr->p->manager;
@@ -115,7 +142,7 @@ DD::checkReturnValue(
 inline void
 DD::checkReturnValue(
   const int result,
-  const int expected)
+  const int expected) const
 {
     if (result != expected) {
 	DdManager *mgr = ddMgr->p->manager;
@@ -146,7 +173,7 @@ DD::checkReturnValue(
 
 
 Cudd *
-DD::manager()
+DD::manager() const
 {
     return ddMgr;
 
@@ -154,7 +181,7 @@ DD::manager()
 
 
 inline DdNode *
-DD::getNode()
+DD::getNode() const
 {
     return node;
 
@@ -162,7 +189,7 @@ DD::getNode()
 
 
 int
-DD::nodeCount()
+DD::nodeCount() const
 {
     return Cudd_DagSize(node);
 
@@ -193,7 +220,7 @@ ABDD::~ABDD() {
 
 int
 ABDD::operator==(
-  const ABDD& other)
+  const ABDD& other) const
 {
     this->checkSameManager(other);
     return node == other.node;
@@ -203,7 +230,7 @@ ABDD::operator==(
 
 int
 ABDD::operator!=(
-  const ABDD& other)
+  const ABDD& other) const
 {
     this->checkSameManager(other);
     return node != other.node;
@@ -214,7 +241,7 @@ ABDD::operator!=(
 void
 ABDD::print(
   int nvars,
-  int verbosity)
+  int verbosity) const
 {
     cout.flush();
     int retval = Cudd_PrintDebug(ddMgr->p->manager,node,nvars,verbosity);
@@ -234,7 +261,7 @@ BDD::BDD(const BDD &from) : ABDD(from) {}
 
 int
 BDD::operator==(
-  const BDD& other)
+  const BDD& other) const
 {
     this->checkSameManager(other);
     return node == other.node;
@@ -244,7 +271,7 @@ BDD::operator==(
 
 int
 BDD::operator!=(
-  const BDD& other)
+  const BDD& other) const
 {
     this->checkSameManager(other);
     return node != other.node;
@@ -278,7 +305,7 @@ BDD::operator=(
 
 int
 BDD::operator<=(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return Cudd_bddLeq(mgr,node,other.node);
@@ -288,7 +315,7 @@ BDD::operator<=(
 
 int
 BDD::operator>=(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return Cudd_bddLeq(mgr,other.node,node);
@@ -298,7 +325,7 @@ BDD::operator>=(
 
 int
 BDD::operator<(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return node != other.node && Cudd_bddLeq(mgr,node,other.node);
@@ -308,7 +335,7 @@ BDD::operator<(
 
 int
 BDD::operator>(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return node != other.node && Cudd_bddLeq(mgr,other.node,node);
@@ -317,7 +344,7 @@ BDD::operator>(
 
 
 BDD
-BDD::operator!()
+BDD::operator!() const
 {
     return BDD(ddMgr, Cudd_Not(node));
 
@@ -325,7 +352,7 @@ BDD::operator!()
 
 
 BDD
-BDD::operator~()
+BDD::operator~() const
 {
     return BDD(ddMgr, Cudd_Not(node));
 
@@ -334,7 +361,7 @@ BDD::operator~()
 
 BDD
 BDD::operator*(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_bddAnd(mgr,node,other.node);
@@ -361,7 +388,7 @@ BDD::operator*=(
 
 BDD
 BDD::operator&(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_bddAnd(mgr,node,other.node);
@@ -388,7 +415,7 @@ BDD::operator&=(
 
 BDD
 BDD::operator+(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_bddOr(mgr,node,other.node);
@@ -415,7 +442,7 @@ BDD::operator+=(
 
 BDD
 BDD::operator|(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_bddOr(mgr,node,other.node);
@@ -442,7 +469,7 @@ BDD::operator|=(
 
 BDD
 BDD::operator^(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_bddXor(mgr,node,other.node);
@@ -469,7 +496,7 @@ BDD::operator^=(
 
 BDD
 BDD::operator-(
-  const BDD& other)
+  const BDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_bddAnd(mgr,node,Cudd_Not(other.node));
@@ -506,7 +533,7 @@ ADD::ADD(const ADD &from) : ABDD(from) {}
 
 int
 ADD::operator==(
-  const ADD& other)
+  const ADD& other) const
 {
     this->checkSameManager(other);
     return node == other.node;
@@ -516,7 +543,7 @@ ADD::operator==(
 
 int
 ADD::operator!=(
-  const ADD& other)
+  const ADD& other) const
 {
     this->checkSameManager(other);
     return node != other.node;
@@ -542,7 +569,7 @@ ADD::operator=(
 
 int
 ADD::operator<=(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return Cudd_addLeq(mgr,node,other.node);
@@ -552,7 +579,7 @@ ADD::operator<=(
 
 int
 ADD::operator>=(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return Cudd_addLeq(mgr,other.node,node);
@@ -562,7 +589,7 @@ ADD::operator>=(
 
 int
 ADD::operator<(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return node != other.node && Cudd_addLeq(mgr,node,other.node);
@@ -572,7 +599,7 @@ ADD::operator<(
 
 int
 ADD::operator>(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return node != other.node && Cudd_addLeq(mgr,other.node,node);
@@ -581,7 +608,7 @@ ADD::operator>(
 
 
 ADD
-ADD::operator-()
+ADD::operator-() const
 {
     return ADD(ddMgr, Cudd_addNegate(ddMgr->p->manager,node));
 
@@ -590,7 +617,7 @@ ADD::operator-()
 
 ADD
 ADD::operator*(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_addApply(mgr,Cudd_addTimes,node,other.node);
@@ -617,7 +644,7 @@ ADD::operator*=(
 
 ADD
 ADD::operator+(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_addApply(mgr,Cudd_addPlus,node,other.node);
@@ -644,7 +671,7 @@ ADD::operator+=(
 
 ADD
 ADD::operator-(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_addApply(mgr,Cudd_addMinus,node,other.node);
@@ -670,7 +697,7 @@ ADD::operator-=(
 
 
 ADD
-ADD::operator~()
+ADD::operator~() const
 {
     return ADD(ddMgr, Cudd_addCmpl(ddMgr->p->manager,node));
 
@@ -679,7 +706,7 @@ ADD::operator~()
 
 ADD
 ADD::operator&(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_addApply(mgr,Cudd_addTimes,node,other.node);
@@ -706,7 +733,7 @@ ADD::operator&=(
 
 ADD
 ADD::operator|(
-  const ADD& other)
+  const ADD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_addApply(mgr,Cudd_addOr,node,other.node);
@@ -779,7 +806,7 @@ ZDD::operator=(
 
 int
 ZDD::operator==(
-  const ZDD& other)
+  const ZDD& other) const
 {
     this->checkSameManager(other);
     return node == other.node;
@@ -789,7 +816,7 @@ ZDD::operator==(
 
 int
 ZDD::operator!=(
-  const ZDD& other)
+  const ZDD& other) const
 {
     this->checkSameManager(other);
     return node != other.node;
@@ -799,7 +826,7 @@ ZDD::operator!=(
 
 int
 ZDD::operator<=(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return Cudd_zddDiffConst(mgr,node,other.node) == Cudd_ReadZero(mgr);
@@ -809,7 +836,7 @@ ZDD::operator<=(
 
 int
 ZDD::operator>=(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return Cudd_zddDiffConst(mgr,other.node,node) == Cudd_ReadZero(mgr);
@@ -819,7 +846,7 @@ ZDD::operator>=(
 
 int
 ZDD::operator<(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return node != other.node &&
@@ -830,7 +857,7 @@ ZDD::operator<(
 
 int
 ZDD::operator>(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     return node != other.node &&
@@ -842,7 +869,7 @@ ZDD::operator>(
 void
 ZDD::print(
   int nvars,
-  int verbosity)
+  int verbosity) const
 {
     cout.flush();
     int retval = Cudd_zddPrintDebug(ddMgr->p->manager,node,nvars,verbosity);
@@ -853,7 +880,7 @@ ZDD::print(
 
 ZDD
 ZDD::operator*(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_zddIntersect(mgr,node,other.node);
@@ -880,7 +907,7 @@ ZDD::operator*=(
 
 ZDD
 ZDD::operator&(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_zddIntersect(mgr,node,other.node);
@@ -907,7 +934,7 @@ ZDD::operator&=(
 
 ZDD
 ZDD::operator+(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_zddUnion(mgr,node,other.node);
@@ -934,7 +961,7 @@ ZDD::operator+=(
 
 ZDD
 ZDD::operator|(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_zddUnion(mgr,node,other.node);
@@ -961,7 +988,7 @@ ZDD::operator|=(
 
 ZDD
 ZDD::operator-(
-  const ZDD& other)
+  const ZDD& other) const
 {
     DdManager *mgr = this->checkSameManager(other);
     DdNode *result = Cudd_zddDiff(mgr,node,other.node);
@@ -1063,7 +1090,7 @@ Cudd::setHandler(
 
 
 PFC
-Cudd::getHandler()
+Cudd::getHandler() const
 {
     return p->errorHandler;
 
@@ -1072,7 +1099,7 @@ Cudd::getHandler()
 
 inline void
 Cudd::checkReturnValue(
-  const DdNode *result)
+  const DdNode *result) const
 {
     if (result == 0) {
 	if (Cudd_ReadErrorCode(p->manager) == CUDD_MEMORY_OUT) {
@@ -1087,7 +1114,7 @@ Cudd::checkReturnValue(
 
 inline void
 Cudd::checkReturnValue(
-  const int result)
+  const int result) const
 {
     if (result == 0) {
 	if (Cudd_ReadErrorCode(p->manager) == CUDD_MEMORY_OUT) {
@@ -1101,7 +1128,7 @@ Cudd::checkReturnValue(
 
 
 void
-Cudd::info()
+Cudd::info() const
 {
     cout.flush();
     int retval = Cudd_PrintInfo(p->manager,stdout);
@@ -1338,7 +1365,7 @@ BDDvector::operator=(
 
 
 BDD&
-BDDvector::operator[](int i)
+BDDvector::operator[](int i) const
 {
     if (i >= p->size)
 	(p->manager->getHandler())("Out-of-bounds access attempted");
@@ -1420,7 +1447,7 @@ ADDvector::operator=(
 
 
 ADD&
-ADDvector::operator[](int i)
+ADDvector::operator[](int i) const
 {
     if (i >= p->size)
 	(p->manager->getHandler())("Out-of-bounds access attempted");
@@ -1502,7 +1529,7 @@ ZDDvector::operator=(
 
 
 ZDD&
-ZDDvector::operator[](int i)
+ZDDvector::operator[](int i) const
 {
     if (i >= p->size)
 	(p->manager->getHandler())("Out-of-bounds access attempted");
@@ -1567,7 +1594,7 @@ Cudd::AutodynDisable()
 
 int
 Cudd::ReorderingStatus(
-  Cudd_ReorderingType * method)
+  Cudd_ReorderingType * method) const
 {
     return Cudd_ReorderingStatus(p->manager, method);
 
@@ -1593,7 +1620,7 @@ Cudd::AutodynDisableZdd()
 
 int
 Cudd::ReorderingStatusZdd(
-  Cudd_ReorderingType * method)
+  Cudd_ReorderingType * method) const
 {
     return Cudd_ReorderingStatusZdd(p->manager, method);
 
@@ -1601,7 +1628,7 @@ Cudd::ReorderingStatusZdd(
 
 
 int
-Cudd::zddRealignmentEnabled()
+Cudd::zddRealignmentEnabled() const
 {
     return Cudd_zddRealignmentEnabled(p->manager);
 
@@ -1625,7 +1652,7 @@ Cudd::zddRealignDisable()
 
 
 int
-Cudd::bddRealignmentEnabled()
+Cudd::bddRealignmentEnabled() const
 {
     return Cudd_bddRealignmentEnabled(p->manager);
 
@@ -1672,7 +1699,7 @@ Cudd::SetBackground(
 
 
 unsigned int
-Cudd::ReadCacheSlots()
+Cudd::ReadCacheSlots() const
 {
     return Cudd_ReadCacheSlots(p->manager);
 
@@ -1680,7 +1707,7 @@ Cudd::ReadCacheSlots()
 
 
 double
-Cudd::ReadCacheLookUps()
+Cudd::ReadCacheLookUps() const
 {
     return Cudd_ReadCacheLookUps(p->manager);
 
@@ -1688,7 +1715,7 @@ Cudd::ReadCacheLookUps()
 
 
 double
-Cudd::ReadCacheUsedSlots()
+Cudd::ReadCacheUsedSlots() const
 {
     return Cudd_ReadCacheUsedSlots(p->manager);
 
@@ -1696,7 +1723,7 @@ Cudd::ReadCacheUsedSlots()
 
 
 double
-Cudd::ReadCacheHits()
+Cudd::ReadCacheHits() const
 {
     return Cudd_ReadCacheHits(p->manager);
 
@@ -1704,7 +1731,7 @@ Cudd::ReadCacheHits()
 
 
 unsigned int
-Cudd::ReadMinHit()
+Cudd::ReadMinHit() const
 {
     return Cudd_ReadMinHit(p->manager);
 
@@ -1721,7 +1748,7 @@ Cudd::SetMinHit(
 
 
 unsigned int
-Cudd::ReadLooseUpTo()
+Cudd::ReadLooseUpTo() const
 {
     return Cudd_ReadLooseUpTo(p->manager);
 
@@ -1738,7 +1765,7 @@ Cudd::SetLooseUpTo(
 
 
 unsigned int
-Cudd::ReadMaxCache()
+Cudd::ReadMaxCache() const
 {
     return Cudd_ReadMaxCache(p->manager);
 
@@ -1746,7 +1773,7 @@ Cudd::ReadMaxCache()
 
 
 unsigned int
-Cudd::ReadMaxCacheHard()
+Cudd::ReadMaxCacheHard() const
 {
     return Cudd_ReadMaxCacheHard(p->manager);
 
@@ -1763,7 +1790,7 @@ Cudd::SetMaxCacheHard(
 
 
 int
-Cudd::ReadSize()
+Cudd::ReadSize() const
 {
     return Cudd_ReadSize(p->manager);
 
@@ -1771,7 +1798,7 @@ Cudd::ReadSize()
 
 
 int
-Cudd::ReadZddSize()
+Cudd::ReadZddSize() const
 {
     return Cudd_ReadZddSize(p->manager);
 
@@ -1779,7 +1806,7 @@ Cudd::ReadZddSize()
 
 
 unsigned int
-Cudd::ReadSlots()
+Cudd::ReadSlots() const
 {
     return Cudd_ReadSlots(p->manager);
 
@@ -1787,7 +1814,7 @@ Cudd::ReadSlots()
 
 
 unsigned int
-Cudd::ReadKeys()
+Cudd::ReadKeys() const
 {
     return Cudd_ReadKeys(p->manager);
 
@@ -1795,7 +1822,7 @@ Cudd::ReadKeys()
 
 
 unsigned int
-Cudd::ReadDead()
+Cudd::ReadDead() const
 {
     return Cudd_ReadDead(p->manager);
 
@@ -1803,7 +1830,7 @@ Cudd::ReadDead()
 
 
 unsigned int
-Cudd::ReadMinDead()
+Cudd::ReadMinDead() const
 {
     return Cudd_ReadMinDead(p->manager);
 
@@ -1811,7 +1838,7 @@ Cudd::ReadMinDead()
 
 
 int
-Cudd::ReadReorderings()
+Cudd::ReadReorderings() const
 {
     return Cudd_ReadReorderings(p->manager);
 
@@ -1819,7 +1846,7 @@ Cudd::ReadReorderings()
 
 
 long
-Cudd::ReadReorderingTime()
+Cudd::ReadReorderingTime() const
 {
     return Cudd_ReadReorderingTime(p->manager);
 
@@ -1827,7 +1854,7 @@ Cudd::ReadReorderingTime()
 
 
 int
-Cudd::ReadGarbageCollections()
+Cudd::ReadGarbageCollections() const
 {
     return Cudd_ReadGarbageCollections(p->manager);
 
@@ -1835,7 +1862,7 @@ Cudd::ReadGarbageCollections()
 
 
 long
-Cudd::ReadGarbageCollectionTime()
+Cudd::ReadGarbageCollectionTime() const
 {
     return Cudd_ReadGarbageCollectionTime(p->manager);
 
@@ -1843,7 +1870,7 @@ Cudd::ReadGarbageCollectionTime()
 
 
 int
-Cudd::ReadSiftMaxVar()
+Cudd::ReadSiftMaxVar() const
 {
     return Cudd_ReadSiftMaxVar(p->manager);
 
@@ -1860,7 +1887,7 @@ Cudd::SetSiftMaxVar(
 
 
 int
-Cudd::ReadSiftMaxSwap()
+Cudd::ReadSiftMaxSwap() const
 {
     return Cudd_ReadSiftMaxSwap(p->manager);
 
@@ -1877,7 +1904,7 @@ Cudd::SetSiftMaxSwap(
 
 
 double
-Cudd::ReadMaxGrowth()
+Cudd::ReadMaxGrowth() const
 {
     return Cudd_ReadMaxGrowth(p->manager);
 
@@ -1894,7 +1921,7 @@ Cudd::SetMaxGrowth(
 
 
 MtrNode *
-Cudd::ReadTree()
+Cudd::ReadTree() const
 {
     return Cudd_ReadTree(p->manager);
 
@@ -1919,7 +1946,7 @@ Cudd::FreeTree()
 
 
 MtrNode *
-Cudd::ReadZddTree()
+Cudd::ReadZddTree() const
 {
     return Cudd_ReadZddTree(p->manager);
 
@@ -1944,7 +1971,7 @@ Cudd::FreeZddTree()
 
 
 unsigned int
-DD::NodeReadIndex()
+DD::NodeReadIndex() const
 {
     return Cudd_NodeReadIndex(node);
 
@@ -1953,7 +1980,7 @@ DD::NodeReadIndex()
 
 int
 Cudd::ReadPerm(
-  int i)
+  int i) const
 {
     return Cudd_ReadPerm(p->manager, i);
 
@@ -1962,7 +1989,7 @@ Cudd::ReadPerm(
 
 int
 Cudd::ReadPermZdd(
-  int i)
+  int i) const
 {
     return Cudd_ReadPermZdd(p->manager, i);
 
@@ -1971,7 +1998,7 @@ Cudd::ReadPermZdd(
 
 int
 Cudd::ReadInvPerm(
-  int i)
+  int i) const
 {
     return Cudd_ReadInvPerm(p->manager, i);
 
@@ -1980,7 +2007,7 @@ Cudd::ReadInvPerm(
 
 int
 Cudd::ReadInvPermZdd(
-  int i)
+  int i) const
 {
     return Cudd_ReadInvPermZdd(p->manager, i);
 
@@ -1999,7 +2026,7 @@ Cudd::ReadVars(
 
 
 CUDD_VALUE_TYPE
-Cudd::ReadEpsilon()
+Cudd::ReadEpsilon() const
 {
     return Cudd_ReadEpsilon(p->manager);
 
@@ -2016,7 +2043,7 @@ Cudd::SetEpsilon(
 
 
 Cudd_AggregationType
-Cudd::ReadGroupcheck()
+Cudd::ReadGroupcheck() const
 {
     return Cudd_ReadGroupcheck(p->manager);
 
@@ -2033,7 +2060,7 @@ Cudd::SetGroupcheck(
 
 
 int
-Cudd::GarbageCollectionEnabled()
+Cudd::GarbageCollectionEnabled() const
 {
     return Cudd_GarbageCollectionEnabled(p->manager);
 
@@ -2057,7 +2084,7 @@ Cudd::DisableGarbageCollection()
 
 
 int
-Cudd::DeadAreCounted()
+Cudd::DeadAreCounted() const
 {
     return Cudd_DeadAreCounted(p->manager);
 
@@ -2081,7 +2108,7 @@ Cudd::TurnOffCountDead()
 
 
 int
-Cudd::ReadRecomb()
+Cudd::ReadRecomb() const
 {
     return Cudd_ReadRecomb(p->manager);
 
@@ -2098,7 +2125,7 @@ Cudd::SetRecomb(
 
 
 int
-Cudd::ReadSymmviolation()
+Cudd::ReadSymmviolation() const
 {
     return Cudd_ReadSymmviolation(p->manager);
 
@@ -2115,7 +2142,7 @@ Cudd::SetSymmviolation(
 
 
 int
-Cudd::ReadArcviolation()
+Cudd::ReadArcviolation() const
 {
     return Cudd_ReadArcviolation(p->manager);
 
@@ -2132,7 +2159,7 @@ Cudd::SetArcviolation(
 
 
 int
-Cudd::ReadPopulationSize()
+Cudd::ReadPopulationSize() const
 {
     return Cudd_ReadPopulationSize(p->manager);
 
@@ -2149,7 +2176,7 @@ Cudd::SetPopulationSize(
 
 
 int
-Cudd::ReadNumberXovers()
+Cudd::ReadNumberXovers() const
 {
     return Cudd_ReadNumberXovers(p->manager);
 
@@ -2166,7 +2193,7 @@ Cudd::SetNumberXovers(
 
 
 unsigned long
-Cudd::ReadMemoryInUse()
+Cudd::ReadMemoryInUse() const
 {
     return Cudd_ReadMemoryInUse(p->manager);
 
@@ -2174,7 +2201,7 @@ Cudd::ReadMemoryInUse()
 
 
 long
-Cudd::ReadPeakNodeCount()
+Cudd::ReadPeakNodeCount() const
 {
     return Cudd_ReadPeakNodeCount(p->manager);
 
@@ -2182,7 +2209,7 @@ Cudd::ReadPeakNodeCount()
 
 
 long
-Cudd::ReadNodeCount()
+Cudd::ReadNodeCount() const
 {
     return Cudd_ReadNodeCount(p->manager);
 
@@ -2190,7 +2217,7 @@ Cudd::ReadNodeCount()
 
 
 long
-Cudd::zddReadNodeCount()
+Cudd::zddReadNodeCount() const
 {
     return Cudd_zddReadNodeCount(p->manager);
 
@@ -2222,7 +2249,7 @@ Cudd::RemoveHook(
 int
 Cudd::IsInHook(
   DD_HFP f,
-  Cudd_HookType where)
+  Cudd_HookType where) const
 {
     return Cudd_IsInHook(p->manager, f, where);
 
@@ -2256,7 +2283,7 @@ Cudd::ReorderingReporting()
 
 
 int
-Cudd::ReadErrorCode()
+Cudd::ReadErrorCode() const
 {
     return Cudd_ReadErrorCode(p->manager);
 
@@ -2272,7 +2299,7 @@ Cudd::ClearErrorCode()
 
 
 FILE *
-Cudd::ReadStdout()
+Cudd::ReadStdout() const
 {
     return Cudd_ReadStdout(p->manager);
 
@@ -2288,7 +2315,7 @@ Cudd::SetStdout(FILE *fp)
 
 
 FILE *
-Cudd::ReadStderr()
+Cudd::ReadStderr() const
 {
     return Cudd_ReadStderr(p->manager);
 
@@ -2304,7 +2331,7 @@ Cudd::SetStderr(FILE *fp)
 
 
 unsigned int
-Cudd::ReadNextReordering()
+Cudd::ReadNextReordering() const
 {
     return Cudd_ReadNextReordering(p->manager);
 
@@ -2312,7 +2339,7 @@ Cudd::ReadNextReordering()
 
 
 double
-Cudd::ReadSwapSteps()
+Cudd::ReadSwapSteps() const
 {
     return Cudd_ReadSwapSteps(p->manager);
 
@@ -2320,7 +2347,7 @@ Cudd::ReadSwapSteps()
 
 
 unsigned int
-Cudd::ReadMaxLive()
+Cudd::ReadMaxLive() const
 {
     return Cudd_ReadMaxLive(p->manager);
 
@@ -2336,7 +2363,7 @@ Cudd::SetMaxLive(unsigned int maxLive)
 
 
 unsigned long
-Cudd::ReadMaxMemory()
+Cudd::ReadMaxMemory() const
 {
     return Cudd_ReadMaxMemory(p->manager);
 
@@ -2368,7 +2395,7 @@ Cudd::bddUnbindVar(int index)
 
 
 int
-Cudd::bddVarIsBound(int index)
+Cudd::bddVarIsBound(int index) const
 {
     return Cudd_bddVarIsBound(p->manager, index);
 
@@ -2377,7 +2404,7 @@ Cudd::bddVarIsBound(int index)
 
 ADD
 ADD::ExistAbstract(
-  ADD cube)
+  const ADD& cube) const
 {
     DdManager *mgr = this->checkSameManager(cube);
     DdNode *result = Cudd_addExistAbstract(mgr, node, cube.node);
@@ -2389,7 +2416,7 @@ ADD::ExistAbstract(
 
 ADD
 ADD::UnivAbstract(
-  ADD cube)
+  const ADD& cube) const
 {
     DdManager *mgr = this->checkSameManager(cube);
     DdNode *result = Cudd_addUnivAbstract(mgr, node, cube.node);
@@ -2401,7 +2428,7 @@ ADD::UnivAbstract(
 
 ADD
 ADD::OrAbstract(
-  ADD cube)
+  const ADD& cube) const
 {
     DdManager *mgr = this->checkSameManager(cube);
     DdNode *result = Cudd_addOrAbstract(mgr, node, cube.node);
@@ -2413,7 +2440,7 @@ ADD::OrAbstract(
 
 ADD
 ADD::Plus(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addPlus, node, g.node);
@@ -2425,7 +2452,7 @@ ADD::Plus(
 
 ADD
 ADD::Times(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addTimes, node, g.node);
@@ -2437,7 +2464,7 @@ ADD::Times(
 
 ADD
 ADD::Threshold(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addThreshold, node, g.node);
@@ -2449,7 +2476,7 @@ ADD::Threshold(
 
 ADD
 ADD::SetNZ(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addSetNZ, node, g.node);
@@ -2461,7 +2488,7 @@ ADD::SetNZ(
 
 ADD
 ADD::Divide(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addDivide, node, g.node);
@@ -2473,7 +2500,7 @@ ADD::Divide(
 
 ADD
 ADD::Minus(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addMinus, node, g.node);
@@ -2485,7 +2512,7 @@ ADD::Minus(
 
 ADD
 ADD::Minimum(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addMinimum, node, g.node);
@@ -2497,7 +2524,7 @@ ADD::Minimum(
 
 ADD
 ADD::Maximum(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addMaximum, node, g.node);
@@ -2509,7 +2536,7 @@ ADD::Maximum(
 
 ADD
 ADD::OneZeroMaximum(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addOneZeroMaximum, node, g.node);
@@ -2521,7 +2548,7 @@ ADD::OneZeroMaximum(
 
 ADD
 ADD::Diff(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addDiff, node, g.node);
@@ -2533,7 +2560,7 @@ ADD::Diff(
 
 ADD
 ADD::Agreement(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addAgreement, node, g.node);
@@ -2545,7 +2572,7 @@ ADD::Agreement(
 
 ADD
 ADD::Or(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addOr, node, g.node);
@@ -2557,7 +2584,7 @@ ADD::Or(
 
 ADD
 ADD::Nand(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addNand, node, g.node);
@@ -2569,7 +2596,7 @@ ADD::Nand(
 
 ADD
 ADD::Nor(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addNor, node, g.node);
@@ -2581,7 +2608,7 @@ ADD::Nor(
 
 ADD
 ADD::Xor(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addXor, node, g.node);
@@ -2593,7 +2620,7 @@ ADD::Xor(
 
 ADD
 ADD::Xnor(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addApply(mgr, Cudd_addXnor, node, g.node);
@@ -2604,7 +2631,7 @@ ADD::Xnor(
 
 
 ADD
-ADD::Log()
+ADD::Log() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addMonadicApply(mgr, Cudd_addLog, node);
@@ -2615,7 +2642,7 @@ ADD::Log()
 
 
 ADD
-ADD::FindMax()
+ADD::FindMax() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addFindMax(mgr, node);
@@ -2626,7 +2653,7 @@ ADD::FindMax()
 
 
 ADD
-ADD::FindMin()
+ADD::FindMin() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addFindMin(mgr, node);
@@ -2638,7 +2665,7 @@ ADD::FindMin()
 
 ADD
 ADD::IthBit(
-  int bit)
+  int bit) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addIthBit(mgr, node, bit);
@@ -2650,7 +2677,7 @@ ADD::IthBit(
 
 ADD
 ADD::ScalarInverse(
-  ADD epsilon)
+  const ADD& epsilon) const
 {
     DdManager *mgr = this->checkSameManager(epsilon);
     DdNode *result = Cudd_addScalarInverse(mgr, node, epsilon.node);
@@ -2662,8 +2689,8 @@ ADD::ScalarInverse(
 
 ADD
 ADD::Ite(
-  ADD g,
-  ADD h)
+  const ADD& g,
+  const ADD& h) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(h);
@@ -2676,8 +2703,8 @@ ADD::Ite(
 
 ADD
 ADD::IteConstant(
-  ADD g,
-  ADD h)
+  const ADD& g,
+  const ADD& h) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(h);
@@ -2690,7 +2717,7 @@ ADD::IteConstant(
 
 ADD
 ADD::EvalConst(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addEvalConst(mgr, node, g.node);
@@ -2702,7 +2729,7 @@ ADD::EvalConst(
 
 int
 ADD::Leq(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     return Cudd_addLeq(mgr, node, g.node);
@@ -2711,7 +2738,7 @@ ADD::Leq(
 
 
 ADD
-ADD::Cmpl()
+ADD::Cmpl() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addCmpl(mgr, node);
@@ -2722,7 +2749,7 @@ ADD::Cmpl()
 
 
 ADD
-ADD::Negate()
+ADD::Negate() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addNegate(mgr, node);
@@ -2734,7 +2761,7 @@ ADD::Negate()
 
 ADD
 ADD::RoundOff(
-  int N)
+  int N) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addRoundOff(mgr, node, N);
@@ -2781,8 +2808,8 @@ Cudd::addResidue(
 
 BDD
 BDD::AndAbstract(
-  BDD g,
-  BDD cube)
+  const BDD& g,
+  const BDD& cube) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(cube);
@@ -2795,9 +2822,9 @@ BDD::AndAbstract(
 
 BDD
 BDD::AndAbstractLimit(
-  BDD g,
-  BDD cube,
-  unsigned int limit)
+  const BDD& g,
+  const BDD& cube,
+  unsigned int limit) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(cube);
@@ -2811,7 +2838,7 @@ BDD::AndAbstractLimit(
 
 int
 Cudd::ApaNumberOfDigits(
-  int binaryDigits)
+  int binaryDigits) const
 {
     return Cudd_ApaNumberOfDigits(binaryDigits);
 
@@ -2820,7 +2847,7 @@ Cudd::ApaNumberOfDigits(
 
 DdApaNumber
 Cudd::NewApaNumber(
-  int digits)
+  int digits) const
 {
     return Cudd_NewApaNumber(digits);
 
@@ -2831,7 +2858,7 @@ void
 Cudd::ApaCopy(
   int digits,
   DdApaNumber source,
-  DdApaNumber dest)
+  DdApaNumber dest) const
 {
     Cudd_ApaCopy(digits, source, dest);
 
@@ -2843,7 +2870,7 @@ Cudd::ApaAdd(
   int digits,
   DdApaNumber a,
   DdApaNumber b,
-  DdApaNumber sum)
+  DdApaNumber sum) const
 {
     return Cudd_ApaAdd(digits, a, b, sum);
 
@@ -2855,7 +2882,7 @@ Cudd::ApaSubtract(
   int digits,
   DdApaNumber a,
   DdApaNumber b,
-  DdApaNumber diff)
+  DdApaNumber diff) const
 {
     return Cudd_ApaSubtract(digits, a, b, diff);
 
@@ -2867,7 +2894,7 @@ Cudd::ApaShortDivision(
   int digits,
   DdApaNumber dividend,
   DdApaDigit divisor,
-  DdApaNumber quotient)
+  DdApaNumber quotient) const
 {
     return Cudd_ApaShortDivision(digits, dividend, divisor, quotient);
 
@@ -2879,7 +2906,7 @@ Cudd::ApaShiftRight(
   int digits,
   DdApaDigit in,
   DdApaNumber a,
-  DdApaNumber b)
+  DdApaNumber b) const
 {
     Cudd_ApaShiftRight(digits, in, a, b);
 
@@ -2890,7 +2917,7 @@ void
 Cudd::ApaSetToLiteral(
   int digits,
   DdApaNumber number,
-  DdApaDigit literal)
+  DdApaDigit literal) const
 {
     Cudd_ApaSetToLiteral(digits, number, literal);
 
@@ -2901,7 +2928,7 @@ void
 Cudd::ApaPowerOfTwo(
   int digits,
   DdApaNumber number,
-  int power)
+  int power) const
 {
     Cudd_ApaPowerOfTwo(digits, number, power);
 
@@ -2912,7 +2939,7 @@ void
 Cudd::ApaPrintHex(
   FILE * fp,
   int digits,
-  DdApaNumber number)
+  DdApaNumber number) const
 {
     cout.flush();
     int result = Cudd_ApaPrintHex(fp, digits, number);
@@ -2925,7 +2952,7 @@ void
 Cudd::ApaPrintDecimal(
   FILE * fp,
   int digits,
-  DdApaNumber number)
+  DdApaNumber number) const
 {
     cout.flush();
     int result = Cudd_ApaPrintDecimal(fp, digits, number);
@@ -2937,7 +2964,7 @@ Cudd::ApaPrintDecimal(
 DdApaNumber
 ABDD::ApaCountMinterm(
   int nvars,
-  int * digits)
+  int * digits) const
 {
     DdManager *mgr = ddMgr->p->manager;
     return Cudd_ApaCountMinterm(mgr, node, nvars, digits);
@@ -2948,7 +2975,7 @@ ABDD::ApaCountMinterm(
 void
 ABDD::ApaPrintMinterm(
   int nvars,
-  FILE * fp)
+  FILE * fp) const
 {
     cout.flush();
     DdManager *mgr = ddMgr->p->manager;
@@ -2961,7 +2988,7 @@ ABDD::ApaPrintMinterm(
 void
 ABDD::EpdPrintMinterm(
   int nvars,
-  FILE * fp)
+  FILE * fp) const
 {
     EpDouble count;
     char str[24];
@@ -2980,7 +3007,7 @@ BDD::UnderApprox(
   int numVars,
   int threshold,
   int safe,
-  double quality)
+  double quality) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_UnderApprox(mgr, node, numVars, threshold, safe, quality);
@@ -2995,7 +3022,7 @@ BDD::OverApprox(
   int numVars,
   int threshold,
   int safe,
-  double quality)
+  double quality) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_OverApprox(mgr, node, numVars, threshold, safe, quality);
@@ -3009,7 +3036,7 @@ BDD
 BDD::RemapUnderApprox(
   int numVars,
   int threshold,
-  double quality)
+  double quality) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_RemapUnderApprox(mgr, node, numVars, threshold, quality);
@@ -3023,7 +3050,7 @@ BDD
 BDD::RemapOverApprox(
   int numVars,
   int threshold,
-  double quality)
+  double quality) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_RemapOverApprox(mgr, node, numVars, threshold, quality);
@@ -3035,7 +3062,7 @@ BDD::RemapOverApprox(
 
 BDD
 BDD::ExistAbstract(
-  BDD cube)
+  const BDD& cube) const
 {
     DdManager *mgr = this->checkSameManager(cube);
     DdNode *result = Cudd_bddExistAbstract(mgr, node, cube.node);
@@ -3047,8 +3074,8 @@ BDD::ExistAbstract(
 
 BDD
 BDD::XorExistAbstract(
-  BDD g,
-  BDD cube)
+  const BDD& g,
+  const BDD& cube) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(cube);
@@ -3061,7 +3088,7 @@ BDD::XorExistAbstract(
 
 BDD
 BDD::UnivAbstract(
-  BDD cube)
+  const BDD& cube) const
 {
     DdManager *mgr = this->checkSameManager(cube);
     DdNode *result = Cudd_bddUnivAbstract(mgr, node, cube.node);
@@ -3073,7 +3100,7 @@ BDD::UnivAbstract(
 
 BDD
 BDD::BooleanDiff(
-  int x)
+  int x) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_bddBooleanDiff(mgr, node, x);
@@ -3085,7 +3112,7 @@ BDD::BooleanDiff(
 
 int
 BDD::VarIsDependent(
-  BDD var)
+  const BDD& var) const
 {
     DdManager *mgr = ddMgr->p->manager;
     return Cudd_bddVarIsDependent(mgr, node, var.node);
@@ -3095,7 +3122,7 @@ BDD::VarIsDependent(
 
 double
 BDD::Correlation(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     return Cudd_bddCorrelation(mgr, node, g.node);
@@ -3105,8 +3132,8 @@ BDD::Correlation(
 
 double
 BDD::CorrelationWeights(
-  BDD g,
-  double * prob)
+  const BDD& g,
+  double * prob) const
 {
     DdManager *mgr = this->checkSameManager(g);
     return Cudd_bddCorrelationWeights(mgr, node, g.node, prob);
@@ -3116,8 +3143,8 @@ BDD::CorrelationWeights(
 
 BDD
 BDD::Ite(
-  BDD g,
-  BDD h)
+  const BDD& g,
+  const BDD& h) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(h);
@@ -3130,8 +3157,8 @@ BDD::Ite(
 
 BDD
 BDD::IteConstant(
-  BDD g,
-  BDD h)
+  const BDD& g,
+  const BDD& h) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(h);
@@ -3144,7 +3171,7 @@ BDD::IteConstant(
 
 BDD
 BDD::Intersect(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddIntersect(mgr, node, g.node);
@@ -3156,7 +3183,7 @@ BDD::Intersect(
 
 BDD
 BDD::And(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddAnd(mgr, node, g.node);
@@ -3168,8 +3195,8 @@ BDD::And(
 
 BDD
 BDD::AndLimit(
-  BDD g,
-  unsigned int limit)
+  const BDD& g,
+  unsigned int limit) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddAndLimit(mgr, node, g.node, limit);
@@ -3181,7 +3208,7 @@ BDD::AndLimit(
 
 BDD
 BDD::Or(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddOr(mgr, node, g.node);
@@ -3193,7 +3220,7 @@ BDD::Or(
 
 BDD
 BDD::Nand(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddNand(mgr, node, g.node);
@@ -3205,7 +3232,7 @@ BDD::Nand(
 
 BDD
 BDD::Nor(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddNor(mgr, node, g.node);
@@ -3217,7 +3244,7 @@ BDD::Nor(
 
 BDD
 BDD::Xor(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddXor(mgr, node, g.node);
@@ -3229,7 +3256,7 @@ BDD::Xor(
 
 BDD
 BDD::Xnor(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddXnor(mgr, node, g.node);
@@ -3241,7 +3268,7 @@ BDD::Xnor(
 
 int
 BDD::Leq(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     return Cudd_bddLeq(mgr, node, g.node);
@@ -3251,7 +3278,7 @@ BDD::Leq(
 
 BDD
 ADD::BddThreshold(
-  CUDD_VALUE_TYPE value)
+  CUDD_VALUE_TYPE value) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addBddThreshold(mgr, node, value);
@@ -3263,7 +3290,7 @@ ADD::BddThreshold(
 
 BDD
 ADD::BddStrictThreshold(
-  CUDD_VALUE_TYPE value)
+  CUDD_VALUE_TYPE value) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addBddStrictThreshold(mgr, node, value);
@@ -3276,7 +3303,7 @@ ADD::BddStrictThreshold(
 BDD
 ADD::BddInterval(
   CUDD_VALUE_TYPE lower,
-  CUDD_VALUE_TYPE upper)
+  CUDD_VALUE_TYPE upper) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addBddInterval(mgr, node, lower, upper);
@@ -3288,7 +3315,7 @@ ADD::BddInterval(
 
 BDD
 ADD::BddIthBit(
-  int bit)
+  int bit) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addBddIthBit(mgr, node, bit);
@@ -3299,7 +3326,7 @@ ADD::BddIthBit(
 
 
 ADD
-BDD::Add()
+BDD::Add() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_BddToAdd(mgr, node);
@@ -3310,7 +3337,7 @@ BDD::Add()
 
 
 BDD
-ADD::BddPattern()
+ADD::BddPattern() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addBddPattern(mgr, node);
@@ -3322,7 +3349,7 @@ ADD::BddPattern()
 
 BDD
 BDD::Transfer(
-  Cudd& destination)
+  Cudd& destination) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_bddTransfer(mgr, destination.p->manager, node);
@@ -3352,9 +3379,9 @@ Cudd::CheckKeys()
 
 BDD
 BDD::ClippingAnd(
-  BDD g,
+  const BDD& g,
   int maxDepth,
-  int direction)
+  int direction) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddClippingAnd(mgr, node, g.node, maxDepth,
@@ -3367,10 +3394,10 @@ BDD::ClippingAnd(
 
 BDD
 BDD::ClippingAndAbstract(
-  BDD g,
-  BDD cube,
+  const BDD& g,
+  const BDD& cube,
   int maxDepth,
-  int direction)
+  int direction) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(cube);
@@ -3384,7 +3411,7 @@ BDD::ClippingAndAbstract(
 
 ADD
 ADD::Cofactor(
-  ADD g)
+  const ADD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_Cofactor(mgr, node, g.node);
@@ -3396,7 +3423,7 @@ ADD::Cofactor(
 
 BDD
 BDD::Cofactor(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_Cofactor(mgr, node, g.node);
@@ -3408,8 +3435,8 @@ BDD::Cofactor(
 
 BDD
 BDD::Compose(
-  BDD g,
-  int v)
+  const BDD& g,
+  int v) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddCompose(mgr, node, g.node, v);
@@ -3421,8 +3448,8 @@ BDD::Compose(
 
 ADD
 ADD::Compose(
-  ADD g,
-  int v)
+  const ADD& g,
+  int v) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_addCompose(mgr, node, g.node, v);
@@ -3434,7 +3461,7 @@ ADD::Compose(
 
 ADD
 ADD::Permute(
-  int * permut)
+  int * permut) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_addPermute(mgr, node, permut);
@@ -3447,7 +3474,7 @@ ADD::Permute(
 ADD
 ADD::SwapVariables(
   ADDvector x,
-  ADDvector y)
+  ADDvector y) const
 {
     int n = x.count();
     DdManager *mgr = ddMgr->p->manager;
@@ -3468,7 +3495,7 @@ ADD::SwapVariables(
 
 BDD
 BDD::Permute(
-  int * permut)
+  int * permut) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_bddPermute(mgr, node, permut);
@@ -3481,7 +3508,7 @@ BDD::Permute(
 BDD
 BDD::SwapVariables(
   BDDvector x,
-  BDDvector y)
+  BDDvector y) const
 {
     int n = x.count();
     DdManager *mgr = ddMgr->p->manager;
@@ -3502,7 +3529,7 @@ BDD::SwapVariables(
 
 BDD
 BDD::AdjPermuteX(
-  BDDvector x)
+  BDDvector x) const
 {
     int n = x.count();
     DdManager *mgr = ddMgr->p->manager;
@@ -3520,7 +3547,7 @@ BDD::AdjPermuteX(
 
 ADD
 ADD::VectorCompose(
-  ADDvector vector)
+  ADDvector vector) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int n = Cudd_ReadSize(mgr);
@@ -3538,7 +3565,7 @@ ADD::VectorCompose(
 
 ADD
 ADD::NonSimCompose(
-  ADDvector vector)
+  ADDvector vector) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int n = Cudd_ReadSize(mgr);
@@ -3556,7 +3583,7 @@ ADD::NonSimCompose(
 
 BDD
 BDD::VectorCompose(
-  BDDvector vector)
+  BDDvector vector) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int n = Cudd_ReadSize(mgr);
@@ -3575,7 +3602,7 @@ BDD::VectorCompose(
 void
 BDD::ApproxConjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3593,7 +3620,7 @@ BDD::ApproxConjDecomp(
 void
 BDD::ApproxDisjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3611,7 +3638,7 @@ BDD::ApproxDisjDecomp(
 void
 BDD::IterConjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3629,7 +3656,7 @@ BDD::IterConjDecomp(
 void
 BDD::IterDisjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3647,7 +3674,7 @@ BDD::IterDisjDecomp(
 void
 BDD::GenConjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3665,7 +3692,7 @@ BDD::GenConjDecomp(
 void
 BDD::GenDisjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3683,7 +3710,7 @@ BDD::GenDisjDecomp(
 void
 BDD::VarConjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3701,7 +3728,7 @@ BDD::VarConjDecomp(
 void
 BDD::VarDisjDecomp(
   BDD* g,
-  BDD* h)
+  BDD* h) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **pieces;
@@ -3717,7 +3744,7 @@ BDD::VarDisjDecomp(
 
 
 BDD
-ABDD::FindEssential()
+ABDD::FindEssential() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_FindEssential(mgr, node);
@@ -3730,7 +3757,7 @@ ABDD::FindEssential()
 int
 BDD::IsVarEssential(
   int id,
-  int phase)
+  int phase) const
 {
     DdManager *mgr = ddMgr->p->manager;
     return Cudd_bddIsVarEssential(mgr, node, id, phase);
@@ -3741,7 +3768,7 @@ BDD::IsVarEssential(
 void
 ABDD::PrintTwoLiteralClauses(
   char **names,
-  FILE *fp)
+  FILE *fp) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int result = Cudd_PrintTwoLiteralClauses(mgr, node, names, fp);
@@ -3755,7 +3782,7 @@ BDDvector::DumpBlif(
   char ** inames,
   char ** onames,
   char * mname,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3774,7 +3801,7 @@ void
 BDDvector::DumpDot(
   char ** inames,
   char ** onames,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3793,7 +3820,7 @@ void
 ADDvector::DumpDot(
   char ** inames,
   char ** onames,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3812,7 +3839,7 @@ void
 BDDvector::DumpDaVinci(
   char ** inames,
   char ** onames,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3831,7 +3858,7 @@ void
 ADDvector::DumpDaVinci(
   char ** inames,
   char ** onames,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3850,7 +3877,7 @@ void
 BDDvector::DumpDDcal(
   char ** inames,
   char ** onames,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3869,7 +3896,7 @@ void
 BDDvector::DumpFactoredForm(
   char ** inames,
   char ** onames,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3886,7 +3913,7 @@ BDDvector::DumpFactoredForm(
 
 BDD
 BDD::Constrain(
-  BDD c)
+  const BDD& c) const
 {
     DdManager *mgr = this->checkSameManager(c);
     DdNode *result = Cudd_bddConstrain(mgr, node, c.node);
@@ -3898,7 +3925,7 @@ BDD::Constrain(
 
 BDD
 BDD::Restrict(
-  BDD c)
+  const BDD& c) const
 {
     DdManager *mgr = this->checkSameManager(c);
     DdNode *result = Cudd_bddRestrict(mgr, node, c.node);
@@ -3910,7 +3937,7 @@ BDD::Restrict(
 
 BDD
 BDD::NPAnd(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddNPAnd(mgr, node, g.node);
@@ -3922,7 +3949,7 @@ BDD::NPAnd(
 
 ADD
 ADD::Constrain(
-  ADD c)
+  const ADD& c) const
 {
     DdManager *mgr = this->checkSameManager(c);
     DdNode *result = Cudd_addConstrain(mgr, node, c.node);
@@ -3933,7 +3960,7 @@ ADD::Constrain(
 
 
 BDDvector
-BDD::ConstrainDecomp()
+BDD::ConstrainDecomp() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **result = Cudd_bddConstrainDecomp(mgr, node);
@@ -3951,7 +3978,7 @@ BDD::ConstrainDecomp()
 
 ADD
 ADD::Restrict(
-  ADD c)
+  const ADD& c) const
 {
     DdManager *mgr = this->checkSameManager(c);
     DdNode *result = Cudd_addRestrict(mgr, node, c.node);
@@ -3962,7 +3989,7 @@ ADD::Restrict(
 
 
 BDDvector
-BDD::CharToVect()
+BDD::CharToVect() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **result = Cudd_bddCharToVect(mgr, node);
@@ -3980,7 +4007,7 @@ BDD::CharToVect()
 
 BDD
 BDD::LICompaction(
-  BDD c)
+  const BDD& c) const
 {
     DdManager *mgr = this->checkSameManager(c);
     DdNode *result = Cudd_bddLICompaction(mgr, node, c.node);
@@ -3992,7 +4019,7 @@ BDD::LICompaction(
 
 BDD
 BDD::Squeeze(
-  BDD u)
+  const BDD& u) const
 {
     DdManager *mgr = this->checkSameManager(u);
     DdNode *result = Cudd_bddSqueeze(mgr, node, u.node);
@@ -4004,7 +4031,7 @@ BDD::Squeeze(
 
 BDD
 BDD::Minimize(
-  BDD c)
+  const BDD& c) const
 {
     DdManager *mgr = this->checkSameManager(c);
     DdNode *result = Cudd_bddMinimize(mgr, node, c.node);
@@ -4017,7 +4044,7 @@ BDD::Minimize(
 BDD
 BDD::SubsetCompress(
   int nvars,
-  int threshold)
+  int threshold) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_SubsetCompress(mgr, node, nvars, threshold);
@@ -4030,7 +4057,7 @@ BDD::SubsetCompress(
 BDD
 BDD::SupersetCompress(
   int nvars,
-  int threshold)
+  int threshold) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_SupersetCompress(mgr, node, nvars, threshold);
@@ -4101,7 +4128,7 @@ Cudd::ReadLinear(
 
 BDD
 BDD::LiteralSetIntersection(
-  BDD g)
+  const BDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_bddLiteralSetIntersection(mgr, node, g.node);
@@ -4113,8 +4140,8 @@ BDD::LiteralSetIntersection(
 
 ADD
 ADD::MatrixMultiply(
-  ADD B,
-  ADDvector z)
+  const ADD& B,
+  ADDvector z) const
 {
     int nz = z.count();
     DdManager *mgr = this->checkSameManager(B);
@@ -4132,8 +4159,8 @@ ADD::MatrixMultiply(
 
 ADD
 ADD::TimesPlus(
-  ADD B,
-  ADDvector z)
+  const ADD& B,
+  ADDvector z) const
 {
     int nz = z.count();
     DdManager *mgr = this->checkSameManager(B);
@@ -4151,8 +4178,8 @@ ADD::TimesPlus(
 
 ADD
 ADD::Triangle(
-  ADD g,
-  ADDvector z)
+  const ADD& g,
+  ADDvector z) const
 {
     int nz = z.count();
     DdManager *mgr = this->checkSameManager(g);
@@ -4173,8 +4200,8 @@ BDD::PrioritySelect(
   BDDvector x,
   BDDvector y,
   BDDvector z,
-  BDD Pi,
-  DD_PRFP Pifunc)
+  const BDD& Pi,
+  DD_PRFP Pifunc) const
 {
     int n = x.count();
     DdManager *mgr = ddMgr->p->manager;
@@ -4317,7 +4344,7 @@ Cudd::Dxygtdyz(
 
 BDD
 BDD::CProjection(
-  BDD Y)
+  const BDD& Y) const
 {
     DdManager *mgr = this->checkSameManager(Y);
     DdNode *result = Cudd_CProjection(mgr, node, Y.node);
@@ -4330,7 +4357,7 @@ BDD::CProjection(
 int
 BDD::MinHammingDist(
   int *minterm,
-  int upperBound)
+  int upperBound) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int result = Cudd_MinHammingDist(mgr, node, minterm, upperBound);
@@ -4432,7 +4459,7 @@ Cudd::ShuffleHeap(
 
 ADD
 ADD::Eval(
-  int * inputs)
+  int * inputs) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_Eval(mgr, node, inputs);
@@ -4444,7 +4471,7 @@ ADD::Eval(
 
 BDD
 BDD::Eval(
-  int * inputs)
+  int * inputs) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_Eval(mgr, node, inputs);
@@ -4458,7 +4485,7 @@ BDD
 ABDD::ShortestPath(
   int * weight,
   int * support,
-  int * length)
+  int * length) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_ShortestPath(mgr, node, weight, support, length);
@@ -4470,7 +4497,7 @@ ABDD::ShortestPath(
 
 BDD
 ABDD::LargestCube(
-  int * length)
+  int * length) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_LargestCube(mgr, node, length);
@@ -4482,7 +4509,7 @@ ABDD::LargestCube(
 
 int
 ABDD::ShortestLength(
-  int * weight)
+  int * weight) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int result = Cudd_ShortestLength(mgr, node, weight);
@@ -4494,7 +4521,7 @@ ABDD::ShortestLength(
 
 BDD
 BDD::Decreasing(
-  int i)
+  int i) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_Decreasing(mgr, node, i);
@@ -4506,7 +4533,7 @@ BDD::Decreasing(
 
 BDD
 BDD::Increasing(
-  int i)
+  int i) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_Increasing(mgr, node, i);
@@ -4518,8 +4545,8 @@ BDD::Increasing(
 
 int
 ABDD::EquivDC(
-  ABDD G,
-  ABDD D)
+  const ABDD& G,
+  const ABDD& D) const
 {
     DdManager *mgr = this->checkSameManager(G);
     this->checkSameManager(D);
@@ -4530,9 +4557,9 @@ ABDD::EquivDC(
 
 int
 ADD::EqualSupNorm(
-  ADD g,
+  const ADD& g,
   CUDD_VALUE_TYPE tolerance,
-  int pr)
+  int pr) const
 {
     DdManager *mgr = this->checkSameManager(g);
     return Cudd_EqualSupNorm(mgr, node, g.node, tolerance, pr);
@@ -4541,7 +4568,7 @@ ADD::EqualSupNorm(
 
 
 double *
-ABDD::CofMinterm()
+ABDD::CofMinterm() const
 {
     DdManager *mgr = ddMgr->p->manager;
     double *result = Cudd_CofMinterm(mgr, node);
@@ -4553,10 +4580,10 @@ ABDD::CofMinterm()
 
 BDD
 BDD::SolveEqn(
-  BDD Y,
+  const BDD& Y,
   BDD* G,
   int ** yIndex,
-  int n)
+  int n) const
 {
     DdManager *mgr = this->checkSameManager(Y);
     DdNode **g = ALLOC(DdNode *,n);
@@ -4576,7 +4603,7 @@ BDD
 BDD::VerifySol(
   BDD* G,
   int * yIndex,
-  int n)
+  int n) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode **g = ALLOC(DdNode *,n);
@@ -4594,7 +4621,7 @@ BDD::VerifySol(
 BDD
 BDD::SplitSet(
   BDDvector xVars,
-  double m)
+  double m) const
 {
     int n = xVars.count();
     DdManager *mgr = ddMgr->p->manager;
@@ -4613,7 +4640,7 @@ BDD::SplitSet(
 BDD
 BDD::SubsetHeavyBranch(
   int numVars,
-  int threshold)
+  int threshold) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_SubsetHeavyBranch(mgr, node, numVars, threshold);
@@ -4626,7 +4653,7 @@ BDD::SubsetHeavyBranch(
 BDD
 BDD::SupersetHeavyBranch(
   int numVars,
-  int threshold)
+  int threshold) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_SupersetHeavyBranch(mgr, node, numVars, threshold);
@@ -4640,7 +4667,7 @@ BDD
 BDD::SubsetShortPaths(
   int numVars,
   int threshold,
-  int hardlimit)
+  int hardlimit) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_SubsetShortPaths(mgr, node, numVars, threshold, hardlimit);
@@ -4654,7 +4681,7 @@ BDD
 BDD::SupersetShortPaths(
   int numVars,
   int threshold,
-  int hardlimit)
+  int hardlimit) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_SupersetShortPaths(mgr, node, numVars, threshold, hardlimit);
@@ -4667,7 +4694,7 @@ BDD::SupersetShortPaths(
 void
 Cudd::SymmProfile(
   int lower,
-  int upper)
+  int upper) const
 {
     Cudd_SymmProfile(p->manager, lower, upper);
 
@@ -4676,7 +4703,7 @@ Cudd::SymmProfile(
 
 unsigned int
 Cudd::Prime(
-  unsigned int pr)
+  unsigned int pr) const
 {
     return Cudd_Prime(pr);
 
@@ -4684,7 +4711,7 @@ Cudd::Prime(
 
 
 void
-ABDD::PrintMinterm()
+ABDD::PrintMinterm() const
 {
     cout.flush();
     DdManager *mgr = ddMgr->p->manager;
@@ -4695,7 +4722,7 @@ ABDD::PrintMinterm()
 
 
 void
-BDD::PrintCover()
+BDD::PrintCover() const
 {
     cout.flush();
     DdManager *mgr = ddMgr->p->manager;
@@ -4707,7 +4734,7 @@ BDD::PrintCover()
 
 void
 BDD::PrintCover(
-  const BDD& u)
+  const BDD& u) const
 {
     this->checkSameManager(u);
     cout.flush();
@@ -4721,7 +4748,7 @@ BDD::PrintCover(
 int
 BDD::EstimateCofactor(
   int i,
-  int phase)
+  int phase) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int result = Cudd_EstimateCofactor(mgr, node, i, phase);
@@ -4733,7 +4760,7 @@ BDD::EstimateCofactor(
 
 int
 BDD::EstimateCofactorSimple(
-  int i)
+  int i) const
 {
     int result = Cudd_EstimateCofactorSimple(node, i);
     return result;
@@ -4744,7 +4771,7 @@ BDD::EstimateCofactorSimple(
 int
 Cudd::SharingSize(
   DD* nodes,
-  int n)
+  int n) const
 {
     DdNode **nodeArray = ALLOC(DdNode *,n);
     for (int i = 0; i < n; i++) {
@@ -4760,7 +4787,7 @@ Cudd::SharingSize(
 
 double
 ABDD::CountMinterm(
-  int nvars)
+  int nvars) const
 {
     DdManager *mgr = ddMgr->p->manager;
     double result = Cudd_CountMinterm(mgr, node, nvars);
@@ -4771,7 +4798,7 @@ ABDD::CountMinterm(
 
 
 double
-ABDD::CountPath()
+ABDD::CountPath() const
 {
     double result = Cudd_CountPath(node);
     this->checkReturnValue(result != (double) CUDD_OUT_OF_MEM);
@@ -4781,7 +4808,7 @@ ABDD::CountPath()
 
 
 BDD
-ABDD::Support()
+ABDD::Support() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_Support(mgr, node);
@@ -4792,7 +4819,7 @@ ABDD::Support()
 
 
 int
-ABDD::SupportSize()
+ABDD::SupportSize() const
 {
     DdManager *mgr = ddMgr->p->manager;
     int result = Cudd_SupportSize(mgr, node);
@@ -4803,7 +4830,7 @@ ABDD::SupportSize()
 
 
 BDD
-BDDvector::VectorSupport()
+BDDvector::VectorSupport() const
 {
     int n = p->size;
     DdManager *mgr = p->manager->getManager();
@@ -4820,7 +4847,7 @@ BDDvector::VectorSupport()
 
 
 int
-BDDvector::nodeCount()
+BDDvector::nodeCount() const
 {
     int n = p->size;
     DdNode **nodeArray = ALLOC(DdNode *,n);
@@ -4836,7 +4863,7 @@ BDDvector::nodeCount()
 
 
 BDD
-ADDvector::VectorSupport()
+ADDvector::VectorSupport() const
 {
     int n = p->size;
     DdManager *mgr = p->manager->getManager();
@@ -4853,7 +4880,7 @@ ADDvector::VectorSupport()
 
 
 int
-BDDvector::VectorSupportSize()
+BDDvector::VectorSupportSize() const
 {
     int n = p->size;
     DdManager *mgr = p->manager->getManager();
@@ -4870,7 +4897,7 @@ BDDvector::VectorSupportSize()
 
 
 int
-ADDvector::VectorSupportSize()
+ADDvector::VectorSupportSize() const
 {
     int n = p->size;
     DdManager *mgr = p->manager->getManager();
@@ -4888,10 +4915,10 @@ ADDvector::VectorSupportSize()
 
 void
 ABDD::ClassifySupport(
-  ABDD g,
+  const ABDD& g,
   BDD* common,
   BDD* onlyF,
-  BDD* onlyG)
+  BDD* onlyG) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *C, *F, *G;
@@ -4905,7 +4932,7 @@ ABDD::ClassifySupport(
 
 
 int
-ABDD::CountLeaves()
+ABDD::CountLeaves() const
 {
     return Cudd_CountLeaves(node);
 
@@ -4914,7 +4941,7 @@ ABDD::CountLeaves()
 
 void
 BDD::PickOneCube(
-  char * string)
+  char * string) const
 {
     DdManager *mgr = ddMgr->p->manager;
     int result = Cudd_bddPickOneCube(mgr, node, string);
@@ -4925,7 +4952,7 @@ BDD::PickOneCube(
 
 BDD
 BDD::PickOneMinterm(
-  BDDvector vars)
+  BDDvector vars) const
 {
     int n = vars.count();
     DdManager *mgr = ddMgr->p->manager;
@@ -4944,7 +4971,7 @@ BDD::PickOneMinterm(
 DdGen *
 ABDD::FirstCube(
   int ** cube,
-  CUDD_VALUE_TYPE * value)
+  CUDD_VALUE_TYPE * value) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdGen *result = Cudd_FirstCube(mgr, node, cube, value);
@@ -5005,7 +5032,7 @@ Cudd::addComputeCube(
 
 DdGen *
 BDD::FirstNode(
-  BDD* fnode)
+  BDD* fnode) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *Fn;
@@ -5062,7 +5089,7 @@ Cudd::IndicesToCube(
 
 void
 Cudd::PrintVersion(
-  FILE * fp)
+  FILE * fp) const
 {
     cout.flush();
     Cudd_PrintVersion(fp);
@@ -5071,7 +5098,7 @@ Cudd::PrintVersion(
 
 
 double
-Cudd::AverageDistance()
+Cudd::AverageDistance() const
 {
     return Cudd_AverageDistance(p->manager);
 
@@ -5097,7 +5124,7 @@ Cudd::Srandom(
 
 double
 ABDD::Density(
-  int nvars)
+  int nvars) const
 {
     DdManager *mgr = ddMgr->p->manager;
     double result = Cudd_Density(mgr, node, nvars);
@@ -5108,7 +5135,7 @@ ABDD::Density(
 
 
 int
-ZDD::Count()
+ZDD::Count() const
 {
     DdManager *mgr = ddMgr->p->manager;
     int result = Cudd_zddCount(mgr, node);
@@ -5119,7 +5146,7 @@ ZDD::Count()
 
 
 double
-ZDD::CountDouble()
+ZDD::CountDouble() const
 {
     DdManager *mgr = ddMgr->p->manager;
     double result = Cudd_zddCountDouble(mgr, node);
@@ -5131,7 +5158,7 @@ ZDD::CountDouble()
 
 ZDD
 ZDD::Product(
-  ZDD g)
+  const ZDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_zddProduct(mgr, node, g.node);
@@ -5143,7 +5170,7 @@ ZDD::Product(
 
 ZDD
 ZDD::UnateProduct(
-  ZDD g)
+  const ZDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_zddUnateProduct(mgr, node, g.node);
@@ -5155,7 +5182,7 @@ ZDD::UnateProduct(
 
 ZDD
 ZDD::WeakDiv(
-  ZDD g)
+  const ZDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_zddWeakDiv(mgr, node, g.node);
@@ -5167,7 +5194,7 @@ ZDD::WeakDiv(
 
 ZDD
 ZDD::Divide(
-  ZDD g)
+  const ZDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_zddDivide(mgr, node, g.node);
@@ -5179,7 +5206,7 @@ ZDD::Divide(
 
 ZDD
 ZDD::WeakDivF(
-  ZDD g)
+  const ZDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_zddWeakDivF(mgr, node, g.node);
@@ -5191,7 +5218,7 @@ ZDD::WeakDivF(
 
 ZDD
 ZDD::DivideF(
-  ZDD g)
+  const ZDD& g) const
 {
     DdManager *mgr = this->checkSameManager(g);
     DdNode *result = Cudd_zddDivideF(mgr, node, g.node);
@@ -5214,8 +5241,8 @@ Cudd::MakeZddTreeNode(
 
 BDD
 BDD::zddIsop(
-  BDD U,
-  ZDD* zdd_I)
+  const BDD& U,
+  ZDD* zdd_I) const
 {
     DdManager *mgr = this->checkSameManager(U);
     DdNode *Z;
@@ -5229,7 +5256,7 @@ BDD::zddIsop(
 
 BDD
 BDD::Isop(
-  BDD U)
+  const BDD& U) const
 {
     DdManager *mgr = this->checkSameManager(U);
     DdNode *result = Cudd_bddIsop(mgr, node, U.node);
@@ -5241,7 +5268,7 @@ BDD::Isop(
 
 double
 ZDD::CountMinterm(
-  int path)
+  int path) const
 {
     DdManager *mgr = ddMgr->p->manager;
     double result = Cudd_zddCountMinterm(mgr, node, path);
@@ -5252,7 +5279,7 @@ ZDD::CountMinterm(
 
 
 void
-Cudd::zddPrintSubtable()
+Cudd::zddPrintSubtable() const
 {
     cout.flush();
     Cudd_zddPrintSubtable(p->manager);
@@ -5261,7 +5288,7 @@ Cudd::zddPrintSubtable()
 
 
 ZDD
-BDD::PortToZdd()
+BDD::PortToZdd() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_zddPortFromBdd(mgr, node);
@@ -5272,7 +5299,7 @@ BDD::PortToZdd()
 
 
 BDD
-ZDD::PortToBdd()
+ZDD::PortToBdd() const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_zddPortToBdd(mgr, node);
@@ -5305,8 +5332,8 @@ Cudd::zddShuffleHeap(
 
 ZDD
 ZDD::Ite(
-  ZDD g,
-  ZDD h)
+  const ZDD& g,
+  const ZDD& h) const
 {
     DdManager *mgr = this->checkSameManager(g);
     this->checkSameManager(h);
@@ -5319,7 +5346,7 @@ ZDD::Ite(
 
 ZDD
 ZDD::Union(
-  ZDD Q)
+  const ZDD& Q) const
 {
     DdManager *mgr = this->checkSameManager(Q);
     DdNode *result = Cudd_zddUnion(mgr, node, Q.node);
@@ -5331,7 +5358,7 @@ ZDD::Union(
 
 ZDD
 ZDD::Intersect(
-  ZDD Q)
+  const ZDD& Q) const
 {
     DdManager *mgr = this->checkSameManager(Q);
     DdNode *result = Cudd_zddIntersect(mgr, node, Q.node);
@@ -5343,7 +5370,7 @@ ZDD::Intersect(
 
 ZDD
 ZDD::Diff(
-  ZDD Q)
+  const ZDD& Q) const
 {
     DdManager *mgr = this->checkSameManager(Q);
     DdNode *result = Cudd_zddDiff(mgr, node, Q.node);
@@ -5355,7 +5382,7 @@ ZDD::Diff(
 
 ZDD
 ZDD::DiffConst(
-  ZDD Q)
+  const ZDD& Q) const
 {
     DdManager *mgr = this->checkSameManager(Q);
     DdNode *result = Cudd_zddDiffConst(mgr, node, Q.node);
@@ -5367,7 +5394,7 @@ ZDD::DiffConst(
 
 ZDD
 ZDD::Subset1(
-  int var)
+  int var) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_zddSubset1(mgr, node, var);
@@ -5379,7 +5406,7 @@ ZDD::Subset1(
 
 ZDD
 ZDD::Subset0(
-  int var)
+  int var) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_zddSubset0(mgr, node, var);
@@ -5391,7 +5418,7 @@ ZDD::Subset0(
 
 ZDD
 ZDD::Change(
-  int var)
+  int var) const
 {
     DdManager *mgr = ddMgr->p->manager;
     DdNode *result = Cudd_zddChange(mgr, node, var);
@@ -5404,7 +5431,7 @@ ZDD::Change(
 void
 Cudd::zddSymmProfile(
   int lower,
-  int upper)
+  int upper) const
 {
     Cudd_zddSymmProfile(p->manager, lower, upper);
 
@@ -5412,7 +5439,7 @@ Cudd::zddSymmProfile(
 
 
 void
-ZDD::PrintMinterm()
+ZDD::PrintMinterm() const
 {
     cout.flush();
     DdManager *mgr = ddMgr->p->manager;
@@ -5423,7 +5450,7 @@ ZDD::PrintMinterm()
 
 
 void
-ZDD::PrintCover()
+ZDD::PrintCover() const
 {
     cout.flush();
     DdManager *mgr = ddMgr->p->manager;
@@ -5437,7 +5464,7 @@ void
 ZDDvector::DumpDot(
   char ** inames,
   char ** onames,
-  FILE * fp)
+  FILE * fp) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;

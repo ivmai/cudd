@@ -1,21 +1,48 @@
 /**CFile***********************************************************************
  
-   FileName    [ntrBddTest.c]
+  FileName    [ntrBddTest.c]
 
-   PackageName [ntr]
+  PackageName [ntr]
 
-   Synopsis    [BDD test functions for the nanotrav program.]
+  Synopsis    [BDD test functions for the nanotrav program.]
 
-   Description []
+  Description []
 
-   SeeAlso     []
+  SeeAlso     []
 
-   Author      [Fabio Somenzi]
-		   
-   Copyright [This file was created at the University of Colorado at
-   Boulder.  The University of Colorado at Boulder makes no warranty
-   about the suitability of this software for any purpose.  It is
-   presented on an AS IS basis.]
+  Author      [Fabio Somenzi]
+   
+  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
+
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  Neither the name of the University of Colorado nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.]
 
 ******************************************************************************/
 
@@ -39,7 +66,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrBddTest.c,v 1.18 2004/01/01 07:06:06 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: ntrBddTest.c,v 1.20 2004/08/13 18:28:28 fabio Exp fabio $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -59,6 +86,7 @@ static int ntrTestCofEstAux (DdManager * dd, BnetNetwork * net, DdNode * f, char
 static int ntrTestClippingAux (DdManager *dd, BnetNetwork *net1, DdNode *f, char *name, DdNode *g, char *gname, NtrOptions *option);
 static int ntrTestEquivAndContainAux (DdManager *dd, BnetNetwork *net1, DdNode *f, char *fname, DdNode *g, char *gname, DdNode *d, char *dname, NtrOptions *option);
 static int ntrTestClosestCubeAux (DdManager *dd, BnetNetwork *net, DdNode *f, char *fname, DdNode *g, char *gname, DdNode **vars, NtrOptions *option);
+static int ntrTestCharToVect(DdManager * dd, DdNode * f, NtrOptions *option);
 #if 0
 static DdNode * ntrCompress1 (DdManager *dd, DdNode *f, int nvars, int threshold);
 #endif
@@ -89,7 +117,7 @@ static BnetNode * ntrNodeIsBuffer (BnetNode *nd, st_table *hash);
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestMinimization(
   DdManager * dd,
@@ -162,7 +190,7 @@ Ntr_TestMinimization(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestDensity(
   DdManager * dd,
@@ -213,7 +241,7 @@ Ntr_TestDensity(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestDecomp(
   DdManager * dd,
@@ -269,7 +297,7 @@ Ntr_TestDecomp(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_VerifyEquivalence(
   DdManager * dd,
@@ -340,7 +368,7 @@ Ntr_VerifyEquivalence(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestCofactorEstimate(
   DdManager * dd,
@@ -391,7 +419,7 @@ Ntr_TestCofactorEstimate(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestClipping(
   DdManager * dd,
@@ -466,7 +494,7 @@ Ntr_TestClipping(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestEquivAndContain(
   DdManager *dd,
@@ -554,7 +582,7 @@ Ntr_TestEquivAndContain(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestClosestCube(
   DdManager * dd,
@@ -654,7 +682,7 @@ Ntr_TestClosestCube(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 int
 Ntr_TestTwoLiteralClauses(
   DdManager * dd,
@@ -733,6 +761,62 @@ Ntr_TestTwoLiteralClauses(
 } /* end of Ntr_TestTwoLiteralClauses */
 
 
+/**Function********************************************************************
+
+  Synopsis    [Test char-to-vect conversion.]
+
+  Description [Test char-to-vect conversion.  Returns 1 if successful;
+  0 otherwise.]
+
+  SideEffects [None]
+
+  SeeAlso     []
+
+******************************************************************************/
+int
+Ntr_TestCharToVect(
+  DdManager * dd,
+  BnetNetwork * net1,
+  NtrOptions * option)
+{
+    DdNode *f;
+    int result;
+    BnetNode *node;
+    int i;
+
+    if (option->char2vect == FALSE) return(1);
+
+    (void) printf("Testing char-to-vect\n");
+    if (net1->nlatches > 0) {
+	NtrPartTR *T;
+	T = Ntr_buildTR(dd,net1,option,NTR_IMAGE_MONO);
+	result = ntrTestCharToVect(dd,T->part[0],option);
+	Ntr_freeTR(dd,T);
+    } else if (option->node == NULL) {
+	result = 1;
+	for (i = 0; i < net1->noutputs; i++) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+		return(0);
+	    }
+	    f = node->dd;
+	    if (f == NULL) return(0);
+	    (void) printf("*** %s ***\n", net1->outputs[i]);
+	    result = ntrTestCharToVect(dd,f,option);
+	    if (result == 0) return(0);
+	}
+    } else {
+	if (!st_lookup(net1->hash,option->node,&node)) {
+	    return(0);
+	}
+	f = node->dd;
+	if (f == NULL) return(0);
+	result = ntrTestCharToVect(dd,f,option);
+    }
+    return(result);
+
+} /* end of Ntr_TestCharToVect */
+
+
 /*---------------------------------------------------------------------------*/
 /* Definition of internal functions                                          */
 /*---------------------------------------------------------------------------*/
@@ -753,7 +837,7 @@ Ntr_TestTwoLiteralClauses(
 
   SeeAlso     [Ntr_TestMinimization]
 
-*****************************************************************************/
+******************************************************************************/
 static int
 ntrTestMinimizationAux(
   DdManager * dd,
@@ -1107,7 +1191,7 @@ ntrTestMinimizationAux(
 
   SeeAlso     [Ntr_TestDensity ntrCompress1]
 
-*****************************************************************************/
+******************************************************************************/
 static int
 ntrTestDensityAux(
   DdManager * dd,
@@ -1326,7 +1410,7 @@ ntrTestDensityAux(
 
   SeeAlso     [Ntr_TestDecomp]
 
-*****************************************************************************/
+******************************************************************************/
 static int
 ntrTestDecompAux(
   DdManager * dd,
@@ -1527,7 +1611,7 @@ ntrTestDecompAux(
 
   SeeAlso     []
 
-*****************************************************************************/
+******************************************************************************/
 static int
 ntrTestCofEstAux(
   DdManager * dd,
@@ -1617,7 +1701,7 @@ ntrTestCofEstAux(
 
   SeeAlso     [Ntr_TestClipping]
 
-*****************************************************************************/
+******************************************************************************/
 static int
 ntrTestClippingAux(
   DdManager * dd,
@@ -1789,7 +1873,7 @@ ntrTestClippingAux(
 
   SeeAlso     [Ntr_TestEquivAndContain]
 
-*****************************************************************************/
+******************************************************************************/
 static int
 ntrTestEquivAndContainAux(
   DdManager *dd,
@@ -1945,7 +2029,7 @@ ntrTestEquivAndContainAux(
 
   SeeAlso     [Ntr_TestClosestCube]
 
-*****************************************************************************/
+******************************************************************************/
 static int
 ntrTestClosestCubeAux(
   DdManager *dd,
@@ -2063,6 +2147,63 @@ ntrTestClosestCubeAux(
 } /* end of ntrTestClosestCubeAux */
 
 
+/**Function********************************************************************
+
+  Synopsis    [Processes one BDDs for Ntr_TestCharToVect.]
+
+  Description [Processes one BDD for Ntr_TestCharToVect.
+  Returns 1 if successful; 0 otherwise.]
+
+  SideEffects [None]
+
+  SeeAlso     [Ntr_TestCharToVect]
+
+******************************************************************************/
+static int
+ntrTestCharToVect(
+  DdManager * dd,
+  DdNode * f,
+  NtrOptions *option)
+{
+    DdNode **vector;
+    int sharingSize;
+    DdNode *verify;
+    int pr = option->verb;
+    int i;
+
+    (void) fprintf(stdout,"f");
+    Cudd_PrintDebug(dd, f, Cudd_ReadSize(dd), 1);
+    if (pr > 1) {
+	Cudd_bddPrintCover(dd, f, f);
+    }
+    vector = Cudd_bddCharToVect(dd,f);
+    if (vector == NULL) return(0);
+    sharingSize = Cudd_SharingSize(vector, Cudd_ReadSize(dd));
+    (void) fprintf(stdout, "Vector Size: %d components %d nodes\n",
+		   Cudd_ReadSize(dd), sharingSize);
+    for (i = 0; i < Cudd_ReadSize(dd); i++) {
+	(void) fprintf(stdout,"v[%d]",i);
+	Cudd_PrintDebug(dd, vector[i], Cudd_ReadSize(dd), 1);
+	if (pr > 1) {
+	    Cudd_bddPrintCover(dd, vector[i], vector[i]);
+	}
+    }
+    verify = Cudd_bddVectorCompose(dd,f,vector);
+    if (verify != Cudd_ReadOne(dd)) {
+	(void) fprintf(stdout, "Verification failed!\n");
+	return(0);
+    }
+    Cudd_Ref(verify);
+    Cudd_IterDerefBdd(dd, verify);
+    for (i = 0; i < Cudd_ReadSize(dd); i++) {
+	Cudd_IterDerefBdd(dd, vector[i]);
+    }
+    FREE(vector);
+    return(1);
+
+} /* end of ntrTestCharToVect */
+
+
 #if 0
 /**Function********************************************************************
 
@@ -2075,7 +2216,7 @@ ntrTestClosestCubeAux(
 
   SeeAlso     [ntrTestDensityAux Cudd_SubsetCompress]
 
-*****************************************************************************/
+******************************************************************************/
 static DdNode *
 ntrCompress1(
   DdManager * dd,
@@ -2122,7 +2263,7 @@ ntrCompress1(
 
   SeeAlso     [ntrTestDensityAux Cudd_SubsetCompress]
 
-*****************************************************************************/
+******************************************************************************/
 static DdNode *
 ntrCompress2(
   DdManager * dd,

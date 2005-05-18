@@ -1,0 +1,516 @@
+Entering testBdd
+f: 3 nodes 1 leaves 1 minterms
+11  1
+
+g: 3 nodes 1 leaves 3 minterms
+0-  1
+11  1
+
+f and g are not complementary
+f is less than or equal to g
+g: 2 nodes 1 leaves 2 minterms
+1-  1
+
+h: 2 nodes 1 leaves 2 minterms
+-1  1
+
+x + h has 3 nodes
+h: 3 nodes 1 leaves 3 minterms
+01  1
+1-  1
+
+Entering testAdd
+r: 6 nodes 3 leaves 3 minterms
+01  1
+10  1
+11  2
+
+s: 4 nodes 2 leaves 1 minterms
+11  3
+
+s: 1 nodes 1 leaves 4 minterms
+--  inf
+
+p is less than or equal to r
+r: 4 nodes 2 leaves 3 minterms
+01  1
+1-  1
+
+Entering testAdd2
+f: 7 nodes 4 leaves 4 minterms
+00  0.1
+01  0.2
+10  0.3
+11  0.4
+
+l: 7 nodes 4 leaves 4 minterms
+00 -2.30259
+01 -1.60944
+10 -1.20397
+11 -0.916291
+
+r: 7 nodes 4 leaves 4 minterms
+00 -0.230259
+01 -0.321888
+10 -0.361192
+11 -0.366516
+
+e: 1 nodes 1 leaves 4 minterms
+--  1.84644
+
+Entering testZdd
+s: 3 nodes 3 minterms
+1- 1
+01 1
+
+v is less than s
+s: 1 nodes 1 minterms
+01 1
+
+Entering testBdd2
+f: 7 nodes 1 leaves 7 minterms
+01-1  1
+101-  1
+1101  1
+111-  1
+
+Irredundant cover of f:
+1-1- 1
+-1-1 1
+
+Number of minterms (arbitrary precision): 7
+Number of minterms (extended precision):  7.000000e+00
+Two-literal clauses of f:
+ x2 |  x3
+ x1 |  x2
+ x0 |  x3
+ x0 |  x1
+
+vect[0]
+1--- 1
+
+vect[1]
+0--- 1
+-1-- 1
+
+vect[2]
+10-- 1
+--1- 1
+
+vect[3]
+0--- 1
+-10- 1
+---1 1
+
+digraph "DD" {
+size = "7.5,10"
+center = true;
+edge [dir = none];
+{ node [shape = plaintext];
+  edge [style = invis];
+  "CONST NODES" [style = invis];
+" x0 " -> " x1 " -> " x2 " -> " x3 " -> "CONST NODES"; 
+}
+{ rank = same; node [shape = box]; edge [style = invis];
+"  v0  " -> "  v1  " -> "  v2  " -> "  v3  "; }
+{ rank = same; " x0 ";
+"3d";
+"7a";
+"7d";
+"39";
+}
+{ rank = same; " x1 ";
+"79";
+"7c";
+"3a";
+}
+{ rank = same; " x2 ";
+"7b";
+"6a";
+}
+{ rank = same; " x3 ";
+"6b";
+}
+{ rank = same; "CONST NODES";
+{ node [shape = box]; "33";
+}
+}
+"  v0  " -> "39" [style = solid];
+"  v1  " -> "3d" [style = solid];
+"  v2  " -> "7a" [style = solid];
+"  v3  " -> "7d" [style = solid];
+"3d" -> "3a";
+"3d" -> "33" [style = dashed];
+"7a" -> "79";
+"7a" -> "6a" [style = dashed];
+"7d" -> "7c";
+"7d" -> "33" [style = dashed];
+"39" -> "33";
+"39" -> "33" [style = dotted];
+"79" -> "6a";
+"79" -> "33" [style = dashed];
+"7c" -> "7b";
+"7c" -> "6b" [style = dashed];
+"3a" -> "33";
+"3a" -> "33" [style = dotted];
+"7b" -> "6b";
+"7b" -> "33" [style = dashed];
+"6a" -> "33";
+"6a" -> "33" [style = dotted];
+"6b" -> "33";
+"6b" -> "33" [style = dotted];
+"33" [label = "1"];
+}
+Entering testBdd3
+f: 10 nodes 1 leaves 50 minterms
+0-0-0-  1
+0-0-10  1
+0-100-  1
+0-1010  1
+0-11--  1
+10-00-  1
+10-010  1
+10-1--  1
+11000-  1
+110010  1
+1101--  1
+1110-1  1
+111101  1
+
+f1: 5 nodes 1 leaves 36 minterms
+0---0-  1
+0---10  1
+10--0-  1
+10--10  1
+
+f1 is less than or equal to f
+g: 6 nodes 1 leaves 62 minterms
+0-----  1
+10----  1
+110---  1
+1110--  1
+11110-  1
+
+h: 8 nodes 1 leaves 51 minterms
+0-0-0-  1
+0-0-10  1
+0-100-  1
+0-1010  1
+0-11--  1
+10-00-  1
+10-010  1
+10-1--  1
+11000-  1
+110010  1
+1101--  1
+111--1  1
+
+g * h == f
+Entering testZdd2
+p[0]: 3 nodes 1 leaves 64 minterms
+----0-0  1
+----1-1  1
+
+p[1]: 5 nodes 1 leaves 64 minterms
+--0-0-0  1
+--0-10-  1
+--1-0-1  1
+--1-11-  1
+
+p[2]: 7 nodes 1 leaves 64 minterms
+0-0-0-0  1
+0-0-10-  1
+0-10---  1
+1-0-0-1  1
+1-0-11-  1
+1-11---  1
+
+p[3]: 8 nodes 1 leaves 64 minterms
+0-0-0-1  1
+0-0-11-  1
+0-11---  1
+11-----  1
+
+digraph "DD" {
+size = "7.5,10"
+center = true;
+edge [dir = none];
+{ node [shape = plaintext];
+  edge [style = invis];
+  "CONST NODES" [style = invis];
+" a2 " -> " b2 " -> " a1 " -> " b1 " -> " a0 " -> " b0 " -> " c0 " -> "CONST NODES"; 
+}
+{ rank = same; node [shape = box]; edge [style = invis];
+"  s0  " -> "  s1  " -> "  s2  " -> "  c3  "; }
+{ rank = same; " a2 ";
+"b4";
+"b3";
+}
+{ rank = same; " b2 ";
+"3a";
+}
+{ rank = same; " a1 ";
+"b2";
+"b1";
+}
+{ rank = same; " b1 ";
+"6b";
+}
+{ rank = same; " a0 ";
+"b0";
+"af";
+}
+{ rank = same; " b0 ";
+"8a";
+}
+{ rank = same; " c0 ";
+"ae";
+}
+{ rank = same; "CONST NODES";
+{ node [shape = box]; "33";
+}
+}
+"  s0  " -> "af" [style = solid];
+"  s1  " -> "b1" [style = solid];
+"  s2  " -> "b3" [style = solid];
+"  c3  " -> "b4" [style = solid];
+"b4" -> "3a";
+"b4" -> "b2" [style = dashed];
+"b3" -> "b2";
+"b3" -> "b2" [style = dotted];
+"3a" -> "33";
+"3a" -> "33" [style = dotted];
+"b2" -> "6b";
+"b2" -> "b0" [style = dashed];
+"b1" -> "b0";
+"b1" -> "b0" [style = dotted];
+"6b" -> "33";
+"6b" -> "33" [style = dotted];
+"b0" -> "8a";
+"b0" -> "ae" [style = dashed];
+"af" -> "ae";
+"af" -> "ae" [style = dotted];
+"8a" -> "33";
+"8a" -> "33" [style = dotted];
+"ae" -> "33";
+"ae" -> "33" [style = dotted];
+"33" [label = "1"];
+}
+z[0]: 4 nodes 2 minterms
+00000000100010 1
+00000000010001 1
+
+z[1]: 10 nodes 4 minterms
+00001000101000 1
+00001000010010 1
+00000100100100 1
+00000100010001 1
+
+z[2]: 16 nodes 6 minterms
+10001010000000 1
+10000100101000 1
+10000100010010 1
+01001001000000 1
+01000100100100 1
+01000100010001 1
+
+z[3]: 10 nodes 4 minterms
+10100000000000 1
+01001010000000 1
+01000100101000 1
+01000100010010 1
+
+z[0]
+----1-1 1
+----0-0 1
+z[1]
+--1-11- 1
+--1-0-1 1
+--0-10- 1
+--0-0-0 1
+z[2]
+1-11--- 1
+1-0-11- 1
+1-0-0-1 1
+0-10--- 1
+0-0-10- 1
+0-0-0-0 1
+z[3]
+11----- 1
+0-11--- 1
+0-0-11- 1
+0-0-0-1 1
+digraph "ZDD" {
+size = "7.5,10"
+center = true;
+edge [dir = none];
+{ node [shape = plaintext];
+  edge [style = invis];
+  "CONST NODES" [style = invis];
+" a2+ " -> " a2- " -> " b2+ " -> " a1+ " -> " a1- " -> " b1+ " -> " b1- " -> " a0+ " -> " a0- " -> " b0+ " -> " b0- " -> " c0+ " -> " c0- " -> "CONST NODES"; 
+}
+{ rank = same; node [shape = box]; edge [style = invis];
+"  s0  " -> "  s1  " -> "  s2  " -> "  c3  "; }
+{ rank = same; " a2+ ";
+"6d";
+"76";
+}
+{ rank = same; " a2- ";
+"69";
+"74";
+}
+{ rank = same; " b2+ ";
+"70";
+}
+{ rank = same; " a1+ ";
+"64";
+"5d";
+"56";
+}
+{ rank = same; " a1- ";
+"62";
+"54";
+}
+{ rank = same; " b1+ ";
+"5e";
+}
+{ rank = same; " b1- ";
+"59";
+}
+{ rank = same; " a0+ ";
+"4f";
+"41";
+"48";
+}
+{ rank = same; " a0- ";
+"4d";
+"3f";
+}
+{ rank = same; " b0+ ";
+"49";
+}
+{ rank = same; " b0- ";
+"44";
+}
+{ rank = same; " c0+ ";
+"38";
+}
+{ rank = same; " c0- ";
+"37";
+}
+{ rank = same; "CONST NODES";
+{ node [shape = box]; "34";
+"33";
+}
+}
+"  s0  " -> "41" [style = solid];
+"  s1  " -> "56" [style = solid];
+"  s2  " -> "6d" [style = solid];
+"  c3  " -> "76" [style = solid];
+"6d" -> "64";
+"6d" -> "69" [style = dashed];
+"76" -> "70";
+"76" -> "74" [style = dashed];
+"69" -> "5d";
+"69" -> "34" [style = dashed];
+"74" -> "64";
+"74" -> "34" [style = dashed];
+"70" -> "33";
+"70" -> "34" [style = dashed];
+"64" -> "5e";
+"64" -> "62" [style = dashed];
+"5d" -> "59";
+"5d" -> "54" [style = dashed];
+"56" -> "4f";
+"56" -> "54" [style = dashed];
+"62" -> "4f";
+"62" -> "34" [style = dashed];
+"54" -> "48";
+"54" -> "34" [style = dashed];
+"5e" -> "33";
+"5e" -> "34" [style = dashed];
+"59" -> "33";
+"59" -> "34" [style = dashed];
+"4f" -> "49";
+"4f" -> "4d" [style = dashed];
+"41" -> "38";
+"41" -> "3f" [style = dashed];
+"48" -> "44";
+"48" -> "3f" [style = dashed];
+"4d" -> "38";
+"4d" -> "34" [style = dashed];
+"3f" -> "37";
+"3f" -> "34" [style = dashed];
+"49" -> "33";
+"49" -> "34" [style = dashed];
+"44" -> "33";
+"44" -> "34" [style = dashed];
+"38" -> "33";
+"38" -> "34" [style = dashed];
+"37" -> "33";
+"37" -> "34" [style = dashed];
+"34" [label = "0"];
+"33" [label = "1"];
+}
+Entering testBdd4
+f: 5 nodes 1 leaves 3 minterms
+000-----------  1
+11------------  1
+
+g: 5 nodes 1 leaves 3 minterms
+000  1
+11-  1
+
+f and h are identical
+**** CUDD modifiable parameters ****
+Hard limit for cache size: 16384000
+Cache hit threshold for resizing: 30%
+Garbage collection enabled: yes
+Limit for fast unique table growth: 9830400
+Maximum number of variables sifted per reordering: 1000
+Maximum number of variable swaps per reordering: 2000000
+Maximum growth while sifting a variable: 1.2
+Dynamic reordering of BDDs enabled: no
+Default BDD reordering method: 4
+Dynamic reordering of ZDDs enabled: no
+Default ZDD reordering method: 4
+Realignment of ZDDs to BDDs enabled: no
+Realignment of BDDs to ZDDs enabled: no
+Dead nodes counted in triggering reordering: no
+Group checking criterion: 7
+Recombination threshold: 0
+Symmetry violation threshold: 0
+Arc violation threshold: 0
+GA population size: 0
+Number of crossovers for GA: 0
+Next reordering threshold: 4004
+**** CUDD non-modifiable parameters ****
+Memory in use: 12630320
+Peak number of nodes: 1022
+Peak number of live nodes: 35
+Number of BDD variables: 14
+Number of ZDD variables: 14
+Number of cache entries: 262144
+Number of cache look-ups: 396
+Number of cache hits: 91
+Number of cache insertions: 303
+Number of cache collisions: 0
+Number of cache deletions: 162
+Cache used slots = 0.11% (expected 0.05%)
+Soft limit for cache size: 29696
+Number of buckets in unique table: 7424
+Used buckets in unique table: 1.59% (expected 1.69%)
+Unique lookups: 475
+Unique links: 6 (0.0126316 per lookup)
+Number of BDD and ADD nodes: 78
+Number of ZDD nodes: 49
+Number of dead BDD and ADD nodes: 60
+Number of dead ZDD nodes: 35
+Total number of nodes allocated: 247
+Total number of nodes reclaimed: 85
+Number of recursive calls: 1265
+Garbage collections so far: 1
+Time for garbage collection: 0.00 sec
+Reorderings so far: 0
+Time for reordering: 0.00 sec
+Node swaps in reordering: 0

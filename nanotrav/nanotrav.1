@@ -1,4 +1,4 @@
-.\" $Id: nanotrav.1,v 1.21 2003/12/30 17:12:07 fabio Exp fabio $
+.\" $Id: nanotrav.1,v 1.22 2004/03/06 03:42:09 fabio Exp fabio $
 .\"
 .TH NANOTRAV 1 "18 June 2002" "Release 0.11"
 .SH NAME
@@ -165,8 +165,9 @@ test function that extracts two-literal clauses from a DD.
 .TP 10
 .B \-char2vect
 perform a simple test of the conversion from characteristic function
-to functional vector.  The network must be sequential for the test to
-take place.
+to functional vector.  If the network is sequential, the test is
+applied to the monolithic transition relation; otherwise to the primary
+outputs.
 .TP 10
 .B \-local
 build local BDDs for each gate of the circuit.  This option is not in

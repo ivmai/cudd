@@ -1,21 +1,48 @@
 /**CFile***********************************************************************
 
-   FileName    [main.c]
+  FileName    [main.c]
 
-   PackageName [ntr]
+  PackageName [ntr]
 
-   Synopsis    [Main program for the nanotrav program.]
+  Synopsis    [Main program for the nanotrav program.]
 
-   Description []
+  Description []
 
-   SeeAlso     []
+  SeeAlso     []
 
-   Author      [Fabio Somenzi]
+  Author      [Fabio Somenzi]
 
-   Copyright [This file was created at the University of Colorado at
-   Boulder.  The University of Colorado at Boulder makes no warranty
-   about the suitability of this software for any purpose.  It is
-   presented on an AS IS basis.]
+  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
+
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  Neither the name of the University of Colorado nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.]
 
 ******************************************************************************/
 
@@ -44,7 +71,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: main.c,v 1.36 2004/01/01 07:06:06 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: main.c,v 1.38 2004/08/13 18:28:28 fabio Exp fabio $";
 #endif
 
 static  char    buffer[BUFLENGTH];
@@ -297,34 +324,8 @@ main(
     }
 
     /* Test char-to-vect conversion. */
-    if (option->char2vect == TRUE && net1->nlatches > 0) {
-	NtrPartTR *T;
-	DdNode *verify;
-	DdNode **vector;
-	int sharingSize;
-	T = Ntr_buildTR(dd,net1,option,NTR_IMAGE_MONO);
-	vector = Cudd_bddCharToVect(dd,T->part[0]);
-	if (vector == NULL) exit(2);
-	sharingSize = Cudd_SharingSize(vector, Cudd_ReadSize(dd));
-	(void) fprintf(stdout, "Vector Size: %d components %d nodes\n",
-		       Cudd_ReadSize(dd), sharingSize);
-	(void) fprintf(stdout,"T");
-	Cudd_PrintDebug(dd, T->part[0], Cudd_ReadSize(dd), pr);
-	for (i = 0; i < Cudd_ReadSize(dd); i++) {
-	    (void) fprintf(stdout,"v[%d]",i);
-	    Cudd_PrintDebug(dd, vector[i], Cudd_ReadSize(dd), pr);
-	}
-	verify = Cudd_bddVectorCompose(dd,T->part[0],vector);
-	if (verify != Cudd_ReadOne(dd))
-	    exit(2);
-	Cudd_Ref(verify);
-	Cudd_IterDerefBdd(dd, verify);
-	for (i = 0; i < Cudd_ReadSize(dd); i++) {
-	    Cudd_IterDerefBdd(dd, vector[i]);
-	}
-	FREE(vector);
-	Ntr_freeTR(dd,T);
-    }
+    result = Ntr_TestCharToVect(dd,net1,option);
+    if (result == 0) exit(2);
 
     /* Test extraction of two-literal clauses. */
     result = Ntr_TestTwoLiteralClauses(dd,net1,option);

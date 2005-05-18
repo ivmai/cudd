@@ -14,12 +14,39 @@
 
   Author      [Fabio Somenzi]
 
-  Copyright [This file was created at the University of Colorado at
-  Boulder.  The University of Colorado at Boulder makes no warranty
-  about the suitability of this software for any purpose.  It is
-  presented on an AS IS basis.]
+  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
 
-  Revision    [$Id: cuddObj.hh,v 1.5 2004/01/01 07:04:22 fabio Exp fabio $]
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  Neither the name of the University of Colorado nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.]
+
+  Revision    [$Id: cuddObj.hh,v 1.8 2004/08/24 19:56:19 fabio Exp fabio $]
 
 ******************************************************************************/
 
@@ -76,17 +103,18 @@ class DD {
     friend class ZDD;
     Cudd *ddMgr;
     DdNode *node;
-    inline DdManager * checkSameManager(const DD &other);
-    inline void checkReturnValue(const DdNode *result);
-    inline void checkReturnValue(const int result, const int expected = 1);
+    inline DdManager * checkSameManager(const DD &other) const;
+    inline void checkReturnValue(const DdNode *result) const;
+    inline void checkReturnValue(const int result, const int expected = 1)
+	const;
 public:
     DD(Cudd *ddManager, DdNode *ddNode);
     DD();
     DD(const DD &from);
-    Cudd *manager();
-    inline DdNode * getNode();
-    int nodeCount();
-    unsigned int NodeReadIndex();
+    Cudd *manager() const;
+    inline DdNode * getNode() const;
+    int nodeCount() const;
+    unsigned int NodeReadIndex() const;
 
 }; // DD
 
@@ -109,28 +137,29 @@ public:
     ABDD();
     ABDD(const ABDD &from);
     virtual ~ABDD();
-    int operator==(const ABDD &other);
-    int operator!=(const ABDD &other);
-    void print(int nvars, int verbosity = 1);
-    DdApaNumber ApaCountMinterm(int nvars, int * digits);
-    void ApaPrintMinterm(int nvars, FILE * fp = stdout);
-    void EpdPrintMinterm(int nvars, FILE * fp = stdout);
-    BDD FindEssential();
-    void PrintTwoLiteralClauses(char ** names, FILE * fp = stdout);
-    BDD ShortestPath(int * weight, int * support, int * length);
-    BDD LargestCube(int * length);
-    int ShortestLength(int * weight);
-    int EquivDC(ABDD G, ABDD D);
-    double * CofMinterm();
-    void PrintMinterm();
-    double CountMinterm(int nvars);
-    double CountPath();
-    BDD Support();
-    int SupportSize();
-    void ClassifySupport(ABDD g, BDD* common, BDD* onlyF, BDD* onlyG);
-    int CountLeaves();
-    DdGen * FirstCube(int ** cube, CUDD_VALUE_TYPE * value);
-    double Density(int nvars);
+    int operator==(const ABDD &other) const;
+    int operator!=(const ABDD &other) const;
+    void print(int nvars, int verbosity = 1) const;
+    DdApaNumber ApaCountMinterm(int nvars, int * digits) const;
+    void ApaPrintMinterm(int nvars, FILE * fp = stdout) const;
+    void EpdPrintMinterm(int nvars, FILE * fp = stdout) const;
+    BDD FindEssential() const;
+    void PrintTwoLiteralClauses(char ** names, FILE * fp = stdout) const;
+    BDD ShortestPath(int * weight, int * support, int * length) const;
+    BDD LargestCube(int * length) const;
+    int ShortestLength(int * weight) const;
+    int EquivDC(const ABDD& G, const ABDD& D) const;
+    double * CofMinterm() const;
+    void PrintMinterm() const;
+    double CountMinterm(int nvars) const;
+    double CountPath() const;
+    BDD Support() const;
+    int SupportSize() const;
+    void ClassifySupport(const ABDD& g, BDD* common, BDD* onlyF, BDD* onlyG)
+	const;
+    int CountLeaves() const;
+    DdGen * FirstCube(int ** cube, CUDD_VALUE_TYPE * value) const;
+    double Density(int nvars) const;
 
 }; // ABDD
 
@@ -150,113 +179,117 @@ public:
     BDD(Cudd *bddManager, DdNode *bddNode);
     BDD();
     BDD(const BDD &from);
-    int operator==(const BDD& other);
-    int operator!=(const BDD& other);
+    int operator==(const BDD& other) const;
+    int operator!=(const BDD& other) const;
     BDD operator=(const BDD& right);
-    int operator<=(const BDD& other);
-    int operator>=(const BDD& other);
-    int operator<(const BDD& other);
-    int operator>(const BDD& other);
-    BDD operator!();
-    BDD operator~();
-    BDD operator*(const BDD& other);
+    int operator<=(const BDD& other) const;
+    int operator>=(const BDD& other) const;
+    int operator<(const BDD& other) const;
+    int operator>(const BDD& other) const;
+    BDD operator!() const;
+    BDD operator~() const;
+    BDD operator*(const BDD& other) const;
     BDD operator*=(const BDD& other);
-    BDD operator&(const BDD& other);
+    BDD operator&(const BDD& other) const;
     BDD operator&=(const BDD& other);
-    BDD operator+(const BDD& other);
+    BDD operator+(const BDD& other) const;
     BDD operator+=(const BDD& other);
-    BDD operator|(const BDD& other);
+    BDD operator|(const BDD& other) const;
     BDD operator|=(const BDD& other);
-    BDD operator^(const BDD& other);
+    BDD operator^(const BDD& other) const;
     BDD operator^=(const BDD& other);
-    BDD operator-(const BDD& other);
+    BDD operator-(const BDD& other) const;
     BDD operator-=(const BDD& other);
-    BDD AndAbstract(BDD g, BDD cube);
-    BDD AndAbstractLimit(BDD g, BDD cube, unsigned int limit);
+    BDD AndAbstract(const BDD& g, const BDD& cube) const;
+    BDD AndAbstractLimit(const BDD& g, const BDD& cube, unsigned int limit)
+	const;
     BDD UnderApprox(
       int numVars,
       int threshold = 0,
       int safe = 0,
-      double quality = 1.0);
+      double quality = 1.0) const;
     BDD OverApprox(
       int numVars,
       int threshold = 0,
       int safe = 0,
-      double quality = 1.0);
-    BDD RemapUnderApprox(int numVars, int threshold = 0, double quality = 1.0);
-    BDD RemapOverApprox(int numVars, int threshold = 0, double quality = 1.0);
-    BDD ExistAbstract(BDD cube);
-    BDD XorExistAbstract(BDD g, BDD cube);
-    BDD UnivAbstract(BDD cube);
-    BDD BooleanDiff(int x);
-    int VarIsDependent(BDD var);
-    double Correlation(BDD g);
-    double CorrelationWeights(BDD g, double * prob);
-    BDD Ite(BDD g, BDD h);
-    BDD IteConstant(BDD g, BDD h);
-    BDD Intersect(BDD g);
-    BDD And(BDD g);
-    BDD AndLimit(BDD g, unsigned int limit);
-    BDD Or(BDD g);
-    BDD Nand(BDD g);
-    BDD Nor(BDD g);
-    BDD Xor(BDD g);
-    BDD Xnor(BDD g);
-    int Leq(BDD g);
-    ADD Add();
-    BDD Transfer(Cudd& destination);
-    BDD ClippingAnd(BDD g, int maxDepth, int direction);
-    BDD ClippingAndAbstract(BDD g, BDD cube, int maxDepth, int direction);
-    BDD Cofactor(BDD g);
-    BDD Compose(BDD g, int v);
-    BDD Permute(int * permut);
-    BDD SwapVariables(BDDvector x, BDDvector y);
-    BDD AdjPermuteX(BDDvector x);
-    BDD VectorCompose(BDDvector vector);
-    void ApproxConjDecomp(BDD* g, BDD* h);
-    void ApproxDisjDecomp(BDD* g, BDD* h);
-    void IterConjDecomp(BDD* g, BDD* h);
-    void IterDisjDecomp(BDD* g, BDD* h);
-    void GenConjDecomp(BDD* g, BDD* h);
-    void GenDisjDecomp(BDD* g, BDD* h);
-    void VarConjDecomp(BDD* g, BDD* h);
-    void VarDisjDecomp(BDD* g, BDD* h);
-    int IsVarEssential(int id, int phase);
-    BDD Constrain(BDD c);
-    BDD Restrict(BDD c);
-    BDD NPAnd(BDD g);
-    BDDvector ConstrainDecomp();
-    BDDvector CharToVect();
-    BDD LICompaction(BDD c);
-    BDD Squeeze(BDD u);
-    BDD Minimize(BDD c);
-    BDD SubsetCompress(int nvars, int threshold);
-    BDD SupersetCompress(int nvars, int threshold);
-    BDD LiteralSetIntersection(BDD g);
-    BDD PrioritySelect(BDDvector x, BDDvector y, BDDvector z, BDD Pi,
-		       DD_PRFP Pifunc);
-    BDD CProjection(BDD Y);
-    int MinHammingDist(int *minterm, int upperBound);
-    BDD Eval(int * inputs);
-    BDD Decreasing(int i);
-    BDD Increasing(int i);
-    BDD SolveEqn(BDD Y, BDD* G, int ** yIndex, int n);
-    BDD VerifySol(BDD* G, int * yIndex, int n);
-    BDD SplitSet(BDDvector xVars, double m);
-    BDD SubsetHeavyBranch(int numVars, int threshold);
-    BDD SupersetHeavyBranch(int numVars, int threshold);
-    BDD SubsetShortPaths(int numVars, int threshold, int hardlimit);
-    BDD SupersetShortPaths(int numVars, int threshold, int hardlimit);
-    void PrintCover();
-    void PrintCover(const BDD& u);
-    int EstimateCofactor(int i, int phase);
-    int EstimateCofactorSimple(int i);
-    void PickOneCube(char * string);
-    BDD PickOneMinterm(BDDvector vars);
-    DdGen * FirstNode(BDD* fnode);
-    BDD zddIsop(BDD U, ZDD* zdd_I);
-    BDD Isop(BDD U);
-    ZDD PortToZdd();
+      double quality = 1.0) const;
+    BDD RemapUnderApprox(int numVars, int threshold = 0, double quality = 1.0)
+	const;
+    BDD RemapOverApprox(int numVars, int threshold = 0, double quality = 1.0)
+	const;
+    BDD ExistAbstract(const BDD& cube) const;
+    BDD XorExistAbstract(const BDD& g, const BDD& cube) const;
+    BDD UnivAbstract(const BDD& cube) const;
+    BDD BooleanDiff(int x) const;
+    int VarIsDependent(const BDD& var) const;
+    double Correlation(const BDD& g) const;
+    double CorrelationWeights(const BDD& g, double * prob) const;
+    BDD Ite(const BDD& g, const BDD& h) const;
+    BDD IteConstant(const BDD& g, const BDD& h) const;
+    BDD Intersect(const BDD& g) const;
+    BDD And(const BDD& g) const;
+    BDD AndLimit(const BDD& g, unsigned int limit) const;
+    BDD Or(const BDD& g) const;
+    BDD Nand(const BDD& g) const;
+    BDD Nor(const BDD& g) const;
+    BDD Xor(const BDD& g) const;
+    BDD Xnor(const BDD& g) const;
+    int Leq(const BDD& g) const;
+    ADD Add() const;
+    BDD Transfer(Cudd& destination) const;
+    BDD ClippingAnd(const BDD& g, int maxDepth, int direction) const;
+    BDD ClippingAndAbstract(const BDD& g, const BDD& cube, int maxDepth,
+			    int direction) const;
+    BDD Cofactor(const BDD& g) const;
+    BDD Compose(const BDD& g, int v) const;
+    BDD Permute(int * permut) const;
+    BDD SwapVariables(BDDvector x, BDDvector y) const;
+    BDD AdjPermuteX(BDDvector x) const;
+    BDD VectorCompose(BDDvector vector) const;
+    void ApproxConjDecomp(BDD* g, BDD* h) const;
+    void ApproxDisjDecomp(BDD* g, BDD* h) const;
+    void IterConjDecomp(BDD* g, BDD* h) const;
+    void IterDisjDecomp(BDD* g, BDD* h) const;
+    void GenConjDecomp(BDD* g, BDD* h) const;
+    void GenDisjDecomp(BDD* g, BDD* h) const;
+    void VarConjDecomp(BDD* g, BDD* h) const;
+    void VarDisjDecomp(BDD* g, BDD* h) const;
+    int IsVarEssential(int id, int phase) const;
+    BDD Constrain(const BDD& c) const;
+    BDD Restrict(const BDD& c) const;
+    BDD NPAnd(const BDD& g) const;
+    BDDvector ConstrainDecomp() const;
+    BDDvector CharToVect() const;
+    BDD LICompaction(const BDD& c) const;
+    BDD Squeeze(const BDD& u) const;
+    BDD Minimize(const BDD& c) const;
+    BDD SubsetCompress(int nvars, int threshold) const;
+    BDD SupersetCompress(int nvars, int threshold) const;
+    BDD LiteralSetIntersection(const BDD& g) const;
+    BDD PrioritySelect(BDDvector x, BDDvector y, BDDvector z, const BDD& Pi,
+		       DD_PRFP Pifunc) const;
+    BDD CProjection(const BDD& Y) const;
+    int MinHammingDist(int *minterm, int upperBound) const;
+    BDD Eval(int * inputs) const;
+    BDD Decreasing(int i) const;
+    BDD Increasing(int i) const;
+    BDD SolveEqn(const BDD& Y, BDD* G, int ** yIndex, int n) const;
+    BDD VerifySol(BDD* G, int * yIndex, int n) const;
+    BDD SplitSet(BDDvector xVars, double m) const;
+    BDD SubsetHeavyBranch(int numVars, int threshold) const;
+    BDD SupersetHeavyBranch(int numVars, int threshold) const;
+    BDD SubsetShortPaths(int numVars, int threshold, int hardlimit) const;
+    BDD SupersetShortPaths(int numVars, int threshold, int hardlimit) const;
+    void PrintCover() const;
+    void PrintCover(const BDD& u) const;
+    int EstimateCofactor(int i, int phase) const;
+    int EstimateCofactorSimple(int i) const;
+    void PickOneCube(char * string) const;
+    BDD PickOneMinterm(BDDvector vars) const;
+    DdGen * FirstNode(BDD* fnode) const;
+    BDD zddIsop(const BDD& U, ZDD* zdd_I) const;
+    BDD Isop(const BDD& U) const;
+    ZDD PortToZdd() const;
 
 }; // BDD
 
@@ -276,77 +309,77 @@ public:
     ADD(Cudd *bddManager, DdNode *bddNode);
     ADD();
     ADD(const ADD &from);
-    int operator==(const ADD& other);
-    int operator!=(const ADD& other);
+    int operator==(const ADD& other) const;
+    int operator!=(const ADD& other) const;
     ADD operator=(const ADD& right);
     // Relational operators
-    int operator<=(const ADD& other);
-    int operator>=(const ADD& other);
-    int operator<(const ADD& other);
-    int operator>(const ADD& other);
+    int operator<=(const ADD& other) const;
+    int operator>=(const ADD& other) const;
+    int operator<(const ADD& other) const;
+    int operator>(const ADD& other) const;
     // Arithmetic operators
-    ADD operator-();
-    ADD operator*(const ADD& other);
+    ADD operator-() const;
+    ADD operator*(const ADD& other) const;
     ADD operator*=(const ADD& other);
-    ADD operator+(const ADD& other);
+    ADD operator+(const ADD& other) const;
     ADD operator+=(const ADD& other);
-    ADD operator-(const ADD& other);
+    ADD operator-(const ADD& other) const;
     ADD operator-=(const ADD& other);
     // Logical operators
-    ADD operator~();
-    ADD operator&(const ADD& other);
+    ADD operator~() const;
+    ADD operator&(const ADD& other) const;
     ADD operator&=(const ADD& other);
-    ADD operator|(const ADD& other);
+    ADD operator|(const ADD& other) const;
     ADD operator|=(const ADD& other);
-    ADD ExistAbstract(ADD cube);
-    ADD UnivAbstract(ADD cube);
-    ADD OrAbstract(ADD cube);
-    ADD Plus(ADD g);
-    ADD Times(ADD g);
-    ADD Threshold(ADD g);
-    ADD SetNZ(ADD g);
-    ADD Divide(ADD g);
-    ADD Minus(ADD g);
-    ADD Minimum(ADD g);
-    ADD Maximum(ADD g);
-    ADD OneZeroMaximum(ADD g);
-    ADD Diff(ADD g);
-    ADD Agreement(ADD g);
-    ADD Or(ADD g);
-    ADD Nand(ADD g);
-    ADD Nor(ADD g);
-    ADD Xor(ADD g);
-    ADD Xnor(ADD g);
-    ADD Log();
-    ADD FindMax();
-    ADD FindMin();
-    ADD IthBit(int bit);
-    ADD ScalarInverse(ADD epsilon);
-    ADD Ite(ADD g, ADD h);
-    ADD IteConstant(ADD g, ADD h);
-    ADD EvalConst(ADD g);
-    int Leq(ADD g);
-    ADD Cmpl();
-    ADD Negate();
-    ADD RoundOff(int N);
-    BDD BddThreshold(CUDD_VALUE_TYPE value);
-    BDD BddStrictThreshold(CUDD_VALUE_TYPE value);
-    BDD BddInterval(CUDD_VALUE_TYPE lower, CUDD_VALUE_TYPE upper);
-    BDD BddIthBit(int bit);
-    BDD BddPattern();
-    ADD Cofactor(ADD g);
-    ADD Compose(ADD g, int v);
-    ADD Permute(int * permut);
-    ADD SwapVariables(ADDvector x, ADDvector y);
-    ADD VectorCompose(ADDvector vector);
-    ADD NonSimCompose(ADDvector vector);
-    ADD Constrain(ADD c);
-    ADD Restrict(ADD c);
-    ADD MatrixMultiply(ADD B, ADDvector z);
-    ADD TimesPlus(ADD B, ADDvector z);
-    ADD Triangle(ADD g, ADDvector z);
-    ADD Eval(int * inputs);
-    int EqualSupNorm(ADD g, CUDD_VALUE_TYPE tolerance, int pr);
+    ADD ExistAbstract(const ADD& cube) const;
+    ADD UnivAbstract(const ADD& cube) const;
+    ADD OrAbstract(const ADD& cube) const;
+    ADD Plus(const ADD& g) const;
+    ADD Times(const ADD& g) const;
+    ADD Threshold(const ADD& g) const;
+    ADD SetNZ(const ADD& g) const;
+    ADD Divide(const ADD& g) const;
+    ADD Minus(const ADD& g) const;
+    ADD Minimum(const ADD& g) const;
+    ADD Maximum(const ADD& g) const;
+    ADD OneZeroMaximum(const ADD& g) const;
+    ADD Diff(const ADD& g) const;
+    ADD Agreement(const ADD& g) const;
+    ADD Or(const ADD& g) const;
+    ADD Nand(const ADD& g) const;
+    ADD Nor(const ADD& g) const;
+    ADD Xor(const ADD& g) const;
+    ADD Xnor(const ADD& g) const;
+    ADD Log() const;
+    ADD FindMax() const;
+    ADD FindMin() const;
+    ADD IthBit(int bit) const;
+    ADD ScalarInverse(const ADD& epsilon) const;
+    ADD Ite(const ADD& g, const ADD& h) const;
+    ADD IteConstant(const ADD& g, const ADD& h) const;
+    ADD EvalConst(const ADD& g) const;
+    int Leq(const ADD& g) const;
+    ADD Cmpl() const;
+    ADD Negate() const;
+    ADD RoundOff(int N) const;
+    BDD BddThreshold(CUDD_VALUE_TYPE value) const;
+    BDD BddStrictThreshold(CUDD_VALUE_TYPE value) const;
+    BDD BddInterval(CUDD_VALUE_TYPE lower, CUDD_VALUE_TYPE upper) const;
+    BDD BddIthBit(int bit) const;
+    BDD BddPattern() const;
+    ADD Cofactor(const ADD& g) const;
+    ADD Compose(const ADD& g, int v) const;
+    ADD Permute(int * permut) const;
+    ADD SwapVariables(ADDvector x, ADDvector y) const;
+    ADD VectorCompose(ADDvector vector) const;
+    ADD NonSimCompose(ADDvector vector) const;
+    ADD Constrain(const ADD& c) const;
+    ADD Restrict(const ADD& c) const;
+    ADD MatrixMultiply(const ADD& B, ADDvector z) const;
+    ADD TimesPlus(const ADD& B, ADDvector z) const;
+    ADD Triangle(const ADD& g, ADDvector z) const;
+    ADD Eval(int * inputs) const;
+    int EqualSupNorm(const ADD& g, CUDD_VALUE_TYPE tolerance, int pr) const;
 
 }; // ADD
 
@@ -368,43 +401,43 @@ public:
     ZDD(const ZDD &from);
     ~ZDD();
     ZDD operator=(const ZDD& right);
-    int operator==(const ZDD& other);
-    int operator!=(const ZDD& other);
-    int operator<=(const ZDD& other);
-    int operator>=(const ZDD& other);
-    int operator<(const ZDD& other);
-    int operator>(const ZDD& other);
-    void print(int nvars, int verbosity = 1);
-    ZDD operator*(const ZDD& other);
+    int operator==(const ZDD& other) const;
+    int operator!=(const ZDD& other) const;
+    int operator<=(const ZDD& other) const;
+    int operator>=(const ZDD& other) const;
+    int operator<(const ZDD& other) const;
+    int operator>(const ZDD& other) const;
+    void print(int nvars, int verbosity = 1) const;
+    ZDD operator*(const ZDD& other) const;
     ZDD operator*=(const ZDD& other);
-    ZDD operator&(const ZDD& other);
+    ZDD operator&(const ZDD& other) const;
     ZDD operator&=(const ZDD& other);
-    ZDD operator+(const ZDD& other);
+    ZDD operator+(const ZDD& other) const;
     ZDD operator+=(const ZDD& other);
-    ZDD operator|(const ZDD& other);
+    ZDD operator|(const ZDD& other) const;
     ZDD operator|=(const ZDD& other);
-    ZDD operator-(const ZDD& other);
+    ZDD operator-(const ZDD& other) const;
     ZDD operator-=(const ZDD& other);
-    int Count();
-    double CountDouble();
-    ZDD Product(ZDD g);
-    ZDD UnateProduct(ZDD g);
-    ZDD WeakDiv(ZDD g);
-    ZDD Divide(ZDD g);
-    ZDD WeakDivF(ZDD g);
-    ZDD DivideF(ZDD g);
-    double CountMinterm(int path);
-    BDD PortToBdd();
-    ZDD Ite(ZDD g, ZDD h);
-    ZDD Union(ZDD Q);
-    ZDD Intersect(ZDD Q);
-    ZDD Diff(ZDD Q);
-    ZDD DiffConst(ZDD Q);
-    ZDD Subset1(int var);
-    ZDD Subset0(int var);
-    ZDD Change(int var);
-    void PrintMinterm();
-    void PrintCover();
+    int Count() const;
+    double CountDouble() const;
+    ZDD Product(const ZDD& g) const;
+    ZDD UnateProduct(const ZDD& g) const;
+    ZDD WeakDiv(const ZDD& g) const;
+    ZDD Divide(const ZDD& g) const;
+    ZDD WeakDivF(const ZDD& g) const;
+    ZDD DivideF(const ZDD& g) const;
+    double CountMinterm(int path) const;
+    BDD PortToBdd() const;
+    ZDD Ite(const ZDD& g, const ZDD& h) const;
+    ZDD Union(const ZDD& Q) const;
+    ZDD Intersect(const ZDD& Q) const;
+    ZDD Diff(const ZDD& Q) const;
+    ZDD DiffConst(const ZDD& Q) const;
+    ZDD Subset1(int var) const;
+    ZDD Subset0(int var) const;
+    ZDD Change(int var) const;
+    void PrintMinterm() const;
+    void PrintCover() const;
 
 }; // ZDD
 
@@ -441,15 +474,15 @@ public:
     Cudd(Cudd& x);
     ~Cudd();
     PFC setHandler(PFC newHandler);
-    PFC getHandler();
-    DdManager *getManager() {return p->manager;}
+    PFC getHandler() const;
+    DdManager *getManager() const {return p->manager;}
     inline void makeVerbose() {p->verbose = 1;}
     inline void makeTerse() {p->verbose = 0;}
-    inline int isVerbose() {return p->verbose;}
-    inline void checkReturnValue(const DdNode *result);
-    inline void checkReturnValue(const int result);
+    inline int isVerbose() const {return p->verbose;}
+    inline void checkReturnValue(const DdNode *result) const;
+    inline void checkReturnValue(const int result) const;
     Cudd& operator=(const Cudd& right);
-    void info();
+    void info() const;
     BDD bddVar();
     BDD bddVar(int index);
     BDD bddOne();
@@ -469,114 +502,119 @@ public:
     void zddVarsFromBddVars(int multiplicity);
     void AutodynEnable(Cudd_ReorderingType method);
     void AutodynDisable();
-    int ReorderingStatus(Cudd_ReorderingType * method);
+    int ReorderingStatus(Cudd_ReorderingType * method) const;
     void AutodynEnableZdd(Cudd_ReorderingType method);
     void AutodynDisableZdd();
-    int ReorderingStatusZdd(Cudd_ReorderingType * method);
-    int zddRealignmentEnabled();
+    int ReorderingStatusZdd(Cudd_ReorderingType * method) const;
+    int zddRealignmentEnabled() const;
     void zddRealignEnable();
     void zddRealignDisable();
-    int bddRealignmentEnabled();
+    int bddRealignmentEnabled() const;
     void bddRealignEnable();
     void bddRealignDisable();
     ADD background();
     void SetBackground(ADD bg);
-    unsigned int ReadCacheSlots();
-    double ReadCacheUsedSlots();
-    double ReadCacheLookUps();
-    double ReadCacheHits();
-    unsigned int ReadMinHit();
+    unsigned int ReadCacheSlots() const;
+    double ReadCacheUsedSlots() const;
+    double ReadCacheLookUps() const;
+    double ReadCacheHits() const;
+    unsigned int ReadMinHit() const;
     void SetMinHit(unsigned int hr);
-    unsigned int ReadLooseUpTo();
+    unsigned int ReadLooseUpTo() const;
     void SetLooseUpTo(unsigned int lut);
-    unsigned int ReadMaxCache();
-    unsigned int ReadMaxCacheHard();
+    unsigned int ReadMaxCache() const;
+    unsigned int ReadMaxCacheHard() const;
     void SetMaxCacheHard(unsigned int mc);
-    int ReadSize();
-    int ReadZddSize();
-    unsigned int ReadSlots();
-    unsigned int ReadKeys();
-    unsigned int ReadDead();
-    unsigned int ReadMinDead();
-    int ReadReorderings();
-    long ReadReorderingTime();
-    int ReadGarbageCollections();
-    long ReadGarbageCollectionTime();
-    int ReadSiftMaxVar();
+    int ReadSize() const;
+    int ReadZddSize() const;
+    unsigned int ReadSlots() const;
+    unsigned int ReadKeys() const;
+    unsigned int ReadDead() const;
+    unsigned int ReadMinDead() const;
+    int ReadReorderings() const;
+    long ReadReorderingTime() const;
+    int ReadGarbageCollections() const;
+    long ReadGarbageCollectionTime() const;
+    int ReadSiftMaxVar() const;
     void SetSiftMaxVar(int smv);
-    int ReadSiftMaxSwap();
+    int ReadSiftMaxSwap() const;
     void SetSiftMaxSwap(int sms);
-    double ReadMaxGrowth();
+    double ReadMaxGrowth() const;
     void SetMaxGrowth(double mg);
-    MtrNode * ReadTree();
+    MtrNode * ReadTree() const;
     void SetTree(MtrNode * tree);
     void FreeTree();
-    MtrNode * ReadZddTree();
+    MtrNode * ReadZddTree() const;
     void SetZddTree(MtrNode * tree);
     void FreeZddTree();
-    int ReadPerm(int i);
-    int ReadPermZdd(int i);
-    int ReadInvPerm(int i);
-    int ReadInvPermZdd(int i);
+    int ReadPerm(int i) const;
+    int ReadPermZdd(int i) const;
+    int ReadInvPerm(int i) const;
+    int ReadInvPermZdd(int i) const;
     BDD ReadVars(int i);
-    CUDD_VALUE_TYPE ReadEpsilon();
+    CUDD_VALUE_TYPE ReadEpsilon() const;
     void SetEpsilon(CUDD_VALUE_TYPE ep);
-    Cudd_AggregationType ReadGroupcheck();
+    Cudd_AggregationType ReadGroupcheck() const;
     void SetGroupcheck(Cudd_AggregationType gc);
-    int GarbageCollectionEnabled();
+    int GarbageCollectionEnabled() const;
     void EnableGarbageCollection();
     void DisableGarbageCollection();
-    int DeadAreCounted();
+    int DeadAreCounted() const;
     void TurnOnCountDead();
     void TurnOffCountDead();
-    int ReadRecomb();
+    int ReadRecomb() const;
     void SetRecomb(int recomb);
-    int ReadSymmviolation();
+    int ReadSymmviolation() const;
     void SetSymmviolation(int symmviolation);
-    int ReadArcviolation();
+    int ReadArcviolation() const;
     void SetArcviolation(int arcviolation);
-    int ReadPopulationSize();
+    int ReadPopulationSize() const;
     void SetPopulationSize(int populationSize);
-    int ReadNumberXovers();
+    int ReadNumberXovers() const;
     void SetNumberXovers(int numberXovers);
-    unsigned long ReadMemoryInUse();
-    long ReadPeakNodeCount();
-    long ReadNodeCount();
-    long zddReadNodeCount();
+    unsigned long ReadMemoryInUse() const;
+    long ReadPeakNodeCount() const;
+    long ReadNodeCount() const;
+    long zddReadNodeCount() const;
     void AddHook(DD_HFP f, Cudd_HookType where);
     void RemoveHook(DD_HFP f, Cudd_HookType where);
-    int IsInHook(DD_HFP f, Cudd_HookType where);
+    int IsInHook(DD_HFP f, Cudd_HookType where) const;
     void EnableReorderingReporting();
     void DisableReorderingReporting();
     int ReorderingReporting();
-    int ReadErrorCode();
+    int ReadErrorCode() const;
     void ClearErrorCode();
-    FILE *ReadStdout();
+    FILE *ReadStdout() const;
     void SetStdout(FILE *);
-    FILE *ReadStderr();
+    FILE *ReadStderr() const;
     void SetStderr(FILE *);
-    unsigned int ReadNextReordering();
-    double ReadSwapSteps();
-    unsigned int ReadMaxLive();
+    unsigned int ReadNextReordering() const;
+    double ReadSwapSteps() const;
+    unsigned int ReadMaxLive() const;
     void SetMaxLive(unsigned int);
-    unsigned long ReadMaxMemory();
+    unsigned long ReadMaxMemory() const;
     void SetMaxMemory(unsigned long);
     int bddBindVar(int);
     int bddUnbindVar(int);
-    int bddVarIsBound(int);
+    int bddVarIsBound(int) const;
     ADD Walsh(ADDvector x, ADDvector y);
     ADD addResidue(int n, int m, int options, int top);
-    int ApaNumberOfDigits(int binaryDigits);
-    DdApaNumber NewApaNumber(int digits);
-    void ApaCopy(int digits, DdApaNumber source, DdApaNumber dest);
-    DdApaDigit ApaAdd(int digits, DdApaNumber a, DdApaNumber b, DdApaNumber sum);
-    DdApaDigit ApaSubtract(int digits, DdApaNumber a, DdApaNumber b, DdApaNumber diff);
-    DdApaDigit ApaShortDivision(int digits, DdApaNumber dividend, DdApaDigit divisor, DdApaNumber quotient);
-    void ApaShiftRight(int digits, DdApaDigit in, DdApaNumber a, DdApaNumber b);
-    void ApaSetToLiteral(int digits, DdApaNumber number, DdApaDigit literal);
-    void ApaPowerOfTwo(int digits, DdApaNumber number, int power);
-    void ApaPrintHex(FILE * fp, int digits, DdApaNumber number);
-    void ApaPrintDecimal(FILE * fp, int digits, DdApaNumber number);
+    int ApaNumberOfDigits(int binaryDigits) const;
+    DdApaNumber NewApaNumber(int digits) const;
+    void ApaCopy(int digits, DdApaNumber source, DdApaNumber dest) const;
+    DdApaDigit ApaAdd(int digits, DdApaNumber a, DdApaNumber b, DdApaNumber
+		      sum) const;
+    DdApaDigit ApaSubtract(int digits, DdApaNumber a, DdApaNumber b,
+			   DdApaNumber diff) const;
+    DdApaDigit ApaShortDivision(int digits, DdApaNumber dividend, DdApaDigit
+				divisor, DdApaNumber quotient) const;
+    void ApaShiftRight(int digits, DdApaDigit in, DdApaNumber a, DdApaNumber
+		       b) const;
+    void ApaSetToLiteral(int digits, DdApaNumber number, DdApaDigit literal)
+      const;
+    void ApaPowerOfTwo(int digits, DdApaNumber number, int power) const;
+    void ApaPrintHex(FILE * fp, int digits, DdApaNumber number) const;
+    void ApaPrintDecimal(FILE * fp, int digits, DdApaNumber number) const;
     void DebugCheck();
     void CheckKeys();
     MtrNode * MakeTreeNode(unsigned int low, unsigned int size, unsigned int type);
@@ -593,23 +631,23 @@ public:
     // void Read(FILE * fp, BDD* E, BDD** x, BDD** y, int * nx, int * ny, int * m, int * n, int bx, int sx, int by, int sy);
     void ReduceHeap(Cudd_ReorderingType heuristic, int minsize);
     void ShuffleHeap(int * permutation);
-    void SymmProfile(int lower, int upper);
-    unsigned int Prime(unsigned int pr);
-    int SharingSize(DD* nodes, int n);
+    void SymmProfile(int lower, int upper) const;
+    unsigned int Prime(unsigned int pr) const;
+    int SharingSize(DD* nodes, int n) const;
     BDD bddComputeCube(BDD * vars, int * phase, int n);
     ADD addComputeCube(ADD * vars, int * phase, int n);
     int NextNode(DdGen * gen, BDD * nnode);
     BDD IndicesToCube(int * array, int n);
-    void PrintVersion(FILE * fp);
-    double AverageDistance();
+    void PrintVersion(FILE * fp) const;
+    double AverageDistance() const;
     long Random();
     void Srandom(long seed);
     MtrNode * MakeZddTreeNode(unsigned int low, unsigned int size, unsigned int type);
-    void zddPrintSubtable();
+    void zddPrintSubtable() const;
     void zddReduceHeap(Cudd_ReorderingType heuristic, int minsize);
     void zddShuffleHeap(int * permutation);
-    void zddSymmProfile(int lower, int upper);
-    void DumpDot(int n, ZDD* f, char ** inames, char ** onames, FILE * fp);
+    void zddSymmProfile(int lower, int upper) const;
+  //void DumpDot(int n, ZDD* f, char ** inames, char ** onames, FILE * fp);
 
 }; // Cudd
 
@@ -636,27 +674,29 @@ public:
     BDDvector(const BDDvector &from);
     ~BDDvector();
     BDDvector& operator=(const BDDvector& right);
-    BDD& operator[](int i);
-    int count() {return p->size;}
-    Cudd *manager() {return p->manager;}
-    void DumpDot(char ** inames = 0, char ** onames = 0, FILE * fp = stdout);
+    BDD& operator[](int i) const;
+    int count() const {return p->size;}
+    Cudd *manager() const {return p->manager;}
+    void DumpDot(char ** inames = 0, char ** onames = 0, FILE * fp = stdout)
+	const;
     void DumpDaVinci(
       char ** inames = 0,
       char ** onames = 0,
-      FILE * fp = stdout);
+      FILE * fp = stdout) const;
     void DumpBlif(
       char ** inames = 0,
       char ** onames = 0,
       char * mname = 0,
-      FILE * fp = stdout);
-    void DumpDDcal(char ** inames = 0, char ** onames = 0, FILE * fp = stdout);
+      FILE * fp = stdout) const;
+    void DumpDDcal(char ** inames = 0, char ** onames = 0, FILE * fp = stdout)
+	const;
     void DumpFactoredForm(
       char ** inames = 0,
       char ** onames = 0,
-      FILE * fp = stdout);
-    BDD VectorSupport();
-    int nodeCount();
-    int VectorSupportSize();
+      FILE * fp = stdout) const;
+    BDD VectorSupport() const;
+    int nodeCount() const;
+    int VectorSupportSize() const;
 
 }; // BDDvector
 
@@ -683,16 +723,17 @@ public:
     ADDvector(const ADDvector &from);
     ~ADDvector();
     ADDvector& operator=(const ADDvector& right);
-    ADD& operator[](int i);
-    int count() {return p->size;}
-    Cudd *manager() {return p->manager;}
-    void DumpDot(char ** inames = 0, char ** onames = 0, FILE * fp = stdout);
+    ADD& operator[](int i) const;
+    int count() const {return p->size;}
+    Cudd *manager() const {return p->manager;}
+    void DumpDot(char ** inames = 0, char ** onames = 0, FILE * fp = stdout)
+	const;
     void DumpDaVinci(
       char ** inames = 0,
       char ** onames = 0,
-      FILE * fp = stdout);
-    BDD VectorSupport();
-    int VectorSupportSize();
+      FILE * fp = stdout) const;
+    BDD VectorSupport() const;
+    int VectorSupportSize() const;
 
 }; // ADDvector
 
@@ -719,10 +760,11 @@ public:
     ZDDvector(const ZDDvector &from);
     ~ZDDvector();
     ZDDvector& operator=(const ZDDvector& right);
-    ZDD& operator[](int i);
-    int count() {return p->size;}
-    Cudd *manager() {return p->manager;}
-    void DumpDot(char ** inames = 0, char ** onames = 0, FILE * fp = stdout);
+    ZDD& operator[](int i) const;
+    int count() const {return p->size;}
+    Cudd *manager() const {return p->manager;}
+    void DumpDot(char ** inames = 0, char ** onames = 0, FILE * fp = stdout)
+	const;
 
 }; // ZDDvector
 
