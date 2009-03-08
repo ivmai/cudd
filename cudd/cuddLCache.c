@@ -96,7 +96,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddLCache.c,v 1.21 2004/08/13 18:04:49 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddLCache.c,v 1.24 2009/03/08 02:49:02 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -116,8 +116,8 @@ static char rcsid[] DD_UNUSED = "$Id: cuddLCache.c,v 1.21 2004/08/13 18:04:49 fa
 ******************************************************************************/
 #if SIZEOF_VOID_P == 8 && SIZEOF_INT == 4
 #define ddLCHash2(f,g,shift) \
-((((unsigned)(unsigned long)(f) * DD_P1 + \
-   (unsigned)(unsigned long)(g)) * DD_P2) >> (shift))
+((((unsigned)(ptruint)(f) * DD_P1 + \
+   (unsigned)(ptruint)(g)) * DD_P2) >> (shift))
 #else
 #define ddLCHash2(f,g,shift) \
 ((((unsigned)(f) * DD_P1 + (unsigned)(g)) * DD_P2) >> (shift))
@@ -362,14 +362,16 @@ cuddLocalCacheClearDead(
 	slots = cache->slots;
 	item = cache->item;
 	for (i = 0; i < slots; i++) {
-	    if (item->value != NULL && Cudd_Regular(item->value)->ref == 0) {
-		item->value = NULL;
-	    } else {
-		key = item->key;
-		for (j = 0; j < keysize; j++) {
-		    if (Cudd_Regular(key[j])->ref == 0) {
-			item->value = NULL;
-			break;
+	    if (item->value != NULL) {
+		if (Cudd_Regular(item->value)->ref == 0) {
+		    item->value = NULL;
+		} else {
+		    key = item->key;
+		    for (j = 0; j < keysize; j++) {
+			if (Cudd_Regular(key[j])->ref == 0) {
+			    item->value = NULL;
+			    break;
+			}
 		    }
 		}
 	    }
@@ -1144,7 +1146,7 @@ cuddLocalCacheResize(
 	    entry = (DdLocalCacheItem *) ((char *) item +
 					  posn * cache->itemsize);
 	    memcpy(entry->key,old->key,cache->keysize*sizeof(DdNode *));
-	    entry->value = old->value;	
+	    entry->value = old->value;
 	}
     }
 
@@ -1411,7 +1413,7 @@ cuddHashTableAlloc(
 		hash->manager->stash = NULL;
 		/* Inhibit resizing of tables. */
 		hash->manager->maxCacheHard = hash->manager->cacheSlots - 1;
-		hash->manager->cacheSlack = -(hash->manager->cacheSlots + 1);
+		hash->manager->cacheSlack = - (int) (hash->manager->cacheSlots + 1);
 		for (i = 0; i < hash->manager->size; i++) {
 		    hash->manager->subtables[i].maxKeys <<= 2;
 		}

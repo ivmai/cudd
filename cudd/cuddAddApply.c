@@ -92,7 +92,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddAddApply.c,v 1.17 2004/08/13 18:04:45 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddAddApply.c,v 1.18 2009/02/19 16:15:26 fabio Exp $";
 #endif
 
 
@@ -517,11 +517,11 @@ Cudd_addDiff(
     if (G == DD_PLUS_INFINITY(dd)) return(F);
     if (cuddIsConstant(F) && cuddIsConstant(G)) {
 	if (cuddV(F) != cuddV(G)) {
-            if (cuddV(F) < cuddV(G)) {
-                return(F);
-            } else {
-                return(G);
-            }
+	    if (cuddV(F) < cuddV(G)) {
+		return(F);
+	    } else {
+		return(G);
+	    }
 	} else {
 	    return(DD_PLUS_INFINITY(dd));
 	}
@@ -939,4 +939,3 @@ cuddAddMonadicApplyRecur(
 /*---------------------------------------------------------------------------*/
 /* Definition of static functions                                            */
 /*---------------------------------------------------------------------------*/
-

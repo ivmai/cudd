@@ -114,52 +114,52 @@ edge [dir = none];
 { rank = same; node [shape = box]; edge [style = invis];
 "  v0  " -> "  v1  " -> "  v2  " -> "  v3  "; }
 { rank = same; " x0 ";
-"3d";
-"7a";
-"7d";
-"39";
+"0x3e";
+"0x7b";
+"0x7e";
+"0x3a";
 }
 { rank = same; " x1 ";
-"79";
-"7c";
-"3a";
+"0x7a";
+"0x7d";
+"0x3b";
 }
 { rank = same; " x2 ";
-"7b";
-"6a";
+"0x6b";
+"0x7c";
 }
 { rank = same; " x3 ";
-"6b";
+"0x6c";
 }
 { rank = same; "CONST NODES";
-{ node [shape = box]; "33";
+{ node [shape = box]; "0x34";
 }
 }
-"  v0  " -> "39" [style = solid];
-"  v1  " -> "3d" [style = solid];
-"  v2  " -> "7a" [style = solid];
-"  v3  " -> "7d" [style = solid];
-"3d" -> "3a";
-"3d" -> "33" [style = dashed];
-"7a" -> "79";
-"7a" -> "6a" [style = dashed];
-"7d" -> "7c";
-"7d" -> "33" [style = dashed];
-"39" -> "33";
-"39" -> "33" [style = dotted];
-"79" -> "6a";
-"79" -> "33" [style = dashed];
-"7c" -> "7b";
-"7c" -> "6b" [style = dashed];
-"3a" -> "33";
-"3a" -> "33" [style = dotted];
-"7b" -> "6b";
-"7b" -> "33" [style = dashed];
-"6a" -> "33";
-"6a" -> "33" [style = dotted];
-"6b" -> "33";
-"6b" -> "33" [style = dotted];
-"33" [label = "1"];
+"  v0  " -> "0x3a" [style = solid];
+"  v1  " -> "0x3e" [style = solid];
+"  v2  " -> "0x7b" [style = solid];
+"  v3  " -> "0x7e" [style = solid];
+"0x3e" -> "0x3b";
+"0x3e" -> "0x34" [style = dashed];
+"0x7b" -> "0x7a";
+"0x7b" -> "0x6b" [style = dashed];
+"0x7e" -> "0x7d";
+"0x7e" -> "0x34" [style = dashed];
+"0x3a" -> "0x34";
+"0x3a" -> "0x34" [style = dotted];
+"0x7a" -> "0x6b";
+"0x7a" -> "0x34" [style = dashed];
+"0x7d" -> "0x7c";
+"0x7d" -> "0x6c" [style = dashed];
+"0x3b" -> "0x34";
+"0x3b" -> "0x34" [style = dotted];
+"0x6b" -> "0x34";
+"0x6b" -> "0x34" [style = dotted];
+"0x7c" -> "0x6c";
+"0x7c" -> "0x34" [style = dashed];
+"0x6c" -> "0x34";
+"0x6c" -> "0x34" [style = dotted];
+"0x34" [label = "1"];
 }
 Entering testBdd3
 f: 10 nodes 1 leaves 50 minterms
@@ -243,58 +243,58 @@ edge [dir = none];
 { rank = same; node [shape = box]; edge [style = invis];
 "  s0  " -> "  s1  " -> "  s2  " -> "  c3  "; }
 { rank = same; " a2 ";
-"b4";
-"b3";
+"0xb5";
+"0xb4";
 }
 { rank = same; " b2 ";
-"3a";
+"0x3b";
 }
 { rank = same; " a1 ";
-"b2";
-"b1";
+"0xb2";
+"0xb3";
 }
 { rank = same; " b1 ";
-"6b";
+"0x6c";
 }
 { rank = same; " a0 ";
-"b0";
-"af";
+"0xb1";
+"0xb0";
 }
 { rank = same; " b0 ";
-"8a";
+"0x8b";
 }
 { rank = same; " c0 ";
-"ae";
+"0xaf";
 }
 { rank = same; "CONST NODES";
-{ node [shape = box]; "33";
+{ node [shape = box]; "0x34";
 }
 }
-"  s0  " -> "af" [style = solid];
-"  s1  " -> "b1" [style = solid];
-"  s2  " -> "b3" [style = solid];
-"  c3  " -> "b4" [style = solid];
-"b4" -> "3a";
-"b4" -> "b2" [style = dashed];
-"b3" -> "b2";
-"b3" -> "b2" [style = dotted];
-"3a" -> "33";
-"3a" -> "33" [style = dotted];
-"b2" -> "6b";
-"b2" -> "b0" [style = dashed];
-"b1" -> "b0";
-"b1" -> "b0" [style = dotted];
-"6b" -> "33";
-"6b" -> "33" [style = dotted];
-"b0" -> "8a";
-"b0" -> "ae" [style = dashed];
-"af" -> "ae";
-"af" -> "ae" [style = dotted];
-"8a" -> "33";
-"8a" -> "33" [style = dotted];
-"ae" -> "33";
-"ae" -> "33" [style = dotted];
-"33" [label = "1"];
+"  s0  " -> "0xb0" [style = solid];
+"  s1  " -> "0xb2" [style = solid];
+"  s2  " -> "0xb4" [style = solid];
+"  c3  " -> "0xb5" [style = solid];
+"0xb5" -> "0x3b";
+"0xb5" -> "0xb3" [style = dashed];
+"0xb4" -> "0xb3";
+"0xb4" -> "0xb3" [style = dotted];
+"0x3b" -> "0x34";
+"0x3b" -> "0x34" [style = dotted];
+"0xb2" -> "0xb1";
+"0xb2" -> "0xb1" [style = dotted];
+"0xb3" -> "0x6c";
+"0xb3" -> "0xb1" [style = dashed];
+"0x6c" -> "0x34";
+"0x6c" -> "0x34" [style = dotted];
+"0xb1" -> "0x8b";
+"0xb1" -> "0xaf" [style = dashed];
+"0xb0" -> "0xaf";
+"0xb0" -> "0xaf" [style = dotted];
+"0x8b" -> "0x34";
+"0x8b" -> "0x34" [style = dotted];
+"0xaf" -> "0x34";
+"0xaf" -> "0x34" [style = dotted];
+"0x34" [label = "1"];
 }
 z[0]: 4 nodes 2 minterms
 00000000100010 1
@@ -352,105 +352,105 @@ edge [dir = none];
 { rank = same; node [shape = box]; edge [style = invis];
 "  s0  " -> "  s1  " -> "  s2  " -> "  c3  "; }
 { rank = same; " a2+ ";
-"6d";
-"76";
+"0x6e";
+"0x77";
 }
 { rank = same; " a2- ";
-"69";
-"74";
+"0x6a";
+"0x75";
 }
 { rank = same; " b2+ ";
-"70";
+"0x71";
 }
 { rank = same; " a1+ ";
-"64";
-"5d";
-"56";
+"0x57";
+"0x65";
+"0x5e";
 }
 { rank = same; " a1- ";
-"62";
-"54";
+"0x55";
+"0x63";
 }
 { rank = same; " b1+ ";
-"5e";
+"0x5f";
 }
 { rank = same; " b1- ";
-"59";
+"0x5a";
 }
 { rank = same; " a0+ ";
-"4f";
-"41";
-"48";
+"0x50";
+"0x42";
+"0x49";
 }
 { rank = same; " a0- ";
-"4d";
-"3f";
+"0x4e";
+"0x40";
 }
 { rank = same; " b0+ ";
-"49";
+"0x4a";
 }
 { rank = same; " b0- ";
-"44";
+"0x45";
 }
 { rank = same; " c0+ ";
-"38";
+"0x39";
 }
 { rank = same; " c0- ";
-"37";
+"0x38";
 }
 { rank = same; "CONST NODES";
-{ node [shape = box]; "34";
-"33";
+{ node [shape = box]; "0x35";
+"0x34";
 }
 }
-"  s0  " -> "41" [style = solid];
-"  s1  " -> "56" [style = solid];
-"  s2  " -> "6d" [style = solid];
-"  c3  " -> "76" [style = solid];
-"6d" -> "64";
-"6d" -> "69" [style = dashed];
-"76" -> "70";
-"76" -> "74" [style = dashed];
-"69" -> "5d";
-"69" -> "34" [style = dashed];
-"74" -> "64";
-"74" -> "34" [style = dashed];
-"70" -> "33";
-"70" -> "34" [style = dashed];
-"64" -> "5e";
-"64" -> "62" [style = dashed];
-"5d" -> "59";
-"5d" -> "54" [style = dashed];
-"56" -> "4f";
-"56" -> "54" [style = dashed];
-"62" -> "4f";
-"62" -> "34" [style = dashed];
-"54" -> "48";
-"54" -> "34" [style = dashed];
-"5e" -> "33";
-"5e" -> "34" [style = dashed];
-"59" -> "33";
-"59" -> "34" [style = dashed];
-"4f" -> "49";
-"4f" -> "4d" [style = dashed];
-"41" -> "38";
-"41" -> "3f" [style = dashed];
-"48" -> "44";
-"48" -> "3f" [style = dashed];
-"4d" -> "38";
-"4d" -> "34" [style = dashed];
-"3f" -> "37";
-"3f" -> "34" [style = dashed];
-"49" -> "33";
-"49" -> "34" [style = dashed];
-"44" -> "33";
-"44" -> "34" [style = dashed];
-"38" -> "33";
-"38" -> "34" [style = dashed];
-"37" -> "33";
-"37" -> "34" [style = dashed];
-"34" [label = "0"];
-"33" [label = "1"];
+"  s0  " -> "0x42" [style = solid];
+"  s1  " -> "0x57" [style = solid];
+"  s2  " -> "0x6e" [style = solid];
+"  c3  " -> "0x77" [style = solid];
+"0x6e" -> "0x65";
+"0x6e" -> "0x6a" [style = dashed];
+"0x77" -> "0x71";
+"0x77" -> "0x75" [style = dashed];
+"0x6a" -> "0x5e";
+"0x6a" -> "0x35" [style = dashed];
+"0x75" -> "0x65";
+"0x75" -> "0x35" [style = dashed];
+"0x71" -> "0x34";
+"0x71" -> "0x35" [style = dashed];
+"0x57" -> "0x50";
+"0x57" -> "0x55" [style = dashed];
+"0x65" -> "0x5f";
+"0x65" -> "0x63" [style = dashed];
+"0x5e" -> "0x5a";
+"0x5e" -> "0x55" [style = dashed];
+"0x55" -> "0x49";
+"0x55" -> "0x35" [style = dashed];
+"0x63" -> "0x50";
+"0x63" -> "0x35" [style = dashed];
+"0x5f" -> "0x34";
+"0x5f" -> "0x35" [style = dashed];
+"0x5a" -> "0x34";
+"0x5a" -> "0x35" [style = dashed];
+"0x50" -> "0x4a";
+"0x50" -> "0x4e" [style = dashed];
+"0x42" -> "0x39";
+"0x42" -> "0x40" [style = dashed];
+"0x49" -> "0x45";
+"0x49" -> "0x40" [style = dashed];
+"0x4e" -> "0x39";
+"0x4e" -> "0x35" [style = dashed];
+"0x40" -> "0x38";
+"0x40" -> "0x35" [style = dashed];
+"0x4a" -> "0x34";
+"0x4a" -> "0x35" [style = dashed];
+"0x45" -> "0x34";
+"0x45" -> "0x35" [style = dashed];
+"0x39" -> "0x34";
+"0x39" -> "0x35" [style = dashed];
+"0x38" -> "0x34";
+"0x38" -> "0x35" [style = dashed];
+"0x35" [label = "0"];
+"0x34" [label = "1"];
 }
 Entering testBdd4
 f: 5 nodes 1 leaves 3 minterms
@@ -463,10 +463,10 @@ g: 5 nodes 1 leaves 3 minterms
 
 f and h are identical
 **** CUDD modifiable parameters ****
-Hard limit for cache size: 16384000
+Hard limit for cache size: 7645866
 Cache hit threshold for resizing: 30%
 Garbage collection enabled: yes
-Limit for fast unique table growth: 9830400
+Limit for fast unique table growth: 4587520
 Maximum number of variables sifted per reordering: 1000
 Maximum number of variable swaps per reordering: 2000000
 Maximum growth while sifting a variable: 1.2
@@ -485,7 +485,7 @@ GA population size: 0
 Number of crossovers for GA: 0
 Next reordering threshold: 4004
 **** CUDD non-modifiable parameters ****
-Memory in use: 12630320
+Memory in use: 8436016
 Peak number of nodes: 1022
 Peak number of live nodes: 35
 Number of BDD variables: 14
@@ -499,7 +499,7 @@ Number of cache deletions: 162
 Cache used slots = 0.11% (expected 0.05%)
 Soft limit for cache size: 29696
 Number of buckets in unique table: 7424
-Used buckets in unique table: 1.59% (expected 1.69%)
+Used buckets in unique table: 1.58% (expected 1.69%)
 Unique lookups: 475
 Unique links: 6 (0.0126316 per lookup)
 Number of BDD and ADD nodes: 78

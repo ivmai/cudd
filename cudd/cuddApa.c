@@ -8,15 +8,30 @@
 
   Description [External procedures included in this module:
 		<ul>
-		<li> 
-		</ul>
-	Internal procedures included in this module:
-		<ul>
-		<li> ()
+		<li> Cudd_ApaNumberOfDigits()
+		<li> Cudd_NewApaNumber()
+		<li> Cudd_ApaCopy()
+		<li> Cudd_ApaAdd()
+		<li> Cudd_ApaSubtract()
+		<li> Cudd_ApaShortDivision()
+		<li> Cudd_ApaIntDivision()
+		<li> Cudd_ApaShiftRight()
+		<li> Cudd_ApaSetToLiteral()
+		<li> Cudd_ApaPowerOfTwo()
+		<li> Cudd_ApaCompare()
+		<li> Cudd_ApaCompareRatios()
+		<li> Cudd_ApaPrintHex()
+		<li> Cudd_ApaPrintDecimal()
+		<li> Cudd_ApaPrintExponential()
+		<li> Cudd_ApaCountMinterm()
+		<li> Cudd_ApaPrintMinterm()
+		<li> Cudd_ApaPrintMintermExp()
+		<li> Cudd_ApaPrintDensity()
 		</ul>
 	Static procedures included in this module:
 		<ul>
-		<li> ()
+		<li> cuddApaCountMintermAux()
+		<li> cuddApaStCountfree()
 		</ul>]
 
   Author      [Fabio Somenzi]
@@ -75,7 +90,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddApa.c,v 1.16 2004/08/13 18:04:46 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddApa.c,v 1.19 2009/03/08 01:27:50 fabio Exp $";
 #endif
 
 static	DdNode	*background, *zero;
@@ -136,7 +151,7 @@ Cudd_ApaNumberOfDigits(
     return(digits);
 
 } /* end of Cudd_ApaNumberOfDigits */
-	   
+
 
 /**Function********************************************************************
 
@@ -241,7 +256,7 @@ Cudd_ApaSubtract(
     DdApaDoubleDigit partial = DD_APA_BASE;
 
     for (i = digits - 1; i >= 0; i--) {
-	partial = a[i] - b[i] + DD_MSDIGIT(partial) + DD_APA_MASK;
+	partial = DD_MSDIGIT(partial) + DD_APA_MASK + a[i] - b[i];
 	diff[i] = (DdApaDigit) DD_LSDIGIT(partial);
     }
     return((DdApaDigit) DD_MSDIGIT(partial) - 1);
@@ -484,6 +499,8 @@ Cudd_ApaCompareRatios(
     second = Cudd_NewApaNumber(digitsSecond);
     secondRem = Cudd_ApaIntDivision(digitsSecond,secondNum,secondDen,second);
     result = Cudd_ApaCompare(digitsFirst,first,digitsSecond,second);
+    FREE(first);
+    FREE(second);
     if (result == 0) {
 	if ((double)firstRem/firstDen > (double)secondRem/secondDen)
 	    return(1);
@@ -549,7 +566,7 @@ Cudd_ApaPrintDecimal(
     unsigned char *decimal;
     int leadingzero;
     int decimalDigits = (int) (digits * log10((double) DD_APA_BASE)) + 1;
-    
+
     work = Cudd_NewApaNumber(digits);
     if (work == NULL)
 	return(0);
@@ -561,7 +578,7 @@ Cudd_ApaPrintDecimal(
     Cudd_ApaCopy(digits,number,work);
     for (i = decimalDigits - 1; i >= 0; i--) {
 	remainder = Cudd_ApaShortDivision(digits,work,(DdApaDigit) 10,work);
-	decimal[i] = remainder;
+	decimal[i] = (unsigned char) remainder;
     }
     FREE(work);
 
@@ -606,7 +623,7 @@ Cudd_ApaPrintExponential(
     DdApaNumber work;
     unsigned char *decimal;
     int decimalDigits = (int) (digits * log10((double) DD_APA_BASE)) + 1;
-    
+
     work = Cudd_NewApaNumber(digits);
     if (work == NULL)
 	return(0);
@@ -619,7 +636,7 @@ Cudd_ApaPrintExponential(
     first = decimalDigits - 1;
     for (i = decimalDigits - 1; i >= 0; i--) {
 	remainder = Cudd_ApaShortDivision(digits,work,(DdApaDigit) 10,work);
-	decimal[i] = remainder;
+	decimal[i] = (unsigned char) remainder;
 	if (remainder != 0) first = i; /* keep track of MS non-zero */
     }
     FREE(work);
@@ -668,7 +685,7 @@ Cudd_ApaCountMinterm(
 {
     DdApaNumber	max, min;
     st_table	*table;
-    DdApaNumber	i,count;	
+    DdApaNumber	i,count;
 
     background = manager->background;
     zero = Cudd_Not(manager->one);
@@ -924,7 +941,7 @@ cuddApaCountMintermAux(
     ** freed here. */
     if (Nt->ref == 1) FREE(mint1);
     if (Cudd_Regular(Ne)->ref == 1) FREE(mint2);
-    
+
     if (node->ref > 1) {
 	if (st_insert(table, (char *)node, (char *)mint) == ST_OUT_OF_MEM) {
 	    FREE(mint);
@@ -960,5 +977,3 @@ cuddApaStCountfree(
     return(ST_CONTINUE);
 
 } /* end of cuddApaStCountfree */
-
-

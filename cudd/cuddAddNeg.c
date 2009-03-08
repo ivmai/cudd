@@ -4,7 +4,7 @@
 
   PackageName [cudd]
 
-  Synopsis    [function to compute the negation of an ADD.]
+  Synopsis    [Function to compute the negation of an ADD.]
 
   Description [External procedures included in this module:
 		<ul>
@@ -77,7 +77,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddAddNeg.c,v 1.11 2004/08/13 18:04:46 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddAddNeg.c,v 1.12 2009/02/20 02:14:58 fabio Exp $";
 #endif
 
 
@@ -242,17 +242,17 @@ cuddAddRoundOffRecur(
     DdNode *res, *fv, *fvn, *T, *E;
     double n;
     DD_CTFP1 cacheOp;
-  
+
     statLine(dd);
     if (cuddIsConstant(f)) {
-        n = ceil(cuddV(f)*trunc)/trunc;
+	n = ceil(cuddV(f)*trunc)/trunc;
 	res = cuddUniqueConst(dd,n);
 	return(res);
     }
     cacheOp = (DD_CTFP1) Cudd_addRoundOff;
     res = cuddCacheLookup1(dd,cacheOp,f);
     if (res != NULL) {
-        return(res);
+	return(res);
     }
     /* Recursive Step */
     fv = cuddT(f);
@@ -264,13 +264,13 @@ cuddAddRoundOffRecur(
     cuddRef(T);
     E = cuddAddRoundOffRecur(dd,fvn,trunc);
     if (E == NULL) {
-        Cudd_RecursiveDeref(dd,T);
+	Cudd_RecursiveDeref(dd,T);
 	return(NULL);
     }
     cuddRef(E);
     res = (T == E) ? T : cuddUniqueInter(dd,(int)f->index,T,E);
     if (res == NULL) {
-        Cudd_RecursiveDeref(dd,T);
+	Cudd_RecursiveDeref(dd,T);
 	Cudd_RecursiveDeref(dd,E);
 	return(NULL);
     }
@@ -280,10 +280,9 @@ cuddAddRoundOffRecur(
     /* Store result. */
     cuddCacheInsert1(dd,cacheOp,f,res);
     return(res);
-  
+
 } /* end of cuddAddRoundOffRecur */
 
 /*---------------------------------------------------------------------------*/
 /* Definition of static functions                                            */
 /*---------------------------------------------------------------------------*/
-

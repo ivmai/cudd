@@ -80,7 +80,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] MTR_UNUSED = "$Id: mtrGroup.c,v 1.16 2004/08/13 18:15:11 fabio Exp $";
+static char rcsid[] MTR_UNUSED = "$Id: mtrGroup.c,v 1.18 2009/02/20 02:03:47 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -541,7 +541,11 @@ Mtr_PrintGroups(
     assert(root != NULL);
     assert(root->younger == NULL || root->younger->elder == root);
     assert(root->elder == NULL || root->elder->younger == root);
-    if (!silent) (void) printf("(%d",root->low);
+#if SIZEOF_VOID_P == 8
+    if (!silent) (void) printf("(%u",root->low);
+#else
+    if (!silent) (void) printf("(%hu",root->low);
+#endif
     if (MTR_TEST(root,MTR_TERMINAL) || root->child == NULL) {
 	if (!silent) (void) printf(",");
     } else {
@@ -554,7 +558,11 @@ Mtr_PrintGroups(
 	}
     }
     if (!silent) {
-	(void) printf("%d", root->low + root->size - 1);
+#if SIZEOF_VOID_P == 8
+	(void) printf("%u", root->low + root->size - 1);
+#else
+	(void) printf("%hu", root->low + root->size - 1);
+#endif
 	if (root->flags != MTR_DEFAULT) {
 	    (void) printf("|");
 	    if (MTR_TEST(root,MTR_FIXED)) (void) printf("F");
@@ -620,12 +628,15 @@ Mtr_ReadGroups(
 	if (err == EOF) {
 	    break;
 	} else if (err != 3) {
+	    Mtr_FreeTree(root);
 	    return(NULL);
 	} else if (low < 0 || low+size > nleaves || size < 1) {
+	    Mtr_FreeTree(root);
 	    return(NULL);
 	} else if (strlen(attrib) > 8 * sizeof(MtrHalfWord)) {
 	    /* Not enough bits in the flags word to store these many
 	    ** attributes. */
+	    Mtr_FreeTree(root);
 	    return(NULL);
 	}
 
@@ -655,7 +666,10 @@ Mtr_ReadGroups(
 	}
 	node = Mtr_MakeGroup(root, (MtrHalfWord) low, (MtrHalfWord) size,
 			     flags);
-	if (node == NULL) return(NULL);
+	if (node == NULL) {
+	    Mtr_FreeTree(root);
+	    return(NULL);
+	}
     }
 
     return(root);

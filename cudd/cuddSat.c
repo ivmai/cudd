@@ -96,7 +96,7 @@ typedef struct cuddPathPair {
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddSat.c,v 1.34 2004/08/13 18:04:50 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddSat.c,v 1.36 2009/03/08 02:49:02 fabio Exp $";
 #endif
 
 static	DdNode	*one, *zero;
@@ -239,7 +239,7 @@ Cudd_ShortestPath(
 
 	F = Cudd_Regular(f);
 
-	st_lookup(visited, F, &rootPair);
+	if (!st_lookup(visited, F, &rootPair)) return(NULL);
 
 	if (complement) {
 	  cost = rootPair->neg;
@@ -311,7 +311,7 @@ Cudd_LargestCube(
 
 	F = Cudd_Regular(f);
 
-	st_lookup(visited, F, &rootPair);
+	if (!st_lookup(visited, F, &rootPair)) return(NULL);
 
 	if (complement) {
 	  cost = rootPair->neg;
@@ -341,7 +341,8 @@ Cudd_LargestCube(
   the DD we want to get the shortest path for; weight\[i\] is the
   weight of the THEN edge coming from the node whose index is i. All
   ELSE edges have 0 weight. Returns the length of the shortest
-  path(s) if successful; CUDD_OUT_OF_MEM otherwise.]
+  path(s) if such a path is found; a large number if the function is
+  identically 0, and CUDD_OUT_OF_MEM in case of failure.]
 
   SideEffects [None]
 
@@ -377,7 +378,7 @@ Cudd_ShortestLength(
 
     F = Cudd_Regular(f);
 
-    st_lookup(visited, F, &my_pair);
+    if (!st_lookup(visited, F, &my_pair)) return(CUDD_OUT_OF_MEM);
     
     if (complement) {
 	cost = my_pair->neg;
@@ -807,21 +808,12 @@ Cudd_EqualSupNorm(
 	} else {
 	    if (pr>0) {
 		(void) fprintf(dd->out,"Offending nodes:\n");
-#if SIZEOF_VOID_P == 8
 		(void) fprintf(dd->out,
-			       "f: address = %lx\t value = %40.30f\n",
-			       (unsigned long) f, cuddV(f));
+			       "f: address = %p\t value = %40.30f\n",
+			       (void *) f, cuddV(f));
 		(void) fprintf(dd->out,
-			       "g: address = %lx\t value = %40.30f\n",
-			       (unsigned long) g, cuddV(g));
-#else
-		(void) fprintf(dd->out,
-			       "f: address = %x\t value = %40.30f\n",
-			       (unsigned) f, cuddV(f));
-		(void) fprintf(dd->out,
-			       "g: address = %x\t value = %40.30f\n",
-			       (unsigned) g, cuddV(g));
-#endif
+			       "g: address = %p\t value = %40.30f\n",
+			       (void *) g, cuddV(g));
 	    }
 	    return(0);
 	}
@@ -1242,6 +1234,7 @@ getLargest(
     my_pair->pos = res_pair.pos;
     my_pair->neg = res_pair.neg;
 
+    /* Caching may fail without affecting correctness. */
     st_insert(visited, (char *)my_root, (char *)my_pair);
     if (Cudd_IsComplement(root)) {
 	res_pair.pos = my_pair->neg;
@@ -1301,7 +1294,7 @@ getCube(
 
 	if (complement) {T = Cudd_Not(T); E = Cudd_Not(E);}
 
-	st_lookup(visited, Cudd_Regular(T), &T_pair);
+	if (!st_lookup(visited, Cudd_Regular(T), &T_pair)) return(NULL);
 	if ((Cudd_IsComplement(T) && T_pair->neg == Tcost) ||
 	(!Cudd_IsComplement(T) && T_pair->pos == Tcost)) {
 	    tmp = cuddBddAndRecur(manager,manager->vars[my_dd->index],sol);
@@ -1318,7 +1311,7 @@ getCube(
 	    cost = Tcost;
 	    continue;
 	}
-	st_lookup(visited, Cudd_Regular(E), &E_pair);
+	if (!st_lookup(visited, Cudd_Regular(E), &E_pair)) return(NULL);
 	if ((Cudd_IsComplement(E) && E_pair->neg == Ecost) ||
 	(!Cudd_IsComplement(E) && E_pair->pos == Ecost)) {
 	    tmp = cuddBddAndRecur(manager,Cudd_Not(manager->vars[my_dd->index]),sol);

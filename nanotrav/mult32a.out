@@ -1,11 +1,11 @@
 # Nanotrav Version #0.12, Release date 2003/12/31
 # ./nanotrav -p 1 -autodyn -reordering sifting -trav mult32a.blif
-# CUDD Version 2.4.0
-BDD reordering with sifting: from 4001 to ... 268 nodes in 0 sec
-BDD reordering with sifting: from 537 to ... 246 nodes in 0.01 sec
-BDD reordering with sifting: from 493 to ... 250 nodes in 0 sec
-BDD reordering with sifting: from 501 to ... 280 nodes in 0.01 sec
-BDD reordering with sifting: from 561 to ... 296 nodes in 0.01 sec
+# CUDD Version 2.4.2
+BDD reordering with sifting: from 4001 to ... 268 nodes in 0.005 sec
+BDD reordering with sifting: from 537 to ... 246 nodes in 0.006 sec
+BDD reordering with sifting: from 493 to ... 250 nodes in 0.009 sec
+BDD reordering with sifting: from 501 to ... 280 nodes in 0.012 sec
+BDD reordering with sifting: from 561 to ... 296 nodes in 0.015 sec
 Order before final reordering
 2 34 33 66 32 65 31 64 
 63 30 62 29 28 61 27 60 
@@ -17,7 +17,7 @@ Order before final reordering
 41 8 42 9 43 10 44 11 
 1 
 Number of inputs = 65
-BDD reordering with sifting: from 380 to ... 317 nodes in 0.01 sec
+BDD reordering with sifting: from 380 to ... 317 nodes in 0.012 sec
 New order
 1 2 34 66 33 65 32 64 
 31 63 30 62 29 61 28 60 
@@ -28,19 +28,19 @@ New order
 3 4 37 5 38 6 39 7 
 40 8 41 9 42 10 43 44 
 11 
-Building transition relation. Time = 0.05 sec
-BDD reordering with sifting: from 670 to ... 453 nodes in 0.03 sec
-@@BDD reordering with sifting: from 940 to ... 700 nodes in 0.02 sec
-@@BDD reordering with sifting: from 1433 to ... 832 nodes in 0.03 sec
-@@BDD reordering with sifting: from 1697 to ... 1063 nodes in 0.03 sec
-@@@BDD reordering with sifting: from 2159 to ... 786 nodes in 0.05 sec
-@@@@BDD reordering with sifting: from 1605 to ... 893 nodes in 0.03 sec
-@@@@BDD reordering with sifting: from 1819 to ... 951 nodes in 0.04 sec
-@@@@@BDD reordering with sifting: from 1935 to ... 965 nodes in 0.04 sec
-@@@@@BDD reordering with sifting: from 1963 to ... 1055 nodes in 0.05 sec
+Building transition relation. Time = 0.06 sec
+BDD reordering with sifting: from 670 to ... 453 nodes in 0.029 sec
+@@BDD reordering with sifting: from 940 to ... 700 nodes in 0.03 sec
+@@BDD reordering with sifting: from 1433 to ... 832 nodes in 0.039 sec
+@@BDD reordering with sifting: from 1697 to ... 1063 nodes in 0.045 sec
+@@@BDD reordering with sifting: from 2159 to ... 786 nodes in 0.049 sec
+@@@@BDD reordering with sifting: from 1605 to ... 893 nodes in 0.043 sec
+@@@@BDD reordering with sifting: from 1819 to ... 951 nodes in 0.048 sec
+@@@@@BDD reordering with sifting: from 1935 to ... 965 nodes in 0.055 sec
+@@@@@BDD reordering with sifting: from 1963 to ... 1055 nodes in 0.059 sec
 @@@@@
 Transition relation: 1 parts 32 latches 199 nodes
-Traversing. Time = 0.39 sec
+Traversing. Time = 0.46 sec
 S0: 33 nodes 1 leaves 1 minterms
 From[1]: 33 nodes 1 leaves 2.14748e+09 minterms
 Reached[1]: 2 nodes 1 leaves 2.14748e+09 minterms
@@ -211,48 +211,48 @@ Peak number of live nodes: 4004
 Number of BDD variables: 97
 Number of ZDD variables: 0
 Number of cache entries: 65536
-Number of cache look-ups: 48721
-Number of cache hits: 20856
-Number of cache insertions: 27820
-Number of cache collisions: 952
-Number of cache deletions: 20085
-Cache used slots = 17.69% (expected 10.30%)
+Number of cache look-ups: 48730
+Number of cache hits: 20857
+Number of cache insertions: 27828
+Number of cache collisions: 997
+Number of cache deletions: 20076
+Cache used slots = 17.56% (expected 10.31%)
 Soft limit for cache size: 100352
 Number of buckets in unique table: 25088
-Used buckets in unique table: 12.31% (expected 12.30%)
+Used buckets in unique table: 12.29% (expected 12.30%)
 Number of BDD and ADD nodes: 3533
 Number of ZDD nodes: 0
 Number of dead BDD and ADD nodes: 3186
 Number of dead ZDD nodes: 0
 Total number of nodes allocated: 23948
-Total number of nodes reclaimed: 3938
+Total number of nodes reclaimed: 3937
 Garbage collections so far: 15
-Time for garbage collection: 0.01 sec
+Time for garbage collection: 0.00 sec
 Reorderings so far: 15
-Time for reordering: 0.36 sec
+Time for reordering: 0.46 sec
 Final size: 275
-total time = 0.39 sec
+total time = 0.47 sec
 Runtime Statistics
 ------------------
 Machine name: jobim.colorado.edu
-User time      0.4 seconds
+User time      0.5 seconds
 System time    0.0 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
 Maximum resident size            =     0K
 
-Virtual text size                = 131782K
-Virtual data size                =   178K
-    data size initialized        =    39K
+Virtual text size                = 131815K
+Virtual data size                =   297K
+    data size initialized        =    25K
     data size uninitialized      =   137K
-    data size sbrk               =     2K
+    data size sbrk               =   135K
 Virtual memory limit             = 358400K (4194304K)
 
-Major page faults = 182
-Minor page faults = 1516
+Major page faults = 0
+Minor page faults = 1754
 Swaps = 0
 Input blocks = 0
 Output blocks = 0
-Context switch (voluntary) = 0
-Context switch (involuntary) = 0
+Context switch (voluntary) = 1
+Context switch (involuntary) = 21

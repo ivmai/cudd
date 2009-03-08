@@ -8,8 +8,8 @@
 # define MALLOC_IS_VOIDSTAR if your system's malloc is declared as a (void *)
 # otherwise, it is assumed to be a (char *). a "mall_t" is typedeffed in
 # mnemconf.h and mnemosyne.h to implement this.
-#OPTNS	=	-DMALLOC_IS_VOIDSTAR
-OPTNS	=
+OPTNS	=	-DMALLOC_IS_VOIDSTAR
+#OPTNS	=
 
 CC	= cc
 RANLIB	= ranlib

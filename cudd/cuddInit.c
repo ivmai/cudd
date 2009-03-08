@@ -79,7 +79,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddInit.c,v 1.32 2004/08/13 18:04:49 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddInit.c,v 1.33 2007/07/01 05:10:50 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -139,8 +139,8 @@ Cudd_Init(
     looseUpTo = (unsigned int) ((maxMemory / sizeof(DdNode)) /
 				DD_MAX_LOOSE_FRACTION);
     unique = cuddInitTable(numVars,numVarsZ,numSlots,looseUpTo);
-    unique->maxmem = (unsigned long) maxMemory / 10 * 9;
     if (unique == NULL) return(NULL);
+    unique->maxmem = (unsigned long) maxMemory / 10 * 9;
     maxCacheSize = (unsigned int) ((maxMemory / sizeof(DdCache)) /
 				   DD_MAX_CACHE_FRACTION);
     result = cuddInitCache(unique,cacheSize,maxCacheSize);

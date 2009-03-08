@@ -1,6 +1,6 @@
 # Nanotrav Version #0.12, Release date 2003/12/31
 # ./nanotrav -p 1 -envelope rcn25.blif
-# CUDD Version 2.4.0
+# CUDD Version 2.4.2
 Order before final reordering
 n0 n1 n2 n3 n4 n5 n6 n7 
 n8 n9 n10 n11 n12 n13 n14 n15 
@@ -474,15 +474,15 @@ Peak number of live nodes: 3171948
 Number of BDD variables: 50
 Number of ZDD variables: 0
 Number of cache entries: 4194304
-Number of cache look-ups: 53167646
-Number of cache hits: 30653407
-Number of cache insertions: 22514191
-Number of cache collisions: 15667088
-Number of cache deletions: 3484811
-Cache used slots = 97.85% (expected 98.41%)
+Number of cache look-ups: 53170021
+Number of cache hits: 30653976
+Number of cache insertions: 22515985
+Number of cache collisions: 15665382
+Number of cache deletions: 3483568
+Cache used slots = 97.84% (expected 98.41%)
 Soft limit for cache size: 7645866
 Number of buckets in unique table: 3677184
-Used buckets in unique table: 71.18% (expected 71.15%)
+Used buckets in unique table: 71.16% (expected 71.15%)
 Number of BDD and ADD nodes: 5843265
 Number of ZDD nodes: 0
 Number of dead BDD and ADD nodes: 4325974
@@ -490,32 +490,32 @@ Number of dead ZDD nodes: 0
 Total number of nodes allocated: 15264438
 Total number of nodes reclaimed: 7806126
 Garbage collections so far: 2
-Time for garbage collection: 2.26 sec
+Time for garbage collection: 2.38 sec
 Reorderings so far: 0
 Time for reordering: 0.00 sec
 Final size: 869
-total time = 67.78 sec
+total time = 66.53 sec
 Runtime Statistics
 ------------------
 Machine name: jobim.colorado.edu
-User time     67.8 seconds
-System time    0.9 seconds
+User time     66.5 seconds
+System time    0.6 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
 Maximum resident size            =     0K
 
-Virtual text size                = 131782K
-Virtual data size                =   206K
-    data size initialized        =    39K
+Virtual text size                = 131815K
+Virtual data size                =   297K
+    data size initialized        =    25K
     data size uninitialized      =   137K
-    data size sbrk               =    30K
+    data size sbrk               =   135K
 Virtual memory limit             = 358400K (4194304K)
 
-Major page faults = 3065
-Minor page faults = 93699
+Major page faults = 5
+Minor page faults = 80223
 Swaps = 0
 Input blocks = 0
 Output blocks = 0
-Context switch (voluntary) = 0
-Context switch (involuntary) = 0
+Context switch (voluntary) = 6
+Context switch (involuntary) = 1991

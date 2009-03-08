@@ -11,7 +11,7 @@ Cudd_AddHook()                 Adds a function to a hook.
 Cudd_ApaAdd()                  Adds two arbitrary precision integers.
 
 Cudd_ApaCompareRatios()        Compares the ratios of two arbitrary precision
-                               integers to two unsigned ints.
+                               integers to two   unsigned ints.
 
 Cudd_ApaCompare()              Compares two arbitrary precision integers.
 
@@ -23,7 +23,7 @@ Cudd_ApaIntDivision()          Divides an arbitrary precision integer by an
                                integer.
 
 Cudd_ApaNumberOfDigits()       Finds the number of digits for an arbitrary
-                               precision integer.
+                               precision   integer.
 
 Cudd_ApaPowerOfTwo()           Sets an arbitrary precision integer to a power
                                of two.
@@ -41,17 +41,17 @@ Cudd_ApaPrintHex()             Prints an arbitrary precision integer in
                                hexadecimal format.
 
 Cudd_ApaPrintMintermExp()      Prints the number of minterms of a BDD or ADD
-                               in exponential format using arbitrary precision
-                               arithmetic.
+                               in exponential   format using arbitrary
+                               precision arithmetic.
 
 Cudd_ApaPrintMinterm()         Prints the number of minterms of a BDD or ADD
-                               using arbitrary precision arithmetic.
+                               using   arbitrary precision arithmetic.
 
 Cudd_ApaSetToLiteral()         Sets an arbitrary precision integer to a one-
                                digit literal.
 
 Cudd_ApaShiftRight()           Shifts right an arbitrary precision integer by
-                               one binary place.
+                               one binary   place.
 
 Cudd_ApaShortDivision()        Divides an arbitrary precision integer by a
                                digit.
@@ -76,10 +76,10 @@ Cudd_BddToCubeArray()          Builds a positional array from the BDD of a
                                cube.
 
 Cudd_BiasedOverApprox()        Extracts a dense superset from a BDD with the
-                               biased underapproximation method.
+                               biased   underapproximation method.
 
 Cudd_BiasedUnderApprox()       Extracts a dense subset from a BDD with the
-                               biased underapproximation method.
+                               biased   underapproximation method.
 
 Cudd_CProjection()             Computes the compatible projection of R w.r.t.
                                cube Y.
@@ -88,7 +88,7 @@ Cudd_CheckKeys()               Checks for several conditions that should not
                                occur.
 
 Cudd_CheckZeroRef()            Checks the unique table for nodes with non-zero
-                               reference counts.
+                               reference   counts.
 
 Cudd_ClassifySupport()         Classifies the variables in the support of two
                                DDs.
@@ -96,11 +96,10 @@ Cudd_ClassifySupport()         Classifies the variables in the support of two
 Cudd_ClearErrorCode()          Clear the error code of a manager.
 
 Cudd_CofMinterm()              Computes the fraction of minterms in the on-set
-                               of all the positive cofactors of a BDD or ADD.
+                               of all the   positive cofactors of a BDD or
+                               ADD.
 
 Cudd_Cofactor()                Computes the cofactor of f with respect to g.
-
-Cudd_Complement()              Returns the complemented version of a pointer.
 
 Cudd_CountLeaves()             Counts the number of leaves in a DD.
 
@@ -117,7 +116,7 @@ Cudd_CubeArrayToBdd()          Builds the BDD of a cube from a positional
 Cudd_DagSize()                 Counts the number of nodes in a DD.
 
 Cudd_DeadAreCounted()          Tells whether dead nodes are counted towards
-                               triggering reordering.
+                               triggering   reordering.
 
 Cudd_DebugCheck()              Checks for inconsistencies in the DD heap.
 
@@ -135,6 +134,8 @@ Cudd_DisableGarbageCollection()
 
 Cudd_DisableReorderingReporting()
                                Disables reporting of reordering stats.
+
+Cudd_Disequality()             Generates a BDD for the function x - y != c.
 
 Cudd_DumpBlifBody()            Writes a blif body representing the argument
                                BDDs.
@@ -184,9 +185,7 @@ Cudd_Eval()                    Returns the value of a DD for a given variable
                                assignment.
 
 Cudd_ExpectedUsedSlots()       Computes the expected fraction of used slots in
-                               the unique table.
-
-Cudd_E()                       Returns the else child of an internal node.
+                               the unique   table.
 
 Cudd_FindEssential()           Finds the essential variables of a DD.
 
@@ -197,12 +196,6 @@ Cudd_FirstCube()               Finds the first cube of a decision diagram.
 Cudd_FirstNode()               Finds the first node of a decision diagram.
 
 Cudd_FirstPrime()              Finds the first prime of a Boolean function.
-
-Cudd_ForeachCube()             Iterates over the cubes of a decision diagram.
-
-Cudd_ForeachNode()             Iterates over the nodes of a decision diagram.
-
-Cudd_ForeachPrime()            Iterates over the primes of a Boolean function.
 
 Cudd_FreeTree()                Frees the variable group tree of the manager.
 
@@ -219,11 +212,9 @@ Cudd_Increasing()              Determines whether a BDD is positive unate in a
 Cudd_IndicesToCube()           Builds a cube of BDD variables from an array of
                                indices.
 
+Cudd_Inequality()              Generates a BDD for the function x - y &ge; c.
+
 Cudd_Init()                    Creates a new DD manager.
-
-Cudd_IsComplement()            Returns 1 if a pointer is complemented.
-
-Cudd_IsConstant()              Returns 1 if the node is a constant node.
 
 Cudd_IsGenEmpty()              Queries the status of a generator.
 
@@ -256,14 +247,10 @@ Cudd_NextPrime()               Generates the next prime of a Boolean function.
 
 Cudd_NodeReadIndex()           Returns the index of the node.
 
-Cudd_NotCond()                 Complements a DD if a condition is true.
-
-Cudd_Not()                     Complements a DD.
-
 Cudd_OutOfMem()                Warns that a memory allocation failed.
 
 Cudd_OverApprox()              Extracts a dense superset from a BDD with
-                               Shiple's underapproximation method.
+                               Shiple's   underapproximation method.
 
 Cudd_Prime()                   Returns the next prime >= p.
 
@@ -288,7 +275,7 @@ Cudd_Quit()                    Deletes resources associated with a DD manager.
 Cudd_Random()                  Portable random number generator.
 
 Cudd_ReadArcviolation()        Returns the current value of the arcviolation
-                               parameter used in group sifting.
+                               parameter used   in group sifting.
 
 Cudd_ReadBackground()          Reads the background constant of the manager.
 
@@ -315,14 +302,11 @@ Cudd_ReadGarbageCollections()  Returns the number of times garbage collection
 
 Cudd_ReadGroupcheck()          Reads the groupcheck parameter of the manager.
 
-Cudd_ReadIndex()               Returns the current position in the order of
-                               variable index.
-
 Cudd_ReadInvPermZdd()          Returns the index of the ZDD variable currently
-                               in the i-th position of the order.
+                               in the i-th   position of the order.
 
 Cudd_ReadInvPerm()             Returns the index of the variable currently in
-                               the i-th position of the order.
+                               the i-th   position of the order.
 
 Cudd_ReadIthClause()           Accesses the i-th clause of a DD.
 
@@ -355,7 +339,7 @@ Cudd_ReadMemoryInUse()         Returns the memory in use by the manager
 Cudd_ReadMinDead()             Reads the minDead parameter of the manager.
 
 Cudd_ReadMinHit()              Reads the hit rate that causes resizinig of the
-                               computed table.
+                               computed   table.
 
 Cudd_ReadMinusInfinity()       Reads the minus-infinity constant from the
                                manager.
@@ -370,7 +354,7 @@ Cudd_ReadNodesDropped()        Returns the number of nodes dropped.
 Cudd_ReadNodesFreed()          Returns the number of nodes freed.
 
 Cudd_ReadNumberXovers()        Reads the current number of crossovers used by
-                               the genetic algorithm for reordering.
+                               the   genetic algorithm for reordering.
 
 Cudd_ReadOne()                 Returns the one constant of the manager.
 
@@ -379,19 +363,19 @@ Cudd_ReadPeakLiveNodeCount()   Reports the peak number of live nodes.
 Cudd_ReadPeakNodeCount()       Reports the peak number of nodes.
 
 Cudd_ReadPermZdd()             Returns the current position of the i-th ZDD
-                               variable in the order.
+                               variable in the   order.
 
 Cudd_ReadPerm()                Returns the current position of the i-th
-                               variable in the order.
+                               variable in the   order.
 
 Cudd_ReadPlusInfinity()        Reads the plus-infinity constant from the
                                manager.
 
 Cudd_ReadPopulationSize()      Reads the current size of the population used
-                               by the genetic algorithm for reordering.
+                               by the   genetic algorithm for reordering.
 
 Cudd_ReadRecomb()              Returns the current value of the recombination
-                               parameter used in group sifting.
+                               parameter used   in group sifting.
 
 Cudd_ReadRecursiveCalls()      Returns the number of recursive calls.
 
@@ -420,7 +404,7 @@ Cudd_ReadSwapSteps()           Reads the number of elementary reordering
                                steps.
 
 Cudd_ReadSymmviolation()       Returns the current value of the symmviolation
-                               parameter used in group sifting.
+                               parameter used   in group sifting.
 
 Cudd_ReadTree()                Returns the variable group tree of the manager.
 
@@ -451,15 +435,13 @@ Cudd_RecursiveDeref()          Decreases the reference count of node n.
 Cudd_ReduceHeap()              Main dynamic reordering routine.
 
 Cudd_Ref()                     Increases the reference count of a node, if it
-                               is not saturated.
-
-Cudd_Regular()                 Returns the regular version of a pointer.
+                               is not   saturated.
 
 Cudd_RemapOverApprox()         Extracts a dense superset from a BDD with the
-                               remapping underapproximation method.
+                               remapping   underapproximation method.
 
 Cudd_RemapUnderApprox()        Extracts a dense subset from a BDD with the
-                               remapping underapproximation method.
+                               remapping   underapproximation method.
 
 Cudd_RemoveHook()              Removes a function from a hook.
 
@@ -470,10 +452,10 @@ Cudd_ReorderingStatusZdd()     Reports the status of automatic dynamic
                                reordering of ZDDs.
 
 Cudd_ReorderingStatus()        Reports the status of automatic dynamic
-                               reordering of BDDs and ADDs.
+                               reordering of BDDs   and ADDs.
 
 Cudd_SetArcviolation()         Sets the value of the arcviolation parameter
-                               used in group sifting.
+                               used   in group sifting.
 
 Cudd_SetBackground()           Sets the background constant of the manager.
 
@@ -496,7 +478,7 @@ Cudd_SetMaxLive()              Sets the maximum allowed number of live nodes.
 Cudd_SetMaxMemory()            Sets the maximum allowed memory.
 
 Cudd_SetMinHit()               Sets the hit rate that causes resizinig of the
-                               computed table.
+                               computed   table.
 
 Cudd_SetNextReordering()       Sets the threshold for the next dynamic
                                reordering.
@@ -508,7 +490,7 @@ Cudd_SetPopulationSize()       Sets the size of the population used by the
                                genetic algorithm for reordering.
 
 Cudd_SetRecomb()               Sets the value of the recombination parameter
-                               used in group sifting.
+                               used in group   sifting.
 
 Cudd_SetReorderingCycle()      Sets the reordCycle parameter of the manager.
 
@@ -521,7 +503,7 @@ Cudd_SetStderr()               Sets the stderr of a manager.
 Cudd_SetStdout()               Sets the stdout of a manager.
 
 Cudd_SetSymmviolation()        Sets the value of the symmviolation parameter
-                               used in group sifting.
+                               used   in group sifting.
 
 Cudd_SetTree()                 Sets the variable group tree of the manager.
 
@@ -554,20 +536,20 @@ Cudd_StdPreReordHook()         Sample hook function to call before reordering.
 Cudd_SubsetCompress()          Find a dense subset of BDD f.
 
 Cudd_SubsetHeavyBranch()       Extracts a dense subset from a BDD with the
-                               heavy branch heuristic.
+                               heavy branch   heuristic.
 
 Cudd_SubsetShortPaths()        Extracts a dense subset from a BDD with the
-                               shortest paths heuristic.
+                               shortest paths   heuristic.
 
 Cudd_SubsetWithMaskVars()      Extracts a subset from a BDD.
 
 Cudd_SupersetCompress()        Find a dense superset of BDD f.
 
 Cudd_SupersetHeavyBranch()     Extracts a dense superset from a BDD with the
-                               heavy branch heuristic.
+                               heavy branch   heuristic.
 
 Cudd_SupersetShortPaths()      Extracts a dense superset from a BDD with the
-                               shortest paths heuristic.
+                               shortest paths   heuristic.
 
 Cudd_SupportIndex()            Finds the variables on which a DD depends.
 
@@ -578,15 +560,13 @@ Cudd_Support()                 Finds the variables on which a DD depends.
 Cudd_SymmProfile()             Prints statistics on symmetric variables.
 
 Cudd_TurnOffCountDead()        Causes the dead nodes not to be counted towards
-                               triggering reordering.
+                               triggering   reordering.
 
 Cudd_TurnOnCountDead()         Causes the dead nodes to be counted towards
-                               triggering reordering.
-
-Cudd_T()                       Returns the then child of an internal node.
+                               triggering   reordering.
 
 Cudd_UnderApprox()             Extracts a dense subset from a BDD with
-                               Shiple's underapproximation method.
+                               Shiple's   underapproximation method.
 
 Cudd_VectorSupportIndex()      Finds the variables on which a set of DDs
                                depends.
@@ -598,8 +578,6 @@ Cudd_VectorSupport()           Finds the variables on which a set of DDs
                                depends.
 
 Cudd_VerifySol()               Checks the solution of F(x,y) = 0.
-
-Cudd_V()                       Returns the value of a constant node.
 
 Cudd_Xeqy()                    Generates a BDD for the function x==y.
 
@@ -613,7 +591,7 @@ Cudd_addApply()                Applies op to the corresponding discriminants
 Cudd_addBddInterval()          Converts an ADD to a BDD.
 
 Cudd_addBddIthBit()            Converts an ADD to a BDD by extracting the i-th
-                               bit from the leaves.
+                               bit from   the leaves.
 
 Cudd_addBddPattern()           Converts an ADD to a BDD.
 
@@ -652,7 +630,7 @@ Cudd_addGeneralVectorCompose() Composes an ADD with a vector of ADDs.
 Cudd_addHamming()              Computes the Hamming distance ADD.
 
 Cudd_addHarwell()              Reads in a matrix in the format of the Harwell-
-                               Boeing benchmark suite.
+                               Boeing   benchmark suite.
 
 Cudd_addIteConstant()          Implements ITEconstant for ADDs.
 
@@ -668,7 +646,7 @@ Cudd_addLeq()                  Determines whether f is less than or equal to
 Cudd_addLog()                  Natural logarithm of an ADD.
 
 Cudd_addMatrixMultiply()       Calculates the product of two matrices
-                               represented as ADDs.
+                               represented as   ADDs.
 
 Cudd_addMaximum()              Integer and floating point max.
 
@@ -694,7 +672,7 @@ Cudd_addNor()                  NOR of two 0-1 ADDs.
 Cudd_addOneZeroMaximum()       Returns 1 if f > g and 0 otherwise.
 
 Cudd_addOrAbstract()           Disjunctively abstracts all the variables in
-                               cube from the 0-1 ADD f.
+                               cube from the   0-1 ADD f.
 
 Cudd_addOr()                   Disjunction of two 0-1 ADDs.
 
@@ -708,10 +686,10 @@ Cudd_addPlus()                 Integer and floating point addition.
 Cudd_addRead()                 Reads in a sparse matrix.
 
 Cudd_addResidue()              Builds an ADD for the residue modulo m of an n-
-                               bit number.
+                               bit   number.
 
 Cudd_addRestrict()             ADD restrict according to Coudert and Madre's
-                               algorithm (ICCAD90).
+                               algorithm   (ICCAD90).
 
 Cudd_addRoundOff()             Rounds off the discriminants of an ADD.
 
@@ -721,17 +699,17 @@ Cudd_addSetNZ()                This operator sets f to the value of g wherever
                                g != 0.
 
 Cudd_addSwapVariables()        Swaps two sets of variables of the same size (x
-                               and y) in the ADD f.
+                               and y) in   the ADD f.
 
 Cudd_addThreshold()            f if f>=g; 0 if f<g.
 
 Cudd_addTimesPlus()            Calculates the product of two matrices
-                               represented as ADDs.
+                               represented as   ADDs.
 
 Cudd_addTimes()                Integer and floating point multiplication.
 
 Cudd_addTriangle()             Performs the triangulation step for the
-                               shortest path computation.
+                               shortest path   computation.
 
 Cudd_addUnivAbstract()         Universally Abstracts all the variables in cube
                                from f.
@@ -749,14 +727,14 @@ Cudd_addXor()                  XOR of two 0-1 ADDs.
 Cudd_bddAdjPermuteX()          Rearranges a set of variables in the BDD B.
 
 Cudd_bddAndAbstractLimit()     Takes the AND of two BDDs and simultaneously
-                               abstracts the variables in cube. Returns NULL
-                               if too many nodes are required.
+                               abstracts the   variables in cube.  Returns
+                               NULL if too many nodes are required.
 
 Cudd_bddAndAbstract()          Takes the AND of two BDDs and simultaneously
-                               abstracts the variables in cube.
+                               abstracts the   variables in cube.
 
 Cudd_bddAndLimit()             Computes the conjunction of two BDDs f and g.
-                               Returns NULL if too many nodes are required.
+                               Returns   NULL if too many nodes are required.
 
 Cudd_bddAnd()                  Computes the conjunction of two BDDs f and g.
 
@@ -775,8 +753,8 @@ Cudd_bddCharToVect()           Computes a vector whose image equals a non-zero
                                function.
 
 Cudd_bddClippingAndAbstract()  Approximates the conjunction of two BDDs f and
-                               g and simultaneously abstracts the variables in
-                               cube.
+                               g and   simultaneously abstracts the variables
+                               in cube.
 
 Cudd_bddClippingAnd()          Approximates the conjunction of two BDDs f and
                                g.
@@ -794,7 +772,7 @@ Cudd_bddConstrainDecomp()      BDD conjunctive decomposition as in McMillan's
 Cudd_bddConstrain()            Computes f constrain c.
 
 Cudd_bddCorrelationWeights()   Computes the correlation of f and g for given
-                               input probabilities.
+                               input   probabilities.
 
 Cudd_bddCorrelation()          Computes the correlation of f and g.
 
@@ -810,6 +788,9 @@ Cudd_bddGenDisjDecomp()        Performs two-way disjunctive decomposition of a
 Cudd_bddIntersect()            Returns a function included in the intersection
                                of f and g.
 
+Cudd_bddInterval()             Generates a BDD for the function lowerB &le; x
+                               &le; upperB.
+
 Cudd_bddIsNsVar()              Checks whether a variable is next state.
 
 Cudd_bddIsPiVar()              Checks whether a variable is primary input.
@@ -817,7 +798,7 @@ Cudd_bddIsPiVar()              Checks whether a variable is primary input.
 Cudd_bddIsPsVar()              Checks whether a variable is present state.
 
 Cudd_bddIsVarEssential()       Determines whether a given variable is
-                               essential with a given phase in a BDD.
+                               essential with a   given phase in a BDD.
 
 Cudd_bddIsVarHardGroup()       Checks whether a variable is set to be in a
                                hard group.
@@ -828,7 +809,7 @@ Cudd_bddIsVarToBeUngrouped()   Checks whether a variable is set to be
                                ungrouped.
 
 Cudd_bddIsop()                 Computes a BDD in the interval between L and U
-                               with a simple sum-of-produuct cover.
+                               with a   simple sum-of-produuct cover.
 
 Cudd_bddIteConstant()          Implements ITEconstant(f,g,h).
 
@@ -852,12 +833,12 @@ Cudd_bddLeq()                  Determines whether f is less than or equal to
 
 Cudd_bddLiteralSetIntersection()
                                Computes the intesection of two sets of
-                               literals represented as BDDs.
+                               literals   represented as BDDs.
 
 Cudd_bddMakePrime()            Expands cube to a prime implicant of f.
 
 Cudd_bddMinimize()             Finds a small BDD that agrees with
-                               f over c.
+                               f over   c.
 
 Cudd_bddNPAnd()                Computes f non-polluting-and g.
 
@@ -897,12 +878,12 @@ Cudd_bddRealignDisable()       Disables realignment of ZDD order to BDD order.
 Cudd_bddRealignEnable()        Enables realignment of BDD order to ZDD order.
 
 Cudd_bddRealignmentEnabled()   Tells whether the realignment of BDD order to
-                               ZDD order is enabled.
+                               ZDD order is   enabled.
 
 Cudd_bddResetVarToBeGrouped()  Resets a variable not to be grouped.
 
 Cudd_bddRestrict()             BDD restrict according to Coudert and Madre's
-                               algorithm (ICCAD90).
+                               algorithm   (ICCAD90).
 
 Cudd_bddSetNsVar()             Sets a variable type to next state.
 
@@ -922,7 +903,7 @@ Cudd_bddSetVarToBeUngrouped()  Sets a variable to be ungrouped.
 Cudd_bddSqueeze()              Finds a small BDD in a function interval.
 
 Cudd_bddSwapVariables()        Swaps two sets of variables of the same size (x
-                               and y) in the BDD f.
+                               and y) in   the BDD f.
 
 Cudd_bddTransfer()             Convert a BDD from a manager to another one.
 
@@ -940,7 +921,7 @@ Cudd_bddVarDisjDecomp()        Performs two-way disjunctive decomposition of a
 Cudd_bddVarIsBound()           Tells whether a variable can be sifted.
 
 Cudd_bddVarIsDependent()       Checks whether a variable is dependent on
-                               others in a function.
+                               others in a   function.
 
 Cudd_bddVarMap()               Remaps the variables of a BDD using the default
                                variable map.
@@ -950,7 +931,8 @@ Cudd_bddVectorCompose()        Composes a BDD with a vector of BDDs.
 Cudd_bddXnor()                 Computes the exclusive NOR of two BDDs f and g.
 
 Cudd_bddXorExistAbstract()     Takes the exclusive OR of two BDDs and
-                               simultaneously abstracts the variables in cube.
+                               simultaneously abstracts the   variables in
+                               cube.
 
 Cudd_bddXor()                  Computes the exclusive OR of two BDDs f and g.
 
@@ -985,8 +967,6 @@ Cudd_zddDumpDot()              Writes a dot file representing the argument
                                ZDDs.
 
 Cudd_zddFirstPath()            Finds the first path of a ZDD.
-
-Cudd_zddForeachPath()          Iterates over the paths of a ZDD.
 
 Cudd_zddIntersect()            Computes the intersection of two ZDDs.
 
@@ -1023,7 +1003,7 @@ Cudd_zddRealignDisable()       Disables realignment of ZDD order to BDD order.
 Cudd_zddRealignEnable()        Enables realignment of ZDD order to BDD order.
 
 Cudd_zddRealignmentEnabled()   Tells whether the realignment of ZDD order to
-                               BDD order is enabled.
+                               BDD order is   enabled.
 
 Cudd_zddReduceHeap()           Main dynamic reordering routine for ZDDs.
 
@@ -1510,14 +1490,6 @@ Cudd_Cofactor(
 
   Side Effects: None
 
-
-Cudd_Complement(
-                    node
-)
-  Returns the complemented version of a pointer.
-
-  Side Effects: none
-
 int
 Cudd_CountLeaves(
   DdNode *          node
@@ -1677,6 +1649,22 @@ Cudd_DisableReorderingReporting(
   Side Effects: Removes functions from the pre-reordering and post-reordering
   hooks.
 
+DdNode *
+Cudd_Disequality(
+  DdManager *       dd,              DD manager
+  int               N,               number of x and y variables
+  int               c,               right-hand side constant
+  DdNode **         x,               array of x variables
+  DdNode **         y                array of y variables
+)
+  This function generates a BDD for the function x -y != c. Both x and y are
+  N-bit numbers, x[0] x[1] ... x[N-1] and y[0] y[1] ... y[N-1], with 0 the
+  most significant bit. The BDD is built bottom-up. It has a linear number of
+  nodes if the variables are ordered as follows: x[0] y[0] x[1] y[1] ... x[N-
+  1] y[N-1].
+
+  Side Effects: None
+
 int
 Cudd_DumpBlifBody(
   DdManager *       dd,              manager
@@ -1684,7 +1672,8 @@ Cudd_DumpBlifBody(
   DdNode **         f,               array of output nodes to be dumped
   char **           inames,          array of input names (or NULL)
   char **           onames,          array of output names (or NULL)
-  FILE *            fp               pointer to the dump file
+  FILE *            fp,              pointer to the dump file
+  int               mv               0: blif, 1: blif-MV
 )
   Writes a blif body representing the argument BDDs as a network of
   multiplexers. No header (.model, .inputs, and .outputs) and footer (.end)
@@ -1707,7 +1696,8 @@ Cudd_DumpBlif(
   char **           inames,          array of input names (or NULL)
   char **           onames,          array of output names (or NULL)
   char *            mname,           model name (or NULL)
-  FILE *            fp               pointer to the dump file
+  FILE *            fp,              pointer to the dump file
+  int               mv               0: blif, 1: blif-MV
 )
   Writes a blif file representing the argument BDDs as a network of
   multiplexers. One multiplexer is written for each BDD node. It returns 1 in
@@ -1955,15 +1945,6 @@ Cudd_ExpectedUsedSlots(
 
   Side Effects: None
 
-
-Cudd_E(
-                    node
-)
-  Returns the else child of an internal node. If node is a
-  constant node, the result is unpredictable.
-
-  Side Effects: none
-
 DdNode *
 Cudd_FindEssential(
   DdManager *       dd,
@@ -2051,70 +2032,6 @@ Cudd_FirstPrime(
 
   Side Effects: The first cube is returned as side effect.
 
-
-Cudd_ForeachCube(
-                    manager,
-                    f,
-                    gen,
-                    cube,
-                    value
-)
-  Iterates over the cubes of a decision diagram f.   DdManager
-  *manager;  DdNode *f;  DdGen *gen;  int *cube; 
-  CUDD_VALUE_TYPE value;  Cudd_ForeachCube allocates and frees the
-  generator. Therefore the application should not try to do that. Also, the
-  cube is freed at the end of Cudd_ForeachCube and hence is not available
-  outside of the loop. CAUTION: It is assumed that dynamic reordering will
-  not occur while there are open generators. It is the user's responsibility
-  to make sure that dynamic reordering does not occur. As long as new nodes
-  are not created during generation, and dynamic reordering is not called
-  explicitly, dynamic reordering will not occur. Alternatively, it is
-  sufficient to disable dynamic reordering. It is a mistake to dispose of a
-  diagram on which generation is ongoing.
-
-  Side Effects: none
-
-
-Cudd_ForeachNode(
-                    manager,
-                    f,
-                    gen,
-                    node
-)
-  Iterates over the nodes of a decision diagram f.   DdManager
-  *manager;  DdNode *f;  DdGen *gen;  DdNode *node;  The
-  nodes are returned in a seemingly random order. Cudd_ForeachNode allocates
-  and frees the generator. Therefore the application should not try to do
-  that. CAUTION: It is assumed that dynamic reordering will not occur while
-  there are open generators. It is the user's responsibility to make sure that
-  dynamic reordering does not occur. As long as new nodes are not created
-  during generation, and dynamic reordering is not called explicitly, dynamic
-  reordering will not occur. Alternatively, it is sufficient to disable
-  dynamic reordering. It is a mistake to dispose of a diagram on which
-  generation is ongoing.
-
-  Side Effects: none
-
-
-Cudd_ForeachPrime(
-                    manager,
-                    l,
-                    u,
-                    gen,
-                    cube
-)
-  Iterates over the primes of a Boolean function producing a prime and
-  irredundant cover.   DdManager *manager;  DdNode *l;  DdNode
-  *u;  DdGen *gen;  int *cube;  The Boolean function is described
-  by an upper bound and a lower bound. If the function is completely
-  specified, the two bounds coincide. Cudd_ForeachPrime allocates and frees
-  the generator. Therefore the application should not try to do that. Also,
-  the cube is freed at the end of Cudd_ForeachPrime and hence is not available
-  outside of the loop. CAUTION: It is a mistake to change a diagram on
-  which generation is ongoing.
-
-  Side Effects: none
-
 void
 Cudd_FreeTree(
   DdManager *       dd
@@ -2172,6 +2089,22 @@ Cudd_IndicesToCube(
 
   Side Effects: None
 
+DdNode *
+Cudd_Inequality(
+  DdManager *       dd,              DD manager
+  int               N,               number of x and y variables
+  int               c,               right-hand side constant
+  DdNode **         x,               array of x variables
+  DdNode **         y                array of y variables
+)
+  This function generates a BDD for the function x -y &ge; c. Both x and y are
+  N-bit numbers, x[0] x[1] ... x[N-1] and y[0] y[1] ... y[N-1], with 0 the
+  most significant bit. The BDD is built bottom-up. It has a linear number of
+  nodes if the variables are ordered as follows: x[0] y[0] x[1] y[1] ... x[N-
+  1] y[N-1].
+
+  Side Effects: None
+
 DdManager *
 Cudd_Init(
   unsigned int      numVars,         initial number of BDD variables (i.e.,
@@ -2189,24 +2122,6 @@ Cudd_Init(
   successful; NULL otherwise.
 
   Side Effects: None
-
-
-Cudd_IsComplement(
-                    node
-)
-  Returns 1 if a pointer is complemented.
-
-  Side Effects: none
-
-
-Cudd_IsConstant(
-                    node
-)
-  Returns 1 if the node is a constant node (rather than an internal node). All
-  constant nodes have the same index (CUDD_CONST_INDEX). The pointer passed to
-  Cudd_IsConstant may be either regular or complemented.
-
-  Side Effects: none
 
 int
 Cudd_IsGenEmpty(
@@ -2377,26 +2292,6 @@ Cudd_NodeReadIndex(
   complemented.
 
   Side Effects: None
-
-
-Cudd_NotCond(
-                    node,
-                    c
-)
-  Complements a DD if condition c is true; c should be either 0 or 1, because
-  it is used directly (for efficiency). If in doubt on the values c may take,
-  use "(c) ? Cudd_Not(node) : node".
-
-  Side Effects: none
-
-
-Cudd_Not(
-                    node
-)
-  Complements a DD by flipping the complement attribute of the pointer (the
-  least significant bit).
-
-  Side Effects: none
 
 void
 Cudd_OutOfMem(
@@ -2686,17 +2581,6 @@ Cudd_ReadGroupcheck(
   determines the aggregation criterion in group sifting.
 
   Side Effects: None
-
-
-Cudd_ReadIndex(
-                    dd,
-                    index
-)
-  Returns the current position in the order of variable index. This macro is
-  obsolete and is kept for compatibility. New applications should use
-  Cudd_ReadPerm instead.
-
-  Side Effects: none
 
 int
 Cudd_ReadInvPermZdd(
@@ -3264,14 +3148,6 @@ Cudd_Ref(
 
   Side Effects: None
 
-
-Cudd_Regular(
-                    node
-)
-  Returns the regular version of a pointer.
-
-  Side Effects: none
-
 DdNode *
 Cudd_RemapOverApprox(
   DdManager *       dd,              manager
@@ -3664,7 +3540,8 @@ Cudd_ShortestLength(
   Find the length of the shortest path(s) in a DD. f is the DD we want to get
   the shortest path for; weight[i] is the weight of the THEN edge coming from
   the node whose index is i. All ELSE edges have 0 weight. Returns the length
-  of the shortest path(s) if successful; CUDD_OUT_OF_MEM otherwise.
+  of the shortest path(s) if such a path is found; a large number if the
+  function is identically 0, and CUDD_OUT_OF_MEM in case of failure.
 
   Side Effects: None
 
@@ -3989,15 +3866,6 @@ Cudd_TurnOnCountDead(
 
   Side Effects: Changes the manager.
 
-
-Cudd_T(
-                    node
-)
-  Returns the then child of an internal node. If node is a
-  constant node, the result is unpredictable.
-
-  Side Effects: none
-
 DdNode *
 Cudd_UnderApprox(
   DdManager *       dd,              manager
@@ -4069,15 +3937,6 @@ Cudd_VerifySol(
   components for the unknowns of F and returns the resulting BDD for F.
 
   Side Effects: Frees the memory pointed by yIndex.
-
-
-Cudd_V(
-                    node
-)
-  Returns the value of a constant node. If node is an internal
-  node, the result is unpredictable.
-
-  Side Effects: none
 
 DdNode *
 Cudd_Xeqy(
@@ -5262,6 +5121,23 @@ Cudd_bddIntersect(
 
   Side Effects: None
 
+DdNode *
+Cudd_bddInterval(
+  DdManager *       dd,              DD manager
+  int               N,               number of x variables
+  DdNode **         x,               array of x variables
+  unsigned int      lowerB,          lower bound
+  unsigned int      upperB           upper bound
+)
+  This function generates a BDD for the function lowerB &le; x &le; upperB,
+  where x is an N-bit number, x[0] x[1] ... x[N-1], with 0 the most
+  significant bit (important!). The number of variables N should be sufficient
+  to represent the bounds; otherwise, the bounds are truncated to their N
+  least significant bits. Two BDDs are built bottom-up for lowerB &le; x and x
+  &le; upperB, and they are finally conjoined.
+
+  Side Effects: None
+
 int
 Cudd_bddIsNsVar(
   DdManager *       dd,
@@ -6192,27 +6068,6 @@ Cudd_zddFirstPath(
   in the empty terminal are not enumerated.
 
   Side Effects: The first path is returned as a side effect.
-
-
-Cudd_zddForeachPath(
-                    manager,
-                    f,
-                    gen,
-                    path
-)
-  Iterates over the paths of a ZDD f.   DdManager *manager; 
-  DdNode *f;  DdGen *gen;  int *path;  Cudd_zddForeachPath
-  allocates and frees the generator. Therefore the application should not try
-  to do that. Also, the path is freed at the end of Cudd_zddForeachPath and
-  hence is not available outside of the loop. CAUTION: It is assumed that
-  dynamic reordering will not occur while there are open generators. It is the
-  user's responsibility to make sure that dynamic reordering does not occur.
-  As long as new nodes are not created during generation, and dynamic
-  reordering is not called explicitly, dynamic reordering will not occur.
-  Alternatively, it is sufficient to disable dynamic reordering. It is a
-  mistake to dispose of a diagram on which generation is ongoing.
-
-  Side Effects: none
 
 DdNode *
 Cudd_zddIntersect(

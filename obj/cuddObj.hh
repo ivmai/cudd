@@ -46,7 +46,7 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.]
 
-  Revision    [$Id: cuddObj.hh,v 1.8 2004/08/24 19:56:19 fabio Exp fabio $]
+  Revision    [$Id: cuddObj.hh,v 1.11 2009/02/21 19:41:38 fabio Exp fabio $]
 
 ******************************************************************************/
 
@@ -111,6 +111,7 @@ public:
     DD(Cudd *ddManager, DdNode *ddNode);
     DD();
     DD(const DD &from);
+    virtual ~DD();
     Cudd *manager() const;
     inline DdNode * getNode() const;
     int nodeCount() const;
@@ -626,6 +627,9 @@ public:
     ADD Xeqy(ADDvector x, ADDvector y);
     BDD Dxygtdxz(BDDvector x, BDDvector y, BDDvector z);
     BDD Dxygtdyz(BDDvector x, BDDvector y, BDDvector z);
+    BDD Inequality(int c, BDDvector x, BDDvector y);
+    BDD Disequality(int c, BDDvector x, BDDvector y);
+    BDD Interval(BDDvector x, unsigned int lowerB, unsigned int upperB);
     ADD Hamming(ADDvector xVars, ADDvector yVars);
     // void Read(FILE * fp, ADD* E, ADD** x, ADD** y, ADD** xn, ADD** yn_, int * nx, int * ny, int * m, int * n, int bx, int sx, int by, int sy);
     // void Read(FILE * fp, BDD* E, BDD** x, BDD** y, int * nx, int * ny, int * m, int * n, int bx, int sx, int by, int sy);
@@ -687,7 +691,8 @@ public:
       char ** inames = 0,
       char ** onames = 0,
       char * mname = 0,
-      FILE * fp = stdout) const;
+      FILE * fp = stdout,
+      int mv = 0) const;
     void DumpDDcal(char ** inames = 0, char ** onames = 0, FILE * fp = stdout)
 	const;
     void DumpFactoredForm(

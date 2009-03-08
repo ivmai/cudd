@@ -24,7 +24,7 @@
 /* ARGSUSED */
 int
 util_pipefork(
-  char **argv,		/* normal argv argument list */
+  char * const *argv,		/* normal argv argument list */
   FILE **toCommand,	/* pointer to the sending stream */
   FILE **fromCommand,	/* pointer to the reading stream */
   int *pid)

@@ -1,6 +1,6 @@
 # Nanotrav Version #0.12, Release date 2003/12/31
 # ./nanotrav -p 1 -trav s27.blif
-# CUDD Version 2.4.0
+# CUDD Version 2.4.2
 Order before final reordering
 G0 G1 G2 G3 G5 G6 G7 
 Number of inputs = 7
@@ -79,17 +79,17 @@ Average resident text size       =     0K
 Average resident data+stack size =     0K
 Maximum resident size            =     0K
 
-Virtual text size                = 131782K
-Virtual data size                =   226K
-    data size initialized        =    39K
+Virtual text size                = 131815K
+Virtual data size                =   297K
+    data size initialized        =    25K
     data size uninitialized      =   137K
-    data size sbrk               =    50K
+    data size sbrk               =   135K
 Virtual memory limit             = 358400K (4194304K)
 
-Major page faults = 174
-Minor page faults = 1193
+Major page faults = 0
+Minor page faults = 1424
 Swaps = 0
 Input blocks = 0
 Output blocks = 0
-Context switch (voluntary) = 0
+Context switch (voluntary) = 1
 Context switch (involuntary) = 0

@@ -98,7 +98,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddZddFuncs.c,v 1.14 2004/08/13 18:04:53 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddZddFuncs.c,v 1.16 2008/04/25 07:39:33 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -1345,7 +1345,7 @@ cuddZddDivideF(
   Synopsis    [Computes the three-way decomposition of f w.r.t. v.]
 
   Description [Computes the three-way decomposition of function f (represented
-  by a ZDD) wit respect to variable v.]
+  by a ZDD) wit respect to variable v.  Returns 0 if successful; 1 otherwise.]
 
   SideEffects [The results are returned in f1, f0, and fd.]
 
@@ -1441,7 +1441,7 @@ cuddZddGetCofactors3(
 	    if (*f1 == NULL) {
 		Cudd_RecursiveDerefZdd(dd, pc);
 		Cudd_RecursiveDerefZdd(dd, nc);
-		Cudd_RecursiveDerefZdd(dd, *f1);
+		Cudd_RecursiveDerefZdd(dd, *f0);
 		return(1);
 	    }
 	    Cudd_Ref(*f1);

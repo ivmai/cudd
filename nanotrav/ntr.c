@@ -67,7 +67,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntr.c,v 1.25 2004/08/13 18:28:28 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: ntr.c,v 1.27 2009/02/21 06:00:31 fabio Exp fabio $";
 #endif
 
 static const char *onames[] = { "T", "R" };	/* names of functions to be dumped */
@@ -91,7 +91,7 @@ static DdNode * makecube (DdManager *dd, DdNode **x, int n);
 static void ntrInitializeCount (BnetNetwork *net, NtrOptions *option);
 static void ntrCountDFS (BnetNetwork *net, BnetNode *node);
 static DdNode * ntrImage (DdManager *dd, NtrPartTR *TR, DdNode *from, NtrOptions *option);
-static DdNode * ntrPreimage (DdManager *dd, NtrPartTR *T, DdNode *from, NtrOptions *option);
+static DdNode * ntrPreimage (DdManager *dd, NtrPartTR *T, DdNode *from);
 static DdNode * ntrChooseFrom (DdManager *dd, DdNode *neW, DdNode *reached, NtrOptions *option);
 static DdNode * ntrUpdateReached (DdManager *dd, DdNode *oldreached, DdNode *to);
 static int ntrLatchDependencies (DdManager *dd, DdNode *reached, BnetNetwork *net, NtrOptions *option);
@@ -217,7 +217,7 @@ Ntr_buildDDs(
     /* Currently noBuild doesn't do much. */
     if (option->noBuild == TRUE)
 	return(1);
-    
+
     if (option->locGlob == BNET_LOCAL_DD) {
 	node = net->nodes;
 	while (node != NULL) {
@@ -666,7 +666,7 @@ Ntr_freeTR(
     }
     Ntr_FreeHeap(TR->factors);
     FREE(TR);
-    
+
     return;
 
 } /* end of Ntr_freeTR */
@@ -1071,7 +1071,7 @@ Ntr_SCC(
 	/* Start backward traversal. */
 	for (depth = 0; ; depth++) {
 	    /* Preimage computation. */
-	    to = ntrPreimage(dd,TR,from,option);
+	    to = ntrPreimage(dd,TR,from);
 	    if (to == NULL) {
 		return(0);
 	    }
@@ -1485,7 +1485,7 @@ Ntr_getStateCube(
     if (filename == NULL) {
 	/* Pick one random minterm. */
 	for (i = 0; i < net->nlatches; i++) {
-	    state[i] = (Cudd_Random() & 0x2000) ? '1' : '0';
+	    state[i] = (char) ((Cudd_Random() & 0x2000) ? '1' : '0');
 	}
     } else {
 	if ((fp = fopen(filename,"r")) == NULL) {
@@ -1575,7 +1575,7 @@ Ntr_Envelope(
     int ns;	/* number of x and y variables */
     DdNode *dfunc[2];	/* addresses of the functions to be dumped */
     DdNode *envelope, *oldEnvelope;
-    DdNode *one, *zero;
+    DdNode *one;
     int depth;
     int retval;
     int pr = option->verb;
@@ -1586,7 +1586,6 @@ Ntr_Envelope(
     ns = TR->nlatches;
 
     one = Cudd_ReadOne(dd);
-    zero = Cudd_Not(one);
     retval = Cudd_SetVarMap(dd,x,y,ns);
 
     /* Initialize From. */
@@ -1626,7 +1625,7 @@ Ntr_Envelope(
 	dfunc[0] = TR->part[0];
 	dfunc[1] = envelope;
 	if (dumpFmt == 1) {
-	    retval = Cudd_DumpBlif(dd,2,dfunc,NULL,(char **)onames,NULL,dfp);
+	    retval = Cudd_DumpBlif(dd,2,dfunc,NULL,(char **)onames,NULL,dfp,0);
 	} else if (dumpFmt == 2) {
 	    retval = Cudd_DumpDaVinci(dd,2,dfunc,NULL,(char **)onames,dfp);
 	} else if (dumpFmt == 3) {
@@ -1634,6 +1633,8 @@ Ntr_Envelope(
 	} else if (dumpFmt == 4) {
 	    retval = Cudd_DumpFactoredForm(dd,2,dfunc,NULL,
 					   (char **)onames,dfp);
+	} else if (dumpFmt == 5) {
+	    retval = Cudd_DumpBlif(dd,2,dfunc,NULL,(char **)onames,NULL,dfp,1);
 	} else {
 	    retval = Cudd_DumpDot(dd,2,dfunc,NULL,(char **)onames,dfp);
 	}
@@ -2060,8 +2061,7 @@ static DdNode *
 ntrPreimage(
   DdManager * dd,
   NtrPartTR * T,
-  DdNode * from,
-  NtrOptions * option)
+  DdNode * from)
 {
     int i;
     DdNode *preimage;
@@ -2159,14 +2159,14 @@ ntrChooseFrom(
     case NTR_FROM_UNDERAPPROX:
 	threshold = (option->threshold < 0) ? 0 : option->threshold;
 	min = Cudd_RemapUnderApprox(dd,neW,Cudd_SupportSize(dd,neW),
-		0,option->quality);
+		threshold,option->quality);
 	if (min == NULL) return(NULL);
 	Cudd_Ref(min);
 	return(min);
     case NTR_FROM_OVERAPPROX:
 	threshold = (option->threshold < 0) ? 0 : option->threshold;
 	min = Cudd_RemapOverApprox(dd,neW,Cudd_SupportSize(dd,neW),
-		0,option->quality);
+		threshold,option->quality);
 	if (min == NULL) return(NULL);
 	Cudd_Ref(min);
 	return(min);
@@ -2372,7 +2372,7 @@ ntrLatchDependencies(
     }
     FREE(roots);
     FREE(onames);
-    
+
     initVars = net->nlatches;
     initStates = Cudd_CountMinterm(dd,reached,initVars);
     finalVars = initVars - howMany;
@@ -2506,9 +2506,9 @@ ntrEliminateDependencies(
     FREE(candidates);
 
     if (pr > 0) {
-        finalSize = Cudd_SharingSize(T->part,T->nparts);
-        (void) printf("Eliminated %d vars. Transition function %d nodes.\n",
-                      howMany,finalSize);
+	finalSize = Cudd_SharingSize(T->part,T->nparts);
+	(void) printf("Eliminated %d vars. Transition function %d nodes.\n",
+		      howMany,finalSize);
     }
 
     if (!ntrUpdateQuantificationSchedule(dd,T)) return(NULL);
@@ -2580,7 +2580,6 @@ ntrUpdateQuantificationSchedule(
     extracted = 0;
     for (i = 0; i < nparts - 1; i += j) {
 	int pi, pij;
-	DdNode *tmp;
 	DdNode *eq;
 	j = 1;
 	pi = position[i];
@@ -2689,7 +2688,7 @@ ntrUpdateQuantificationSchedule(
 	** a variable whose flag is 1, we know that the row being sifted
 	** is no longer responsible for that variable. */
 	for (k = 0; k < nvars; k++) {
-	    flags[k] = schedule[k] == i;
+	    flags[k] = (char) (schedule[k] == i);
 	}
 	for (j = posn - 1; j >= 0; j--) {
 	    for (k = 0; k < nvars; k++) {
@@ -2709,7 +2708,7 @@ ntrUpdateQuantificationSchedule(
 	/* Reinitialize the flags. (We are implicitly undoing the sift
 	** down step.) */
 	for (k = 0; k < nvars; k++) {
-	    flags[k] = schedule[k] == i;
+	    flags[k] = (char) (schedule[k] == i);
 	}
 	for (j = posn + 1; j < nparts; j++) {
 	    for (k = 0; k < nvars; k++) {

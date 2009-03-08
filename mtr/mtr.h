@@ -52,7 +52,7 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.]
 
-  Revision    [$Id: mtr.h,v 1.13 2004/08/13 18:15:11 fabio Exp $]
+  Revision    [$Id: mtr.h,v 1.14 2009/02/20 02:03:47 fabio Exp $]
 
 ******************************************************************************/
 
@@ -96,10 +96,10 @@ extern "C" {
 #define MTR_INLINE
 #define MTR_UNUSED
 #endif
- 
+
 /* Flag definitions */
 #define MTR_DEFAULT	0x00000000
-#define MTR_TERMINAL 	0x00000001
+#define MTR_TERMINAL	0x00000001
 #define MTR_SOFT	0x00000002
 #define MTR_FIXED	0x00000004
 #define MTR_NEWNODE	0x00000008

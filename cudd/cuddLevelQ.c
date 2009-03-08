@@ -98,7 +98,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddLevelQ.c,v 1.12 2004/08/13 18:04:49 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddLevelQ.c,v 1.13 2009/03/08 02:49:02 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -119,7 +119,7 @@ static char rcsid[] DD_UNUSED = "$Id: cuddLevelQ.c,v 1.12 2004/08/13 18:04:49 fa
 ******************************************************************************/
 #if SIZEOF_VOID_P == 8 && SIZEOF_INT == 4
 #define lqHash(key,shift) \
-(((unsigned)(unsigned long)(key) * DD_P1) >> (shift))
+(((unsigned)(ptruint)(key) * DD_P1) >> (shift))
 #else
 #define lqHash(key,shift) \
 (((unsigned)(key) * DD_P1) >> (shift))

@@ -14,14 +14,14 @@
 		<li> cuddExact()
 		</ul>
 	Static procedures included in this module:
-		<ul> 
-                <li> getMaxBinomial()
+		<ul>
+		<li> getMaxBinomial()
 		<li> gcd()
-                <li> getMatrix()
+		<li> getMatrix()
 		<li> freeMatrix()
-                <li> getLevelKeys()
-                <li> ddShuffle()
-                <li> ddSiftUp()
+		<li> getLevelKeys()
+		<li> ddShuffle()
+		<li> ddSiftUp()
 		<li> updateUB()
 		<li> ddCountRoots()
 		<li> ddClearGlobal()
@@ -29,7 +29,7 @@
 		<li> updateEntry()
 		<li> pushDown()
 		<li> initSymmInfo()
-                </ul>]
+		</ul>]
 
   Author      [Cheng Hua, Fabio Somenzi]
 
@@ -88,7 +88,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddExact.c,v 1.26 2004/08/13 18:04:48 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddExact.c,v 1.28 2009/02/19 16:19:19 fabio Exp $";
 #endif
 
 #ifdef DD_STATS
@@ -252,7 +252,7 @@ cuddExact(
 
     /* Now consider subsets of increasing size. */
     for (k = 1; k <= size; k++) {
-#if DD_STATS
+#ifdef DD_STATS
 	(void) fprintf(table->out,"Processing subsets of size %d\n", k);
 	fflush(table->out);
 #endif
@@ -401,7 +401,7 @@ gcd(
     if (y == 0) return(x);
 
     a = x; b = y; lsbMask = 1;
-    
+
     /* Here both a and b are != 0. The iteration maintains this invariant.
     ** Hence, we only need to check for when they become equal.
     */
@@ -455,7 +455,10 @@ getMatrix(
     matrix = ALLOC(DdHalfWord *, rows);
     if (matrix == NULL) return(NULL);
     matrix[0] = ALLOC(DdHalfWord, cols*rows);
-    if (matrix[0] == NULL) return(NULL);
+    if (matrix[0] == NULL) {
+	FREE(matrix);
+	return(NULL);
+    }
     for (i = 1; i < rows; i++) {
 	matrix[i] = matrix[i-1] + cols;
     }
@@ -1015,4 +1018,3 @@ checkSymmInfo(
     return(1);
 
 } /* end of checkSymmInfo */
-

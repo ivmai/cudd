@@ -1,4 +1,4 @@
-.\" $Id: nanotrav.1,v 1.22 2004/03/06 03:42:09 fabio Exp fabio $
+.\" $Id: nanotrav.1,v 1.23 2009/02/21 06:00:31 fabio Exp fabio $
 .\"
 .TH NANOTRAV 1 "18 June 2002" "Release 0.11"
 .SH NAME
@@ -132,7 +132,7 @@ test BDD approximation functions.
 .TP 10
 .B \-approx \fImethod\fB
 if \fImethod\fR is \fIunder\fR (default) perform underapproximation
-when BDDs are approximated. If \fImethod\fR is \fIover\fR perform 
+when BDDs are approximated. If \fImethod\fR is \fIover\fR perform
 overapproximation when BDDs are approximated.
 .TP 10
 .B \-threshold \fIn\fB
@@ -204,6 +204,10 @@ use blif format for dump of BDDs (default is dot format). If blif is
 used, the BDDs are dumped as a network of multiplexers. The dot format
 is suitable for input to the dot program, which produces a
 drawing of the BDDs.
+.TP 10
+.B \-dumpmv
+use blif-MV format for dump of BDDs.  The BDDs are dumped as a network
+of multiplexers.
 .TP 10
 .B \-dumpdaVinci
 use daVinci format for dump of BDDs.

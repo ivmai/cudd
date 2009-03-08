@@ -94,7 +94,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddBridge.c,v 1.18 2004/08/13 18:04:46 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddBridge.c,v 1.19 2008/04/25 06:42:55 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -466,8 +466,8 @@ cuddBddTransfer(
     return(res);
 
 failure:
+    /* No need to free gen because it is always NULL here. */
     if (table != NULL) st_free_table(table);
-    if (gen != NULL) st_free_gen(gen);
     return(NULL);
 
 } /* end of cuddBddTransfer */
@@ -969,7 +969,7 @@ cuddBddTransferRecur(
     /* Now f is a regular pointer to a non-constant node. */
 
     /* Check the cache. */
-    if(st_lookup(table, f, &res))
+    if (st_lookup(table, f, &res))
 	return(Cudd_NotCond(res,comple));
     
     /* Recursive step. */

@@ -4,7 +4,7 @@
 
   PackageName [cudd]
 
-  Synopsis    [.]
+  Synopsis    [Miscellaneous utility functions for ZDDs.]
 
   Description [External procedures included in this module:
 		    <ul>
@@ -83,7 +83,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddZddMisc.c,v 1.14 2004/08/13 18:04:53 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddZddMisc.c,v 1.16 2009/02/20 02:14:58 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -124,7 +124,7 @@ Cudd_zddDagSize(
   DdNode * p_node)
 {
 
-    int		i;	
+    int		i;
     st_table	*table;
 
     table = st_init_table(st_ptrcmp, st_ptrhash);
@@ -156,7 +156,7 @@ Cudd_zddCountMinterm(
   DdNode * node,
   int  path)
 {
-    double	dc_var, minterms;	
+    double	dc_var, minterms;
 
     dc_var = (double)((double)(zdd->sizeZ) - (double)path);
     minterms = Cudd_zddCountDouble(zdd, node) / pow(2.0, dc_var);
@@ -181,7 +181,7 @@ Cudd_zddPrintSubtable(
   DdManager * table)
 {
     int		i, j;
-    DdNode 	*z1, *z1_next, *base;
+    DdNode	*z1, *z1_next, *base;
     DdSubtable	*ZSubTable;
 
     base = table->one;
@@ -193,12 +193,12 @@ Cudd_zddPrintSubtable(
 	    while (z1 != NIL(DdNode)) {
 		(void) fprintf(table->out,
 #if SIZEOF_VOID_P == 8
-		    "ID = 0x%lx\tindex = %d\tr = %d\t",
-		    (unsigned long) z1 / (unsigned long) sizeof(DdNode),
+		    "ID = 0x%lx\tindex = %u\tr = %u\t",
+		    (ptruint) z1 / (ptruint) sizeof(DdNode),
 		    z1->index, z1->ref);
 #else
-		    "ID = 0x%x\tindex = %d\tr = %d\t",
-		    (unsigned) z1 / (unsigned) sizeof(DdNode),
+		    "ID = 0x%x\tindex = %hu\tr = %hu\t",
+		    (ptruint) z1 / (ptruint) sizeof(DdNode),
 		    z1->index, z1->ref);
 #endif
 		z1_next = cuddT(z1);
@@ -209,10 +209,10 @@ Cudd_zddPrintSubtable(
 		else {
 #if SIZEOF_VOID_P == 8
 		    (void) fprintf(table->out, "T = 0x%lx\t",
-			(unsigned long) z1_next / (unsigned long) sizeof(DdNode));
+			(ptruint) z1_next / (ptruint) sizeof(DdNode));
 #else
 		    (void) fprintf(table->out, "T = 0x%x\t",
-			(unsigned) z1_next / (unsigned) sizeof(DdNode));
+			(ptruint) z1_next / (ptruint) sizeof(DdNode));
 #endif
 		}
 		z1_next = cuddE(z1);
@@ -223,10 +223,10 @@ Cudd_zddPrintSubtable(
 		else {
 #if SIZEOF_VOID_P == 8
 		    (void) fprintf(table->out, "E = 0x%lx\n",
-			(unsigned long) z1_next / (unsigned long) sizeof(DdNode));
+			(ptruint) z1_next / (ptruint) sizeof(DdNode));
 #else
 		    (void) fprintf(table->out, "E = 0x%x\n",
-			(unsigned) z1_next / (unsigned) sizeof(DdNode));
+			(ptruint) z1_next / (ptruint) sizeof(DdNode));
 #endif
 		}
 
@@ -276,4 +276,3 @@ cuddZddDagInt(
 	cuddZddDagInt(cuddE(n), tab));
 
 } /* cuddZddDagInt */
-

@@ -81,7 +81,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] MTR_UNUSED = "$Id: mtrBasic.c,v 1.12 2004/08/13 18:15:11 fabio Exp $";
+static char rcsid[] MTR_UNUSED = "$Id: mtrBasic.c,v 1.13 2009/02/20 02:03:47 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -249,7 +249,7 @@ Mtr_CopyTree(
 	}
     }
     return(copy);
-    
+
 } /* end of Mtr_CopyTree */
 
 
@@ -425,12 +425,12 @@ Mtr_PrintTree(
     if (node == NULL) return;
     (void) fprintf(stdout,
 #if SIZEOF_VOID_P == 8
-    "N=0x%-8lx C=0x%-8lx Y=0x%-8lx E=0x%-8lx P=0x%-8lx F=%x L=%d S=%d\n",
+    "N=0x%-8lx C=0x%-8lx Y=0x%-8lx E=0x%-8lx P=0x%-8lx F=%x L=%u S=%u\n",
     (unsigned long) node, (unsigned long) node->child,
     (unsigned long) node->younger, (unsigned long) node->elder,
     (unsigned long) node->parent, node->flags, node->low, node->size);
 #else
-    "N=0x%-8x C=0x%-8x Y=0x%-8x E=0x%-8x P=0x%-8x F=%x L=%d S=%d\n",
+    "N=0x%-8x C=0x%-8x Y=0x%-8x E=0x%-8x P=0x%-8x F=%x L=%hu S=%hu\n",
     (unsigned) node, (unsigned) node->child,
     (unsigned) node->younger, (unsigned) node->elder,
     (unsigned) node->parent, node->flags, node->low, node->size);
@@ -448,4 +448,3 @@ Mtr_PrintTree(
 /*---------------------------------------------------------------------------*/
 /* Definition of static functions                                            */
 /*---------------------------------------------------------------------------*/
-

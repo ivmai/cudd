@@ -83,7 +83,7 @@ typedef struct flowStatsStruct {
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrMflow.c,v 1.6 2004/08/13 18:28:28 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: ntrMflow.c,v 1.7 2009/02/20 02:19:02 fabio Exp fabio $";
 #endif
 
 static DdNode *xcube, *ycube, *zcube;
@@ -265,7 +265,7 @@ Ntr_maximum01Flow(
 	/* new[0](x) = s(x);U^0(x,y)=E(x,y)\cdot s(x) \cdot \overline{F(x,y)};
 	** reached=s; new[1](x)=\exists_xU^0(x,y);
 	*/
-	Cudd_Ref(neW[0] = sx); 
+	Cudd_Ref(neW[0] = sx);
 	Cudd_Ref(p = Cudd_bddAnd(bdd, sx, Cudd_Not(*F)));
 	Cudd_Ref(U[0] = Cudd_bddAnd(bdd, p, E));
 	Cudd_RecursiveDeref(bdd,p);
@@ -448,16 +448,12 @@ maximal_pull(
   DdNode * prxz /* priority functions */,
   flowStats * stats)
 {
-    DdNode *one, *zero,
-	     *p, *q, *r,
-	     *UF, *UB;
-    int	     m,
-	     pr;		/* Print control */
+    DdNode *p, *q, *r,
+	   *UF, *UB;
+    int	   m,
+	   pr;		/* Print control */
 
     pr = stats->pr;
-
-    one = Cudd_ReadOne(bdd);
-    zero = Cudd_Not(one);
 
     /* The useful edges of the last layer are all the empty edges into
     ** the sink(s) from new[l].
@@ -1059,22 +1055,18 @@ maximal_push(
   DdNode * prxz /* priority functions */,
   flowStats * stats)
 {
-    DdNode *one, *zero,
-	     *p, *q, *r,
-	     *UT,
-	     *lN, *cN, *rN; /* left, center, right nodes of bilayer */
-    double   mtl, mtc, mtr;
-    int      m,
-	     pr;	  /* print control */
+    DdNode *p, *q, *r,
+	   *UT,
+	   *lN, *cN, *rN; /* left, center, right nodes of bilayer */
+    double mtl, mtc, mtr;
+    int    m,
+	   pr;	  /* print control */
 
     pr = stats->pr;
 
-    one = Cudd_ReadOne(bdd);
-    zero = Cudd_Not(one);
-
     if (l == 0) {
 	/* F(x,y) = F(x,y) + U^{0}(x,y) */
-        Cudd_Ref(q = Cudd_bddOr(bdd, *F, U[0]));
+	Cudd_Ref(q = Cudd_bddOr(bdd, *F, U[0]));
 	Cudd_RecursiveDeref(bdd,*F);
 	*F = q;
 	if(pr>3){(void) fprintf(stdout,"F");Cudd_PrintDebug(bdd,*F,n<<1,pr);}
@@ -1116,16 +1108,16 @@ maximal_push(
 	Cudd_Ref(p = Cudd_bddSwapVariables(bdd, *F, x, y, n));
 	Cudd_Ref(q = Cudd_bddAnd(bdd, Cudd_Not(p), U[m-1]));
 	Cudd_RecursiveDeref(bdd,p);
-        Cudd_Ref(r = Cudd_bddOr(bdd, *F, q));
+	Cudd_Ref(r = Cudd_bddOr(bdd, *F, q));
 	Cudd_RecursiveDeref(bdd,q);
 	Cudd_RecursiveDeref(bdd,*F);
 	*F = r;
 	if(pr>3){(void) fprintf(stdout,"F");Cudd_PrintDebug(bdd,*F,n<<1,pr);}
 
 	/* F(x,y) = F(x,y) - U^{m-1}(y,x) */
-        Cudd_Ref(r = Cudd_bddSwapVariables(bdd, U[m-1], x, y, n));
-        Cudd_Ref(q = Cudd_bddAnd(bdd, *F, Cudd_Not(r)));
-     	Cudd_RecursiveDeref(bdd,r);
+	Cudd_Ref(r = Cudd_bddSwapVariables(bdd, U[m-1], x, y, n));
+	Cudd_Ref(q = Cudd_bddAnd(bdd, *F, Cudd_Not(r)));
+	Cudd_RecursiveDeref(bdd,r);
 	Cudd_RecursiveDeref(bdd,*F);
 	*F = q;
 	if(pr>3){(void) fprintf(stdout,"F");Cudd_PrintDebug(bdd,*F,n<<1,pr);}
@@ -1587,4 +1579,3 @@ hourglassPush(
     return;
 
 } /* end of hourglassPush */
-

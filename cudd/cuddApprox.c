@@ -164,7 +164,7 @@ typedef struct LocalQueueItem {
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddApprox.c,v 1.25 2004/08/13 18:04:46 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddApprox.c,v 1.27 2009/02/19 16:16:51 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -798,7 +798,7 @@ updateParity(
 
     if (!st_lookup(info->table, node, &infoN)) return;
     if ((infoN->parity & newparity) != 0) return;
-    infoN->parity |= newparity;
+    infoN->parity |= (short) newparity;
     if (Cudd_IsConstant(node)) return;
     updateParity(cuddT(node),info,newparity);
     E = cuddE(node);
@@ -863,7 +863,7 @@ gatherInfoAux(
 
     /* Point to the correct location in the page. */
     infoN = &(info->page[info->index++]);
-    infoN->parity |= 1 + (short) Cudd_IsComplement(node);
+    infoN->parity |= (short) (1 + Cudd_IsComplement(node));
 
     infoN->mintermsP = infoT->mintermsP/2;
     infoN->mintermsN = infoT->mintermsN/2;
@@ -1574,7 +1574,7 @@ RAmarkNodes(
 #endif
 	if ((1 - numOnset / info->minterms) >
 	    quality * (1 - (double) savings / info->size)) {
-	    infoN->replace = replace;
+	    infoN->replace = (char) replace;
 	    info->size -= savings;
 	    info->minterms -=numOnset;
 #if 0
@@ -1637,21 +1637,11 @@ RAmarkNodes(
 	    item = (GlobalQueueItem *) cuddLevelQueueEnqueue(queue,Cudd_Regular(shared),
 					 cuddI(dd,Cudd_Regular(shared)->index));
 	    if (Cudd_IsComplement(shared)) {
-		if (replace == REPLACE_T) {
-		    item->impactP += impactN;
-		    item->impactN += impactP;
-		} else {
-		    item->impactP += impactN/2.0;
-		    item->impactN += impactP/2.0;
-		}
+	        item->impactP += impactN;
+		item->impactN += impactP;
 	    } else {
-		if (replace == REPLACE_T) {
-		    item->impactP += impactP;
-		    item->impactN += impactN;
-		} else {
-		    item->impactP += impactP/2.0;
-		    item->impactN += impactN/2.0;
-		}
+	        item->impactP += impactP;
+		item->impactN += impactN;
 	    }
 	}
     }
@@ -1889,7 +1879,7 @@ BAmarkNodes(
 #endif
 	if ((1 - numOnset / info->minterms) >
 	    quality * (1 - (double) savings / info->size)) {
-	    infoN->replace = replace;
+	    infoN->replace = (char) replace;
 	    info->size -= savings;
 	    info->minterms -=numOnset;
 #if 0
@@ -2031,8 +2021,8 @@ RAbuildSubset(
 	    DdNode *Ntt = Cudd_NotCond(cuddT(cuddT(N)),
 				       Cudd_IsComplement(node));
 	    int index = cuddT(N)->index;
-	    DdNode *e = info->zero;
-	    DdNode *t = RAbuildSubset(dd, Ntt, info);
+	    e = info->zero;
+	    t = RAbuildSubset(dd, Ntt, info);
 	    if (t == NULL) {
 		return(NULL);
 	    }
@@ -2059,8 +2049,8 @@ RAbuildSubset(
 	    DdNode *Nte = Cudd_NotCond(cuddE(cuddT(N)),
 				       Cudd_IsComplement(node));
 	    int index = cuddT(N)->index;
-	    DdNode *t = info->one;
-	    DdNode *e = RAbuildSubset(dd, Nte, info);
+	    t = info->one;
+	    e = RAbuildSubset(dd, Nte, info);
 	    if (e == NULL) {
 		return(NULL);
 	    }

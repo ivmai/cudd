@@ -65,7 +65,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: testcudd.c,v 1.16 2004/08/13 18:04:54 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: testcudd.c,v 1.20 2009/03/08 02:49:02 fabio Exp $";
 #endif
 
 static const char *onames[] = { "C", "M" }; /* names of functions to be dumped */
@@ -110,8 +110,8 @@ main(int argc, char **argv)
     DdNode *M;
     DdNode **x;		/* pointers to variables */
     DdNode **y;		/* pointers to variables */
-    DdNode **xn;       	/* complements of row variables */
-    DdNode **yn_;      	/* complements of column variables */
+    DdNode **xn;	/* complements of row variables */
+    DdNode **yn_;	/* complements of column variables */
     DdNode **xvars;
     DdNode **yvars;
     DdNode *C;		/* result of converting from ADD to BDD */
@@ -379,6 +379,43 @@ main(int argc, char **argv)
 	    }
 	    Cudd_RecursiveDeref(dd, CPr);
 	}
+
+	/* Test inequality generator. */
+	{
+	    int Nmin = ddMin(nx,ny);
+	    int q;
+	    DdGen *gen;
+	    int *cube;
+	    DdNode *f = Cudd_Inequality(dd,Nmin,2,xvars,yvars);
+	    if (f == NULL) exit(2);
+	    Cudd_Ref(f);
+	    if (pr>0) {
+		(void) printf(":4: ineq");
+		Cudd_PrintDebug(dd,f,nx+ny,pr);
+		if (pr>1) {
+		    Cudd_ForeachPrime(dd,Cudd_Not(f),Cudd_Not(f),gen,cube) {
+			for (q = 0; q < dd->size; q++) {
+			    switch (cube[q]) {
+			    case 0:
+				(void) printf("1");
+				break;
+			    case 1:
+				(void) printf("0");
+				break;
+			    case 2:
+				(void) printf("-");
+				break;
+			    default:
+				(void) printf("?");
+			    }
+			}
+			(void) printf(" 1\n");
+		    }
+		    (void) printf("\n");
+		}
+	    }
+	    Cudd_IterDerefBdd(dd, f);
+	}
 	FREE(xvars); FREE(yvars);
 
 	Cudd_RecursiveDeref(dd, CP);
@@ -442,7 +479,7 @@ main(int argc, char **argv)
 	}
 
 	/* Reorder if so requested. */
-        if (approach != CUDD_REORDER_NONE) {
+	if (approach != CUDD_REORDER_NONE) {
 #ifndef DD_STATS
 	    retval = Cudd_EnableReorderingReporting(dd);
 	    if (retval == 0) {
@@ -526,7 +563,7 @@ main(int argc, char **argv)
 	    if (blifOrDot == 1) {
 		/* Only dump C because blif cannot handle ADDs */
 		retval = Cudd_DumpBlif(dd,1,dfunc,NULL,(char **)onames,
-				       NULL,dfp);
+				       NULL,dfp,0);
 	    } else {
 		retval = Cudd_DumpDot(dd,2,dfunc,NULL,(char **)onames,dfp);
 	    }
@@ -548,9 +585,9 @@ main(int argc, char **argv)
 	}
 	if (pr>0) {
 	    (void) printf("Number of variables = %6d\t",dd->size);
-	    (void) printf("Number of slots     = %6d\n",dd->slots);
-	    (void) printf("Number of keys      = %6d\t",dd->keys);
-	    (void) printf("Number of min dead  = %6d\n",dd->minDead);
+	    (void) printf("Number of slots     = %6u\n",dd->slots);
+	    (void) printf("Number of keys      = %6u\t",dd->keys);
+	    (void) printf("Number of min dead  = %6u\n",dd->minDead);
 	}
 
     } while (multiple && !feof(fp));
@@ -672,10 +709,10 @@ open_file(char *filename, const char *mode)
     FILE *fp;
 
     if (strcmp(filename, "-") == 0) {
-        return mode[0] == 'r' ? stdin : stdout;
+	return mode[0] == 'r' ? stdin : stdout;
     } else if ((fp = fopen(filename, mode)) == NULL) {
-        perror(filename);
-        exit(1);
+	perror(filename);
+	exit(1);
     }
     return fp;
 
@@ -847,32 +884,31 @@ testIterators(
 
     /* Test iterator on nodes. */
     if (pr>2) {
-	DdGen *gen;
 	DdNode *node;
 	(void) printf("Testing iterator on nodes:\n");
 	Cudd_ForeachNode(dd,M,gen,node) {
 	    if (Cudd_IsConstant(node)) {
 #if SIZEOF_VOID_P == 8
 		(void) printf("ID = 0x%lx\tvalue = %-9g\n",
-			      (unsigned long) node /
-			      (unsigned long) sizeof(DdNode),
+			      (ptruint) node /
+			      (ptruint) sizeof(DdNode),
 			      Cudd_V(node));
 #else
 		(void) printf("ID = 0x%x\tvalue = %-9g\n",
-			      (unsigned int) node /
-			      (unsigned int) sizeof(DdNode),
+			      (ptruint) node /
+			      (ptruint) sizeof(DdNode),
 			      Cudd_V(node));
 #endif
 	    } else {
 #if SIZEOF_VOID_P == 8
-		(void) printf("ID = 0x%lx\tindex = %d\tr = %d\n",
-			      (unsigned long) node /
-			      (unsigned long) sizeof(DdNode),
+		(void) printf("ID = 0x%lx\tindex = %u\tr = %u\n",
+			      (ptruint) node /
+			      (ptruint) sizeof(DdNode),
 			      node->index, node->ref);
 #else
-		(void) printf("ID = 0x%x\tindex = %d\tr = %d\n",
-			      (unsigned int) node /
-			      (unsigned int) sizeof(DdNode),
+		(void) printf("ID = 0x%x\tindex = %u\tr = %u\n",
+			      (ptruint) node /
+			      (ptruint) sizeof(DdNode),
 			      node->index, node->ref);
 #endif
 	    }

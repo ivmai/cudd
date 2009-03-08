@@ -53,7 +53,7 @@
 // ---------------------------------------------------------------------------
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: cuddObj.cc,v 1.9 2004/08/24 19:56:19 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: cuddObj.cc,v 1.13 2009/02/21 19:41:38 fabio Exp fabio $";
 #endif
 
 // ---------------------------------------------------------------------------
@@ -66,7 +66,7 @@ DD::DD(Cudd *ddManager, DdNode *ddNode) {
     node = ddNode;
     if (node != 0) Cudd_Ref(node);
     if (ddMgr->isVerbose()) {
-        cout << "Standard DD constructor for node " << hex << long(node) <<
+	cout << "Standard DD constructor for node " << hex << long(node) <<
 	    " ref = " << Cudd_Regular(node)->ref << "\n";
     }
 
@@ -94,6 +94,9 @@ DD::DD(const DD &from) {
 } // DD::DD
 
 
+DD::~DD() {}
+
+
 inline DdManager *
 DD::checkSameManager(
   const DD &other) const
@@ -115,21 +118,21 @@ DD::checkReturnValue(
 	DdManager *mgr = ddMgr->p->manager;
 	Cudd_ErrorType errType = Cudd_ReadErrorCode(mgr);
 	switch (errType) {
-	CUDD_MEMORY_OUT:
+	case CUDD_MEMORY_OUT:
 	    ddMgr->p->errorHandler("Out of memory.");
 	    break;
-	CUDD_TOO_MANY_NODES:
+	case CUDD_TOO_MANY_NODES:
 	    break;
-	CUDD_MAX_MEM_EXCEEDED:
+	case CUDD_MAX_MEM_EXCEEDED:
 	    ddMgr->p->errorHandler("Maximum memory exceeded.");
 	    break;
-	CUDD_INVALID_ARG:
+	case CUDD_INVALID_ARG:
 	    ddMgr->p->errorHandler("Invalid argument.");
 	    break;
-	CUDD_INTERNAL_ERROR:
+	case CUDD_INTERNAL_ERROR:
 	    ddMgr->p->errorHandler("Internal error.");
 	    break;
-	CUDD_NO_ERROR:
+	case CUDD_NO_ERROR:
 	default:
 	    ddMgr->p->errorHandler("Unexpected error.");
 	    break;
@@ -148,21 +151,21 @@ DD::checkReturnValue(
 	DdManager *mgr = ddMgr->p->manager;
 	Cudd_ErrorType errType = Cudd_ReadErrorCode(mgr);
 	switch (errType) {
-	CUDD_MEMORY_OUT:
+	case CUDD_MEMORY_OUT:
 	    ddMgr->p->errorHandler("Out of memory.");
 	    break;
-	CUDD_TOO_MANY_NODES:
+	case CUDD_TOO_MANY_NODES:
 	    break;
-	CUDD_MAX_MEM_EXCEEDED:
+	case CUDD_MAX_MEM_EXCEEDED:
 	    ddMgr->p->errorHandler("Maximum memory exceeded.");
 	    break;
-	CUDD_INVALID_ARG:
+	case CUDD_INVALID_ARG:
 	    ddMgr->p->errorHandler("Invalid argument.");
 	    break;
-	CUDD_INTERNAL_ERROR:
+	case CUDD_INTERNAL_ERROR:
 	    ddMgr->p->errorHandler("Internal error.");
 	    break;
-	CUDD_NO_ERROR:
+	case CUDD_NO_ERROR:
 	default:
 	    ddMgr->p->errorHandler("Unexpected error.");
 	    break;
@@ -3782,7 +3785,8 @@ BDDvector::DumpBlif(
   char ** inames,
   char ** onames,
   char * mname,
-  FILE * fp) const
+  FILE * fp,
+  int mv) const
 {
     DdManager *mgr = p->manager->getManager();
     int n = p->size;
@@ -3790,7 +3794,7 @@ BDDvector::DumpBlif(
     for (int i = 0; i < n; i ++) {
 	F[i] = p->vect[i].getNode();
     }
-    int result = Cudd_DumpBlif(mgr, n, F, inames, onames, mname, fp);
+    int result = Cudd_DumpBlif(mgr, n, F, inames, onames, mname, fp, mv);
     FREE(F);
     p->manager->checkReturnValue(result);
 
@@ -4336,10 +4340,79 @@ Cudd::Dxygtdyz(
 	Z[i] = z[i].getNode();
     }
     DdNode *result = Cudd_Dxygtdyz(mgr, N, X, Y, Z);
+    FREE(X);
+    FREE(Y);
+    FREE(Z);
     this->checkReturnValue(result);
     return BDD(this, result);
 
 } // Cudd::Dxygtdyz
+
+
+BDD
+Cudd::Inequality(
+  int c,
+  BDDvector x,
+  BDDvector y)
+{
+    int N = x.count();
+    DdManager *mgr = p->manager;
+    DdNode **X = ALLOC(DdNode *,N);
+    DdNode **Y = ALLOC(DdNode *,N);
+    for (int i = 0; i < N; i++) {
+	X[i] = x[i].getNode();
+	Y[i] = y[i].getNode();
+    }
+    DdNode *result = Cudd_Inequality(mgr, N, c, X, Y);
+    FREE(X);
+    FREE(Y);
+    this->checkReturnValue(result);
+    return BDD(this, result);
+
+} // Cudd::Inequality
+
+
+BDD
+Cudd::Disequality(
+  int c,
+  BDDvector x,
+  BDDvector y)
+{
+    int N = x.count();
+    DdManager *mgr = p->manager;
+    DdNode **X = ALLOC(DdNode *,N);
+    DdNode **Y = ALLOC(DdNode *,N);
+    for (int i = 0; i < N; i++) {
+	X[i] = x[i].getNode();
+	Y[i] = y[i].getNode();
+    }
+    DdNode *result = Cudd_Disequality(mgr, N, c, X, Y);
+    FREE(X);
+    FREE(Y);
+    this->checkReturnValue(result);
+    return BDD(this, result);
+
+} // Cudd::Disequality
+
+
+BDD
+Cudd::Interval(
+  BDDvector x,
+  unsigned int lowerB,
+  unsigned int upperB)
+{
+    int N = x.count();
+    DdManager *mgr = p->manager;
+    DdNode **X = ALLOC(DdNode *,N);
+    for (int i = 0; i < N; i++) {
+	X[i] = x[i].getNode();
+    }
+    DdNode *result = Cudd_bddInterval(mgr, N, X, lowerB, upperB);
+    FREE(X);
+    this->checkReturnValue(result);
+    return BDD(this, result);
+
+} // Cudd::Interval
 
 
 BDD

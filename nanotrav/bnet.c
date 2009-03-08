@@ -67,7 +67,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: bnet.c,v 1.24 2004/08/13 18:28:28 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: bnet.c,v 1.25 2009/02/21 06:00:31 fabio Exp fabio $";
 #endif
 
 static	char	BuffLine[MAXLENGTH];
@@ -199,7 +199,7 @@ Bnet_ReadNetwork(
 		goto failure;
 	    }
 	    if (exdc) {
-	    	for (i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 		    FREE(list[i]);
 		FREE(list);
 		savestring = readString(fp);
@@ -209,7 +209,7 @@ Bnet_ReadNetwork(
 	    if (net->ninputs) {
 		net->inputs = REALLOC(char *, net->inputs,
 		    (net->ninputs + n) * sizeof(char *));
-	    	for (i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 		    net->inputs[net->ninputs + i] = list[i];
 	    }
 	    else
@@ -253,7 +253,7 @@ Bnet_ReadNetwork(
 		goto failure;
 	    }
 	    if (exdc) {
-	    	for (i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 		    FREE(list[i]);
 		FREE(list);
 		savestring = readString(fp);
@@ -263,7 +263,7 @@ Bnet_ReadNetwork(
 	    if (net->noutputs) {
 		net->outputs = REALLOC(char *, net->outputs,
 		    (net->noutputs + n) * sizeof(char *));
-	    	for (i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 		    net->outputs[net->noutputs + i] = list[i];
 	    } else {
 		net->outputs = list;
@@ -922,13 +922,16 @@ Bnet_bddDump(
     /* Dump the BDDs. */
     if (dumpFmt == 1) {
 	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
-		 network->name,dfp);
+		 network->name,dfp,0);
     } else if (dumpFmt == 2) {
 	retval = Cudd_DumpDaVinci(dd,noutputs,outputs,inames,onames,dfp);
     } else if (dumpFmt == 3) {
 	retval = Cudd_DumpDDcal(dd,noutputs,outputs,inames,onames,dfp);
     } else if (dumpFmt == 4) {
 	retval = Cudd_DumpFactoredForm(dd,noutputs,outputs,inames,onames,dfp);
+    } else if (dumpFmt == 5) {
+	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
+		 network->name,dfp,1);
     } else {
 	retval = Cudd_DumpDot(dd,noutputs,outputs,inames,onames,dfp);
     }
@@ -949,13 +952,13 @@ endgame:
 /**Function********************************************************************
 
   Synopsis    [Writes an array of BDDs to a file in dot, blif, DDcal,
-  factored-form, or daVinci format.]
+  factored-form, daVinci, or blif-MV format.]
 
   Description [Writes an array of BDDs to a file in dot, blif, DDcal,
-  factored-form, or daVinci format.  The BDDs and their names are
-  passed as arguments.  The inputs and their names are taken from the
-  network. If "-" is passed as file name, the BDDs are dumped to the
-  standard output. Returns 1 in case of success; 0 otherwise.]
+  factored-form, daVinci, or blif-MV format.  The BDDs and their names
+  are passed as arguments.  The inputs and their names are taken from
+  the network. If "-" is passed as file name, the BDDs are dumped to
+  the standard output. Returns 1 in case of success; 0 otherwise.]
 
   SideEffects [None]
 
@@ -1010,13 +1013,16 @@ Bnet_bddArrayDump(
     /* Dump the BDDs. */
     if (dumpFmt == 1) {
 	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
-		 network->name,dfp);
+		 network->name,dfp,0);
     } else if (dumpFmt == 2) {
 	retval = Cudd_DumpDaVinci(dd,noutputs,outputs,inames,onames,dfp);
     } else if (dumpFmt == 3) {
 	retval = Cudd_DumpDDcal(dd,noutputs,outputs,inames,onames,dfp);
     } else if (dumpFmt == 4) {
 	retval = Cudd_DumpFactoredForm(dd,noutputs,outputs,inames,onames,dfp);
+    } else if (dumpFmt == 5) {
+	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
+		 network->name,dfp,1);
     } else {
 	retval = Cudd_DumpDot(dd,noutputs,outputs,inames,onames,dfp);
     }
@@ -1057,7 +1063,7 @@ Bnet_ReadOrder(
     st_table *dict;
     int result;
     BnetNode *node;
-    char name[MAXLENGTH]; 
+    char name[MAXLENGTH];
 
     if (ordFile == NULL) {
 	return(0);
@@ -2244,4 +2250,3 @@ bnetDfsOrder(
     return(1);
 
 } /* end of bnetLevelDFS */
-

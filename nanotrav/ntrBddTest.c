@@ -1,5 +1,5 @@
 /**CFile***********************************************************************
- 
+
   FileName    [ntrBddTest.c]
 
   PackageName [ntr]
@@ -11,7 +11,7 @@
   SeeAlso     []
 
   Author      [Fabio Somenzi]
-   
+
   Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
 
   All rights reserved.
@@ -66,7 +66,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrBddTest.c,v 1.20 2004/08/13 18:28:28 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: ntrBddTest.c,v 1.21 2009/02/20 02:19:02 fabio Exp fabio $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -353,7 +353,7 @@ Ntr_VerifyEquivalence(
 	}
     }
     return(1);
-    
+
 } /* end of Ntr_VerifyEquivalence */
 
 
@@ -1080,7 +1080,7 @@ ntrTestMinimizationAux(
     Cudd_PrintDebug(dd, a0, nvars, pr);
     sizeA0 = Cudd_DagSize(a0);
     (void) printf("TEST-MINI: f %d comp %d mini %d rest %d cons %d sque %d na %d, and %d\n",
-		  sizeF, sizeCom0, sizeMin0, sizeRs0, sizeCs0, sizeSq0, sizeNa0, sizeA0); 
+		  sizeF, sizeCom0, sizeMin0, sizeRs0, sizeCs0, sizeSq0, sizeNa0, sizeA0);
 
     /* Check fundamental identity. */
     g = Cudd_bddIte(dd,c,com1,com0);
@@ -1204,7 +1204,7 @@ ntrTestDensityAux(
     int pr;
     int result;
     int nvars;
-    int size, sizeB, sizeF, sizeS, sizeHB, sizeSP, sizeUA, sizeC1, sizeC2;
+    int size, sizeS;
     double densityF, densityB, densityS, densityHB, densitySP, densityUA;
     double densityC1, densityC2;
     char *onames[8];
@@ -1214,7 +1214,6 @@ ntrTestDensityAux(
     pr = option->verb;
     nvars = Cudd_SupportSize(dd,f);
     if (nvars == CUDD_OUT_OF_MEM) return(0);
-    sizeF = Cudd_DagSize(f);
     densityF = Cudd_Density(dd,f,nvars);
     (void) printf("TEST-DENSITY:: %s (%d variables)\n", name, nvars);
     if (pr > 0) {
@@ -1246,7 +1245,6 @@ ntrTestDensityAux(
 	(void) printf("TEST-DENSITY: result less dense\n");
 	/* result = 0; */
     }
-    /* size = (sizeS < sizeF/2) ? sizeS : sizeF/2; */
     size = sizeS;
     /* Test biased underapproximation. */
     b = Cudd_BiasedUnderApprox(dd,f,Cudd_Not(s),nvars,0,
@@ -1256,7 +1254,6 @@ ntrTestDensityAux(
 	return(0);
     }
     Cudd_Ref(b);
-    sizeB = Cudd_DagSize(b);
     densityB = Cudd_Density(dd,b,nvars);
     if (pr > 0) {
 	(void) printf("T-D BU (%g)", densityB);
@@ -1278,7 +1275,6 @@ ntrTestDensityAux(
 	return(0);
     }
     Cudd_Ref(hb);
-    sizeHB = Cudd_DagSize(hb);
     densityHB = Cudd_Density(dd,hb,nvars);
     if (pr > 0) {
 	(void) printf("T-D HB (%g)", densityHB);
@@ -1297,7 +1293,6 @@ ntrTestDensityAux(
 	return(0);
     }
     Cudd_Ref(sp);
-    sizeSP = Cudd_DagSize(sp);
     densitySP = Cudd_Density(dd,sp,nvars);
     if (pr > 0) {
 	(void) printf("T-D SP (%g)", densitySP);
@@ -1317,7 +1312,6 @@ ntrTestDensityAux(
 	return(0);
     }
     Cudd_Ref(ua);
-    sizeUA = Cudd_DagSize(ua);
     densityUA = Cudd_Density(dd,ua,nvars);
     if (pr > 0) {
 	(void) printf("T-D UA (%g)", densityUA);
@@ -1340,7 +1334,6 @@ ntrTestDensityAux(
 	Cudd_RecursiveDeref(dd,ua);
 	return(0);
     }
-    sizeC1 = Cudd_DagSize(c1);
     densityC1 = Cudd_Density(dd,c1,nvars);
     if (pr > 0) {
 	(void) printf("T-D C1 (%g)", densityC1);
@@ -1362,7 +1355,6 @@ ntrTestDensityAux(
 	return(0);
     }
     Cudd_Ref(c2);
-    sizeC2 = Cudd_DagSize(c2);
     densityC2 = Cudd_Density(dd,c2,nvars);
     if (pr > 0) {
 	(void) printf("T-D C2 (%g)", densityC2);
@@ -1425,8 +1417,8 @@ ntrTestDecompAux(
     int i, result;
     int nA, nI, nG, nV;
     int nvars;
-    int sizeF, sizeGa, sizeHa, sizeSa;
-    int sizeGi, sizeHi, sizeSi, sizeGg, sizeHg, sizeSg, sizeGv, sizeHv, sizeSv;
+    int sizeSa;
+    int sizeSi, sizeSg, sizeSv;
     char *onames[9];
     DdNode *outputs[9];
 
@@ -1434,7 +1426,6 @@ ntrTestDecompAux(
     pr = option->verb;
     nvars = Cudd_SupportSize(dd,f);
     if (nvars == CUDD_OUT_OF_MEM) return(0);
-    sizeF = Cudd_DagSize(f);
     (void) printf("TEST-DECOMP:: %s (%d variables)\n", name, nvars);
     if (pr > 0) {
 	(void) printf("T-d    ");
@@ -1450,8 +1441,6 @@ ntrTestDecompAux(
     }
     g = A[0];
     h = (nA == 2) ? A[1] : one;
-    sizeGa = Cudd_DagSize(g);
-    sizeHa = Cudd_DagSize(h);
     sizeSa = Cudd_SharingSize(A,nA);
     if (pr > 0) {
 	(void) printf("T-d SS : %d nodes\n", sizeSa);
@@ -1480,8 +1469,6 @@ ntrTestDecompAux(
     }
     g = I[0];
     h = (nI == 2) ? I[1] : one;
-    sizeGi = Cudd_DagSize(g);
-    sizeHi = Cudd_DagSize(h);
     sizeSi = Cudd_SharingSize(I,nI);
     if (pr > 0) {
 	(void) printf("T-d SI : %d nodes\n", sizeSi);
@@ -1510,8 +1497,6 @@ ntrTestDecompAux(
     }
     g = G[0];
     h = (nG == 2) ? G[1] : one;
-    sizeGg = Cudd_DagSize(g);
-    sizeHg = Cudd_DagSize(h);
     sizeSg = Cudd_SharingSize(G,nG);
     if (pr > 0) {
 	(void) printf("T-d SD : %d nodes\n", sizeSg);
@@ -1540,8 +1525,6 @@ ntrTestDecompAux(
     }
     g = V[0];
     h = (nV == 2) ? V[1] : one;
-    sizeGv = Cudd_DagSize(g);
-    sizeHv = Cudd_DagSize(h);
     sizeSv = Cudd_SharingSize(V,nV);
     if (pr > 0) {
 	(void) printf("T-d SQ : %d nodes\n", sizeSv);
@@ -1716,7 +1699,7 @@ ntrTestClippingAux(
     DdNode *subF, *subG, *psub;
     DdNode *supF, *supG, *psup;
     int pr, nvars, depth;
-    int sizeF, sizeProd, sizeSub, sizeSup;
+    int sizeProd, sizeSub, sizeSup;
     static char *onames[7];
     DdNode *outputs[7];
     DdNode *operands[2];
@@ -1731,7 +1714,6 @@ ntrTestClippingAux(
     (void) printf("TEST-CLIP:: %s depth = %d\n", name, depth);
     (void) printf("T-C    ");
     Cudd_PrintDebug(dd, f, nvars, pr);
-    sizeF = Cudd_DagSize(f);
 
     /* Compute product. */
     prod = Cudd_bddAnd(dd, f, g);
@@ -2089,15 +2071,15 @@ ntrTestClosestCubeAux(
 	}
     } else {
 	int d, *minterm;
-	int nvars = Cudd_ReadSize(dd);
+	int numvars = Cudd_ReadSize(dd);
 	DdNode *scan, *zero;
-	DdNode *minBdd = Cudd_bddPickOneMinterm(dd,cubeN,vars,nvars);
+	DdNode *minBdd = Cudd_bddPickOneMinterm(dd,cubeN,vars,numvars);
 	if (minBdd == NULL) {
 	    (void) printf("TEST-CC: minterm selection failed (5).\n");
 	    return(0);
 	}
 	Cudd_Ref(minBdd);
-	minterm = ALLOC(int,nvars);
+	minterm = ALLOC(int,numvars);
 	if (minterm == NULL) {
 	    (void) printf("TEST-CC: allocation failed (6).\n");
 	    Cudd_RecursiveDeref(dd,minBdd);
@@ -2122,7 +2104,7 @@ ntrTestClosestCubeAux(
 	    }
 	}
 	Cudd_RecursiveDeref(dd,minBdd);
-	d = Cudd_MinHammingDist(dd,Cudd_Not(g),minterm,nvars);
+	d = Cudd_MinHammingDist(dd,Cudd_Not(g),minterm,numvars);
 	FREE(minterm);
 	if (d != distance) {
 	    (void) printf("TEST-CC: distance disagreement (7).\n");

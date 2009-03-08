@@ -5,11 +5,11 @@
   PackageName [cudd]
 
   Synopsis    [Procedure to subset the given BDD by choosing the heavier
-		branches]
+	       branches.]
 
 
   Description [External procedures provided by this module:
-                <ul>
+		<ul>
 		<li> Cudd_SubsetHeavyBranch()
 		<li> Cudd_SupersetHeavyBranch()
 		</ul>
@@ -113,7 +113,7 @@ typedef struct NodeData NodeData_t;
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddSubsetHB.c,v 1.35 2004/08/13 18:04:51 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddSubsetHB.c,v 1.37 2009/02/20 02:14:58 fabio Exp $";
 #endif
 
 static int memOut;
@@ -127,7 +127,7 @@ static	int		**nodePages; /* pointers to the pages */
 static	int		**lightNodePages; /* pointers to the pages */
 static	double		*currentMintermPage; /* pointer to the current
 						   page */
-static  double 		max; /* to store the 2^n value of the number
+static  double		max; /* to store the 2^n value of the number
 			      * of variables */
 
 static	int		*currentNodePage; /* pointer to the current
@@ -145,7 +145,7 @@ static	int		nodeDataPage; /* index to next element */
 static	int		nodeDataPageIndex; /* index to next element */
 static	NodeData_t	**nodeDataPages; /* index to current page */
 static	int		nodeDataPageSize = DEFAULT_NODE_DATA_PAGE_SIZE;
-                                                     /* page size */
+						     /* page size */
 static  int             maxNodeDataPages; /* number of page pointers */
 
 
@@ -260,15 +260,15 @@ Cudd_SupersetHeavyBranch(
 {
     DdNode *subset, *g;
 
-    g = Cudd_Not(f);    
+    g = Cudd_Not(f);
     memOut = 0;
     do {
 	dd->reordered = 0;
 	subset = cuddSubsetHeavyBranch(dd, g, numVars, threshold);
     } while ((dd->reordered == 1) && (!memOut));
-    
+
     return(Cudd_NotCond(subset, (subset != NULL)));
-    
+
 } /* end of Cudd_SupersetHeavyBranch */
 
 
@@ -313,7 +313,7 @@ cuddSubsetHeavyBranch(
     st_table *storeTable, *approxTable;
     char *key, *value;
     st_generator *stGen;
-    
+
     if (f == NULL) {
 	fprintf(dd->err, "Cannot subset, nil object\n");
 	dd->errorCode = CUDD_INVALID_ARG;
@@ -439,10 +439,10 @@ cuddSubsetHeavyBranch(
 	    return(NULL);
       }
 #endif
-        cuddDeref(subset);
-        return(subset);
+	cuddDeref(subset);
+	return(subset);
     } else {
-        return(NULL);
+	return(NULL);
     }
 } /* end of cuddSubsetHeavyBranch */
 
@@ -519,7 +519,7 @@ ResizeNodeDataPages(void)
   counts.  The procedure  moves the counter to the next page when the
   end of the page is reached and allocates new pages when necessary.]
 
-  SideEffects [Changes the size of minterm pages, page, page index, maximum 
+  SideEffects [Changes the size of minterm pages, page, page index, maximum
   number of pages freeing stuff in case of memory out. ]
 
   SeeAlso     []
@@ -711,7 +711,7 @@ SubsetCountMintermAux(
 	/* store the cofactors */
 	Nv = Cudd_T(N);
 	Nnv = Cudd_E(N);
-	
+
 	Nv = Cudd_NotCond(Nv, Cudd_IsComplement(node));
 	Nnv = Cudd_NotCond(Nnv, Cudd_IsComplement(node));
 
@@ -891,7 +891,7 @@ SubsetCountNodesAux(
     N  = Cudd_Regular(node);
     Nv = Cudd_T(N);
     Nnv = Cudd_E(N);
-    
+
     Nv = Cudd_NotCond(Nv, Cudd_IsComplement(node));
     Nnv = Cudd_NotCond(Nnv, Cudd_IsComplement(node));
 
@@ -1136,7 +1136,7 @@ StoreNodes(
 
 /**Function********************************************************************
 
-  Synopsis    [Builds the subset BDD using the heavy branch method.] 
+  Synopsis    [Builds the subset BDD using the heavy branch method.]
 
   Description [The procedure carries out the building of the subset BDD
   starting at the root. Using the three different counts labelling each node,
@@ -1200,8 +1200,8 @@ BuildSubsetBdd(
     Nnv = Cudd_NotCond(Nnv, Cudd_IsComplement(node));
 
     if (!Cudd_IsConstant(Nv)) {
-        /* find out minterms and nodes contributed by then child */
-        if (!st_lookup(visitedTable, Nv, &currNodeQualT)) {
+	/* find out minterms and nodes contributed by then child */
+	if (!st_lookup(visitedTable, Nv, &currNodeQualT)) {
 		fprintf(dd->out,"Something wrong, couldnt find nodes in node quality table\n");
 		dd->errorCode = CUDD_INTERNAL_ERROR;
 		return(NULL);
@@ -1217,7 +1217,7 @@ BuildSubsetBdd(
 	}
     }
     if (!Cudd_IsConstant(Nnv)) {
-        /* find out minterms and nodes contributed by else child */
+	/* find out minterms and nodes contributed by else child */
 	if (!st_lookup(visitedTable, Nnv, &currNodeQualE)) {
 	    fprintf(dd->out,"Something wrong, couldnt find nodes in node quality table\n");
 	    dd->errorCode = CUDD_INTERNAL_ERROR;
@@ -1240,7 +1240,7 @@ BuildSubsetBdd(
     if (minNv >= minNnv) { /*SubsetCountNodesAux procedure takes
 			     the Then branch in case of a tie */
 
-        /* recur with the Then branch */
+	/* recur with the Then branch */
 	ThenBranch = (DdNode *)BuildSubsetBdd(dd, Nv, size,
 	      visitedTable, threshold, storeTable, approxTable);
 	if (ThenBranch == NULL) {
@@ -1263,11 +1263,11 @@ BuildSubsetBdd(
 	    cuddRef(ElseBranch);
 	  }
 	}
-	
+
     }
     else {
-        /* recur with the Else branch */
-        ElseBranch = (DdNode *)BuildSubsetBdd(dd, Nnv, size,
+	/* recur with the Else branch */
+	ElseBranch = (DdNode *)BuildSubsetBdd(dd, Nnv, size,
 		      visitedTable, threshold, storeTable, approxTable);
 	if (ElseBranch == NULL) {
 	    return(NULL);
@@ -1303,26 +1303,27 @@ BuildSubsetBdd(
     Cudd_RecursiveDeref(dd, ThenBranch);
     Cudd_RecursiveDeref(dd, ElseBranch);
 
-      
+
     if (neW == NULL)
 	return(NULL);
     else {
-        /* store this node in the store table */
-        if (!st_lookup(storeTable, (char *)Cudd_Regular(neW), &dummy)) {
+	/* store this node in the store table */
+	if (!st_lookup(storeTable, (char *)Cudd_Regular(neW), &dummy)) {
 	  cuddRef(neW);
-	  st_insert(storeTable, (char *)Cudd_Regular(neW), NIL(char));
-        }
+	  if (!st_insert(storeTable, (char *)Cudd_Regular(neW), NIL(char)))
+	      return (NULL);
+	}
 	/* store the approximation for this node */
 	if (N !=  Cudd_Regular(neW)) {
-  	    if (st_lookup(approxTable, (char *)node, &dummy)) {
-	        fprintf(dd->err, "This node should not be in the approximated table\n");
+	    if (st_lookup(approxTable, (char *)node, &dummy)) {
+		fprintf(dd->err, "This node should not be in the approximated table\n");
 	    } else {
-	        cuddRef(neW);
-	        st_insert(approxTable, (char *)node, (char *)neW);
+		cuddRef(neW);
+		if (!st_insert(approxTable, (char *)node, (char *)neW))
+		    return(NULL);
 	    }
 	}
-        cuddDeref(neW);
-        return(neW);
+	cuddDeref(neW);
+	return(neW);
     }
 } /* end of BuildSubsetBdd */
-

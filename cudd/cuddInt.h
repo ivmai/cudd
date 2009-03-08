@@ -44,7 +44,7 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.]
 
-  Revision    [$Id: cuddInt.h,v 1.138 2004/08/13 18:04:49 fabio Exp $]
+  Revision    [$Id: cuddInt.h,v 1.139 2009/03/08 02:49:02 fabio Exp $]
 
 ******************************************************************************/
 
@@ -708,8 +708,8 @@ typedef struct DdLevelQueue {
 ******************************************************************************/
 #if SIZEOF_VOID_P == 8 && SIZEOF_INT == 4
 #define ddHash(f,g,s) \
-((((unsigned)(unsigned long)(f) * DD_P1 + \
-   (unsigned)(unsigned long)(g)) * DD_P2) >> (s))
+((((unsigned)(ptruint)(f) * DD_P1 + \
+   (unsigned)(ptruint)(g)) * DD_P2) >> (s))
 #else
 #define ddHash(f,g,s) \
 ((((unsigned)(f) * DD_P1 + (unsigned)(g)) * DD_P2) >> (s))
@@ -729,9 +729,9 @@ typedef struct DdLevelQueue {
 ******************************************************************************/
 #if SIZEOF_VOID_P == 8 && SIZEOF_INT == 4
 #define ddCHash(o,f,g,h,s) \
-((((((unsigned)(unsigned long)(f) + (unsigned)(unsigned long)(o)) * DD_P1 + \
-    (unsigned)(unsigned long)(g)) * DD_P2 + \
-   (unsigned)(unsigned long)(h)) * DD_P3) >> (s))
+((((((unsigned)(ptruint)(f) + (unsigned)(ptruint)(o)) * DD_P1 + \
+    (unsigned)(ptruint)(g)) * DD_P2 + \
+   (unsigned)(ptruint)(h)) * DD_P3) >> (s))
 #else
 #define ddCHash(o,f,g,h,s) \
 ((((((unsigned)(f) + (unsigned)(o)) * DD_P1 + (unsigned)(g)) * DD_P2 + \
@@ -753,8 +753,8 @@ typedef struct DdLevelQueue {
 ******************************************************************************/
 #if SIZEOF_VOID_P == 8 && SIZEOF_INT == 4
 #define ddCHash2(o,f,g,s) \
-(((((unsigned)(unsigned long)(f) + (unsigned)(unsigned long)(o)) * DD_P1 + \
-   (unsigned)(unsigned long)(g)) * DD_P2) >> (s))
+(((((unsigned)(ptruint)(f) + (unsigned)(ptruint)(o)) * DD_P1 + \
+   (unsigned)(ptruint)(g)) * DD_P2) >> (s))
 #else
 #define ddCHash2(o,f,g,s) \
 (((((unsigned)(f) + (unsigned)(o)) * DD_P1 + (unsigned)(g)) * DD_P2) >> (s))

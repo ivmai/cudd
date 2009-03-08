@@ -84,7 +84,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddZddIsop.c,v 1.17 2004/08/13 18:04:53 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddZddIsop.c,v 1.20 2009/02/19 16:26:12 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -252,11 +252,11 @@ cuddZddIsop(
     statLine(dd);
     if (L == zero) {
 	*zdd_I = zdd_zero;
-    	return(zero);
+	return(zero);
     }
     if (U == one) {
 	*zdd_I = zdd_one;
-    	return(one);
+	return(one);
     }
 
     if (U == zero || L == one) {
@@ -291,28 +291,28 @@ cuddZddIsop(
     /* Compute cofactors. */
     if (top_l == v) {
 	index = Cudd_Regular(L)->index;
-    	Lv = Cudd_T(L);
-    	Lnv = Cudd_E(L);
-    	if (Cudd_IsComplement(L)) {
-    	    Lv = Cudd_Not(Lv);
-    	    Lnv = Cudd_Not(Lnv);
-    	}
+	Lv = Cudd_T(L);
+	Lnv = Cudd_E(L);
+	if (Cudd_IsComplement(L)) {
+	    Lv = Cudd_Not(Lv);
+	    Lnv = Cudd_Not(Lnv);
+	}
     }
     else {
 	index = Cudd_Regular(U)->index;
-        Lv = Lnv = L;
+	Lv = Lnv = L;
     }
 
     if (top_u == v) {
-    	Uv = Cudd_T(U);
-    	Unv = Cudd_E(U);
-    	if (Cudd_IsComplement(U)) {
-    	    Uv = Cudd_Not(Uv);
-    	    Unv = Cudd_Not(Unv);
-    	}
+	Uv = Cudd_T(U);
+	Unv = Cudd_E(U);
+	if (Cudd_IsComplement(U)) {
+	    Uv = Cudd_Not(Uv);
+	    Unv = Cudd_Not(Unv);
+	}
     }
     else {
-        Uv = Unv = U;
+	Uv = Unv = U;
     }
 
     Lsub0 = cuddBddAndRecur(dd, Lnv, Cudd_Not(Uv));
@@ -587,14 +587,14 @@ cuddBddIsop(
 
     statLine(dd);
     if (L == zero)
-    	return(zero);
+	return(zero);
     if (U == one)
-    	return(one);
+	return(one);
 
     /* Check cache */
     r = cuddCacheLookup2(dd, cuddBddIsop, L, U);
     if (r)
-    	return(r);
+	return(r);
 
     top_l = dd->perm[Cudd_Regular(L)->index];
     top_u = dd->perm[Cudd_Regular(U)->index];
@@ -603,28 +603,28 @@ cuddBddIsop(
     /* Compute cofactors */
     if (top_l == v) {
 	index = Cudd_Regular(L)->index;
-    	Lv = Cudd_T(L);
-    	Lnv = Cudd_E(L);
-    	if (Cudd_IsComplement(L)) {
-    	    Lv = Cudd_Not(Lv);
-    	    Lnv = Cudd_Not(Lnv);
-    	}
+	Lv = Cudd_T(L);
+	Lnv = Cudd_E(L);
+	if (Cudd_IsComplement(L)) {
+	    Lv = Cudd_Not(Lv);
+	    Lnv = Cudd_Not(Lnv);
+	}
     }
     else {
 	index = Cudd_Regular(U)->index;
-        Lv = Lnv = L;
+	Lv = Lnv = L;
     }
 
     if (top_u == v) {
-    	Uv = Cudd_T(U);
-    	Unv = Cudd_E(U);
-    	if (Cudd_IsComplement(U)) {
-    	    Uv = Cudd_Not(Uv);
-    	    Unv = Cudd_Not(Unv);
-    	}
+	Uv = Cudd_T(U);
+	Unv = Cudd_E(U);
+	if (Cudd_IsComplement(U)) {
+	    Uv = Cudd_Not(Uv);
+	    Unv = Cudd_Not(Unv);
+	}
     }
     else {
-        Uv = Unv = U;
+	Uv = Unv = U;
     }
 
     Lsub0 = cuddBddAndRecur(dd, Lnv, Cudd_Not(Uv));
@@ -815,7 +815,7 @@ cuddMakeBddFromZddCover(
 	return(neW);
 
     v = Cudd_Regular(node)->index;	/* either yi or zi */
-    cuddZddGetCofactors3(dd, node, v, &f1, &f0, &fd);
+    if (cuddZddGetCofactors3(dd, node, v, &f1, &f0, &fd)) return(NULL);
     Cudd_Ref(f1);
     Cudd_Ref(f0);
     Cudd_Ref(fd);
@@ -829,7 +829,7 @@ cuddMakeBddFromZddCover(
     }
     Cudd_Ref(b1);
     b0 = cuddMakeBddFromZddCover(dd, f0);
-    if (!b1) {
+    if (!b0) {
 	Cudd_RecursiveDerefZdd(dd, f1);
 	Cudd_RecursiveDerefZdd(dd, f0);
 	Cudd_RecursiveDerefZdd(dd, fd);
@@ -909,4 +909,3 @@ cuddMakeBddFromZddCover(
 /*---------------------------------------------------------------------------*/
 /* Definition of static functions                                            */
 /*---------------------------------------------------------------------------*/
-

@@ -77,7 +77,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddAddWalsh.c,v 1.9 2004/08/13 18:04:46 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddAddWalsh.c,v 1.10 2008/04/17 21:17:11 fabio Exp $";
 #endif
 
 
@@ -363,7 +363,7 @@ addWalshInt(
 	Cudd_RecursiveDeref(dd, v);
 	if (i>0) {
 	    w = Cudd_addIte(dd, y[i], u1, t1);
-	    if (u == NULL) {
+	    if (w == NULL) {
 		Cudd_RecursiveDeref(dd, u1);
 		Cudd_RecursiveDeref(dd, t1);
 		Cudd_RecursiveDeref(dd, u);

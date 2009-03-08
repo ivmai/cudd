@@ -78,7 +78,7 @@
 		<li> Cudd_ReadZddTree()
 		<li> Cudd_SetZddTree()
 		<li> Cudd_FreeZddTree()
-                <li> Cudd_NodeReadIndex()
+		<li> Cudd_NodeReadIndex()
 		<li> Cudd_ReadPerm()
 		<li> Cudd_ReadInvPerm()
 		<li> Cudd_ReadVars()
@@ -211,7 +211,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddAPI.c,v 1.57 2004/08/13 18:04:45 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddAPI.c,v 1.59 2009/02/19 16:14:14 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -1343,7 +1343,7 @@ Cudd_SetLooseUpTo(
   unsigned int lut)
 {
     if (lut == 0) {
-	long datalimit = getSoftDataLimit();
+	unsigned long datalimit = getSoftDataLimit();
 	lut = (unsigned int) (datalimit / (sizeof(DdNode) *
 					   DD_MAX_LOOSE_FRACTION));
     }
@@ -1413,7 +1413,7 @@ Cudd_SetMaxCacheHard(
   unsigned int mc)
 {
     if (mc == 0) {
-	long datalimit = getSoftDataLimit();
+	unsigned long datalimit = getSoftDataLimit();
 	mc = (unsigned int) (datalimit / (sizeof(DdCache) *
 					  DD_MAX_CACHE_FRACTION));
     }
@@ -1575,7 +1575,7 @@ Cudd_ExpectedUsedSlots(
 
     /* To each subtable we apply the corollary to Theorem 8.5 (occupancy
     ** distribution) from Sedgewick and Flajolet's Analysis of Algorithms.
-    ** The corollary says that for a a table with M buckets and a load ratio
+    ** The corollary says that for a table with M buckets and a load ratio
     ** of r, the expected number of empty buckets is asymptotically given
     ** by M * exp(-r).
     */
@@ -2966,12 +2966,14 @@ Cudd_PrintInfo(
     retval = fprintf(fp,"Dynamic reordering of BDDs enabled: %s\n",
 		     Cudd_ReorderingStatus(dd,&autoMethod) ? "yes" : "no");
     if (retval == EOF) return(0);
-    retval = fprintf(fp,"Default BDD reordering method: %d\n", autoMethod);
+    retval = fprintf(fp,"Default BDD reordering method: %d\n",
+		     (int) autoMethod);
     if (retval == EOF) return(0);
     retval = fprintf(fp,"Dynamic reordering of ZDDs enabled: %s\n",
 		     Cudd_ReorderingStatusZdd(dd,&autoMethodZ) ? "yes" : "no");
     if (retval == EOF) return(0);
-    retval = fprintf(fp,"Default ZDD reordering method: %d\n", autoMethodZ);
+    retval = fprintf(fp,"Default ZDD reordering method: %d\n",
+		     (int) autoMethodZ);
     if (retval == EOF) return(0);
     retval = fprintf(fp,"Realignment of ZDDs to BDDs enabled: %s\n",
 		     Cudd_zddRealignmentEnabled(dd) ? "yes" : "no");
@@ -2983,7 +2985,7 @@ Cudd_PrintInfo(
 		     Cudd_DeadAreCounted(dd) ? "yes" : "no");
     if (retval == EOF) return(0);
     retval = fprintf(fp,"Group checking criterion: %d\n",
-		     Cudd_ReadGroupcheck(dd));
+		     (int) Cudd_ReadGroupcheck(dd));
     if (retval == EOF) return(0);
     retval = fprintf(fp,"Recombination threshold: %d\n", Cudd_ReadRecomb(dd));
     if (retval == EOF) return(0);
@@ -3067,13 +3069,13 @@ Cudd_PrintInfo(
     retval = fprintf(fp,"Total number of nodes reclaimed: %.0f\n",
 		     dd->reclaimed);
     if (retval == EOF) return(0);
-#if DD_STATS
+#ifdef DD_STATS
     retval = fprintf(fp,"Nodes freed: %.0f\n", dd->nodesFreed);
     if (retval == EOF) return(0);
     retval = fprintf(fp,"Nodes dropped: %.0f\n", dd->nodesDropped);
     if (retval == EOF) return(0);
 #endif
-#if DD_COUNT
+#ifdef DD_COUNT
     retval = fprintf(fp,"Number of recursive calls: %.0f\n",
 		     Cudd_ReadRecursiveCalls(dd));
     if (retval == EOF) return(0);
@@ -3089,7 +3091,7 @@ Cudd_PrintInfo(
     retval = fprintf(fp,"Time for reordering: %.2f sec\n",
 		     ((double)Cudd_ReadReorderingTime(dd)/1000.0));
     if (retval == EOF) return(0);
-#if DD_COUNT
+#ifdef DD_COUNT
     retval = fprintf(fp,"Node swaps in reordering: %.0f\n",
 	Cudd_ReadSwapSteps(dd));
     if (retval == EOF) return(0);
@@ -4433,4 +4435,3 @@ addMultiplicityGroups(
     return(1);
 
 } /* end of addMultiplicityGroups */
-

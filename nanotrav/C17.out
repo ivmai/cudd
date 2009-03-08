@@ -1,6 +1,6 @@
 # Nanotrav Version #0.12, Release date 2003/12/31
 # ./nanotrav -p 1 -cover C17.blif
-# CUDD Version 2.4.0
+# CUDD Version 2.4.2
 Order before final reordering
 1GAT(0) 2GAT(1) 3GAT(2) 6GAT(3) 7GAT(4) 
 22GAT(10): 8 nodes 18 minterms
@@ -74,7 +74,7 @@ Time for garbage collection: 0.00 sec
 Reorderings so far: 0
 Time for reordering: 0.00 sec
 Final size: 11
-total time = 0.01 sec
+total time = 0.00 sec
 Runtime Statistics
 ------------------
 Machine name: jobim.colorado.edu
@@ -85,17 +85,17 @@ Average resident text size       =     0K
 Average resident data+stack size =     0K
 Maximum resident size            =     0K
 
-Virtual text size                = 131782K
-Virtual data size                =   214K
-    data size initialized        =    39K
+Virtual text size                = 131815K
+Virtual data size                =   297K
+    data size initialized        =    25K
     data size uninitialized      =   137K
-    data size sbrk               =    38K
+    data size sbrk               =   135K
 Virtual memory limit             = 358400K (4194304K)
 
-Major page faults = 177
-Minor page faults = 1191
+Major page faults = 8
+Minor page faults = 1413
 Swaps = 0
 Input blocks = 0
 Output blocks = 0
-Context switch (voluntary) = 0
+Context switch (voluntary) = 12
 Context switch (involuntary) = 0

@@ -5,7 +5,7 @@
   PackageName [cudd]
 
   Synopsis [Procedure to subset the given BDD choosing the shortest paths
-            (largest cubes) in the BDD.]
+	    (largest cubes) in the BDD.]
 
 
   Description  [External procedures included in this module:
@@ -16,7 +16,7 @@
 		Internal procedures included in this module:
 		<ul>
 		<li> cuddSubsetShortPaths()
-		</ul> 
+		</ul>
 		Static procedures included in this module:
 		<ul>
 		<li> BuildSubsetBdd()
@@ -77,7 +77,7 @@
 
 #define DEFAULT_PAGE_SIZE 2048 /* page size to store the BFS queue element type */
 #define DEFAULT_NODE_DIST_PAGE_SIZE 2048 /*  page sizesto store NodeDist_t type */
-#define MAXSHORTINT    	((DdHalfWord) ~0) /* constant defined to store
+#define MAXSHORTINT	((DdHalfWord) ~0) /* constant defined to store
 					   * maximum distance of a node
 					   * from the root or the
 					   * constant
@@ -89,7 +89,7 @@
 /* Stucture declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-/* structure created to store subset results for each node and distances with 
+/* structure created to store subset results for each node and distances with
  * odd and even parity of the node from the root and sink. Main data structure
  * in this procedure.
  */
@@ -122,7 +122,7 @@ typedef struct NodeDist NodeDist_t;
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddSubsetSP.c,v 1.32 2004/08/13 18:04:51 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddSubsetSP.c,v 1.34 2009/02/19 16:23:19 fabio Exp $";
 #endif
 
 #ifdef DD_DEBUG
@@ -132,7 +132,7 @@ static int thishit;
 #endif
 
 
-static 	int 		memOut; /* flag to indicate out of memory */
+static	int		memOut; /* flag to indicate out of memory */
 static  DdNode          *zero, *one; /* constant functions */
 
 static  NodeDist_t      **nodeDistPages; /* pointers to the pages */
@@ -322,7 +322,7 @@ cuddSubsetShortPaths(
     unsigned int  *pathLengthArray;
     unsigned int maxpath, oddLen, evenLen, pathLength, *excess;
     int i;
-    NodeDist_t 	*nodeStat;
+    NodeDist_t	*nodeStat;
     struct AssortedInfo *info;
     st_table *subsetNodeTable;
 
@@ -333,7 +333,7 @@ cuddSubsetShortPaths(
       /* set default value */
       numVars = Cudd_ReadSize(dd);
     }
-    
+
     if (threshold > numVars) {
 	threshold = threshold - numVars;
     }
@@ -396,6 +396,8 @@ cuddSubsetShortPaths(
 	if (!st_lookup(pathTable, N, &nodeStat)) {
 	    fprintf(dd->err, "Something wrong, root node must be in table\n");
 	    dd->errorCode = CUDD_INTERNAL_ERROR;
+	    FREE(excess);
+	    FREE(info);
 	    return(NULL);
 	} else {
 	    if ((nodeStat->oddTopDist != MAXSHORTINT) &&
@@ -412,7 +414,7 @@ cuddSubsetShortPaths(
 
 	    pathLength = (oddLen <= evenLen) ? oddLen : evenLen;
 	    if (pathLength > maxpath) {
-		(void) fprintf(dd->err, "All computations are bogus, since root has path length greater than max path length within threshold %d, %d\n", maxpath, pathLength);
+		(void) fprintf(dd->err, "All computations are bogus, since root has path length greater than max path length within threshold %u, %u\n", maxpath, pathLength);
 		dd->errorCode = CUDD_INTERNAL_ERROR;
 		return(NULL);
 	    }
@@ -496,7 +498,7 @@ cuddSubsetShortPaths(
   next page when the end of the page is reached and allocates new
   pages when necessary. ]
 
-  SideEffects [Changes the size of  pages, page, page index, maximum 
+  SideEffects [Changes the size of  pages, page, page index, maximum
   number of pages freeing stuff in case of memory out. ]
 
   SeeAlso     []
@@ -512,7 +514,7 @@ ResizeNodeDistPages(void)
     nodeDistPage++;
 
     /* If the current page index is larger than the number of pages
-     * allocated, allocate a new page array. Page numbers are incremented by 
+     * allocated, allocate a new page array. Page numbers are incremented by
      * INITIAL_PAGES
      */
     if (nodeDistPage == maxNodeDistPages) {
@@ -550,15 +552,15 @@ ResizeNodeDistPages(void)
 
 /**Function********************************************************************
 
-  Synopsis    [Resize the number of pages allocated to store nodes in the BFS 
+  Synopsis    [Resize the number of pages allocated to store nodes in the BFS
   traversal of the Bdd  .]
 
-  Description [Resize the number of pages allocated to store nodes in the BFS 
+  Description [Resize the number of pages allocated to store nodes in the BFS
   traversal of the Bdd. The procedure  moves the counter to the
   next page when the end of the page is reached and allocates new
   pages when necessary.]
 
-  SideEffects [Changes the size of pages, page, page index, maximum 
+  SideEffects [Changes the size of pages, page, page index, maximum
   number of pages freeing stuff in case of memory out. ]
 
   SeeAlso     []
@@ -572,7 +574,7 @@ ResizeQueuePages(void)
 
     queuePage++;
     /* If the current page index is larger than the number of pages
-     * allocated, allocate a new page array. Page numbers are incremented by 
+     * allocated, allocate a new page array. Page numbers are incremented by
      * INITIAL_PAGES
      */
     if (queuePage == maxQueuePages) {
@@ -655,7 +657,7 @@ CreateTopDist(
     assert(currentQueuePage == childPage);
 #endif
     /* number children added to queue is initialized , needed for
-     * numParents in the next call 
+     * numParents in the next call
      */
     childrenCount = 0;
     /* process all the nodes in this level */
@@ -891,7 +893,7 @@ CreateBotDist(
 		nodeStat->oddBotDist = 1;
 	    else
 		nodeStat->evenBotDist = 1;
-	} else { 
+	} else {
 	    /* If node not in table, recur. */
 	    if (!st_lookup(pathTable, regChild, &nodeStatChild)) {
 		fprintf(fp, "Something wrong, node in table should have been created in top dist proc.\n");
@@ -1365,7 +1367,7 @@ BuildSubsetBdd(
 
 	NvPathLength = (oddLen <= evenLen) ? oddLen : evenLen;
 	NvBotDist = (oddLen <= evenLen) ? nodeStatNv->oddBotDist:
-	                                           nodeStatNv->evenBotDist;
+						   nodeStatNv->evenBotDist;
     }
     /* if else child constant, branch is the child */
     if (Cudd_IsConstant(Nnv)) {
@@ -1409,7 +1411,7 @@ BuildSubsetBdd(
 
 	NnvPathLength = (oddLen <= evenLen) ? oddLen : evenLen;
 	NnvBotDist = (oddLen <= evenLen) ? nodeStatNnv->oddBotDist :
-	                                           nodeStatNnv->evenBotDist;
+						   nodeStatNnv->evenBotDist;
     }
 
     tiebreakChild = (NvBotDist <= NnvBotDist) ? 1 : 0;
@@ -1538,7 +1540,7 @@ BuildSubsetBdd(
 	}
 	processingDone++;
 
-    } /*end of while processing Nv, Nnv */  	
+    } /*end of while processing Nv, Nnv */
 
     info->findShortestPath = 0;
     topid = Cudd_NodeReadIndex(N);
@@ -1614,7 +1616,7 @@ BuildSubsetBdd(
 		nodeStat->compResult = Cudd_Not(neW);
 		cuddRef(nodeStat->compResult);
 	    }
-	} 
+	}
 
 	cuddDeref(neW);
 	return(neW);

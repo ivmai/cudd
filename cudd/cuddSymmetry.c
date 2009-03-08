@@ -87,7 +87,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddSymmetry.c,v 1.25 2004/08/13 18:04:51 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddSymmetry.c,v 1.26 2009/02/19 16:23:54 fabio Exp $";
 #endif
 
 static	int	*entry;
@@ -514,7 +514,7 @@ cuddSymmSiftingConv(
 #ifdef DD_STATS
 	(void) fprintf(table->out,"\n");
 #endif
-        /* Here we consider only one representative for each symmetry class. */
+	/* Here we consider only one representative for each symmetry class. */
 	for (x = lower, classes = 0; x <= upper; x++, classes++) {
 	    while ((unsigned) x < table->subtables[x].next) {
 		x = table->subtables[x].next;
@@ -781,7 +781,7 @@ ddSymmSiftingAux(
 	    x = table->subtables[i].next;
 	}
 #ifdef DD_DEBUG
-        /* x should be the top of the symmetry group and i the bottom */
+	/* x should be the top of the symmetry group and i the bottom */
 	assert((unsigned) i >= table->subtables[i].next);
 	assert((unsigned) x == table->subtables[i].next);
 #endif
@@ -821,7 +821,7 @@ ddSymmSiftingAux(
 	if (!result) goto ddSymmSiftingAuxOutOfMem;
 
     } else { /* moving up first: shorter */
-        /* Find top of x's symmetry group */
+	/* Find top of x's symmetry group */
 	x = table->subtables[x].next;
 
 	moveUp = ddSymmSiftingUp(table,x,xLow);
@@ -837,7 +837,7 @@ ddSymmSiftingAux(
 	    i = table->subtables[x].next;
 	}
 #ifdef DD_DEBUG
-        /* x is bottom of the symmetry group and i is top */
+	/* x is bottom of the symmetry group and i is top */
 	assert((unsigned) x >= table->subtables[x].next);
 	assert((unsigned) i == table->subtables[x].next);
 #endif
@@ -953,7 +953,7 @@ ddSymmSiftingConvAux(
 	/* x is bottom of symmetry group */
 	assert((unsigned) x >= table->subtables[x].next);
 #endif
-        i = table->subtables[x].next;
+	i = table->subtables[x].next;
 	initGroupSize = x - i + 1;
 
 	moveDown = ddSymmSiftingDown(table,x,xHigh);
@@ -1037,7 +1037,7 @@ ddSymmSiftingConvAux(
 	    x = table->subtables[x].next;
 	}
 #ifdef DD_DEBUG
-        /* x should be the top of the symmetry group and i the bottom */
+	/* x should be the top of the symmetry group and i the bottom */
 	assert((unsigned) i >= table->subtables[i].next);
 	assert((unsigned) x == table->subtables[i].next);
 #endif
@@ -1093,11 +1093,11 @@ ddSymmSiftingConvAux(
 		x = table->subtables[x].next;
 	}
 #ifdef DD_DEBUG
-        /* x is bottom of the symmetry group and i is top */
-        assert((unsigned) x >= table->subtables[x].next);
-        assert((unsigned) i == table->subtables[x].next);
+	/* x is bottom of the symmetry group and i is top */
+	assert((unsigned) x >= table->subtables[x].next);
+	assert((unsigned) i == table->subtables[x].next);
 #endif
-        initGroupSize = x - i + 1;
+	initGroupSize = x - i + 1;
 
 	moveDown = ddSymmSiftingDown(table,x,xHigh);
 	if (moveDown == MV_OOM) goto ddSymmSiftingConvAuxOutOfMem;
@@ -1477,7 +1477,7 @@ ddSymmGroupMove(
     int  xtop,xbot,xsize,ytop,ybot,ysize,newxtop;
     int  swapx,swapy;
 
-#if DD_DEBUG
+#ifdef DD_DEBUG
     assert(x < y);	/* we assume that x < y */
 #endif
     /* Find top, bottom, and size for the two groups. */
@@ -1492,7 +1492,7 @@ ddSymmGroupMove(
 
     /* Sift the variables of the second group up through the first group. */
     for (i = 1; i <= ysize; i++) {
-        for (j = 1; j <= xsize; j++) {
+	for (j = 1; j <= xsize; j++) {
 	    size = cuddSwapInPlace(table,x,y);
 	    if (size == 0) return(0);
 	    swapx = x; swapy = y;
@@ -1510,7 +1510,7 @@ ddSymmGroupMove(
 	y = y + 1;
     }
     table->subtables[y].next = xtop; /* y is bottom of its group, join */
-    				     /* its symmetry to top of its group */
+				     /* its symmetry to top of its group */
     x = y + 1;
     newxtop = x;
     for (i = 0; i < xsize - 1 ; i++) {
@@ -1518,7 +1518,7 @@ ddSymmGroupMove(
 	x = x + 1;
     }
     table->subtables[x].next = newxtop; /* x is bottom of its group, join */
-    					/* its symmetry to top of its group */
+					/* its symmetry to top of its group */
     /* Store group move */
     move = (Move *) cuddDynamicAllocNode(table);
     if (move == NULL) return(0);
@@ -1555,7 +1555,7 @@ ddSymmGroupMoveBackward(
     int i,j;
     int	xtop,xbot,xsize,ytop,ybot,ysize,newxtop;
 
-#if DD_DEBUG
+#ifdef DD_DEBUG
     assert(x < y); /* We assume that x < y */
 #endif
 
@@ -1571,7 +1571,7 @@ ddSymmGroupMoveBackward(
 
     /* Sift the variables of the second group up through the first group. */
     for (i = 1; i <= ysize; i++) {
-        for (j = 1; j <= xsize; j++) {
+	for (j = 1; j <= xsize; j++) {
 	    size = cuddSwapInPlace(table,x,y);
 	    if (size == 0) return(0);
 	    y = x;
@@ -1588,7 +1588,7 @@ ddSymmGroupMoveBackward(
 	y = y + 1;
     }
     table->subtables[y].next = xtop; /* y is bottom of its group, join */
-    				     /* its symmetry to top of its group */
+				     /* its symmetry to top of its group */
     x = y + 1;
     newxtop = x;
     for (i = 0; i < xsize-1 ; i++) {

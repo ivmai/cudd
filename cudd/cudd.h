@@ -50,7 +50,7 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.]
 
-  Revision    [$Id: cudd.h,v 1.170 2005/05/18 06:07:41 fabio Exp $]
+  Revision    [$Id: cudd.h,v 1.174 2009/02/21 05:55:18 fabio Exp $]
 
 ******************************************************************************/
 
@@ -72,7 +72,7 @@ extern "C" {
 /* Constant declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#define CUDD_VERSION "2.4.1"
+#define CUDD_VERSION "2.4.2"
 
 #ifndef SIZEOF_VOID_P
 #define SIZEOF_VOID_P 4
@@ -117,14 +117,20 @@ extern "C" {
 #define CUDD_CONST_INDEX	CUDD_MAXINDEX
 
 /* These constants define the digits used in the representation of
-** arbitrary precision integers.  The two configurations tested use 8
-** and 16 bits for each digit.  The typedefs should be in agreement
+** arbitrary precision integers.  The configurations tested use 8, 16,
+** and 32 bits for each digit.  The typedefs should be in agreement
 ** with these definitions.
 */
+#if SIZEOF_LONG == 8
+#define DD_APA_BITS	32
+#define DD_APA_BASE	(1L << DD_APA_BITS)
+#define DD_APA_HEXPRINT	"%08x"
+#else
 #define DD_APA_BITS	16
 #define DD_APA_BASE	(1 << DD_APA_BITS)
-#define DD_APA_MASK	(DD_APA_BASE - 1)
 #define DD_APA_HEXPRINT	"%04x"
+#endif
+#define DD_APA_MASK	(DD_APA_BASE - 1)
 
 /*---------------------------------------------------------------------------*/
 /* Stucture declarations                                                     */
@@ -289,8 +295,13 @@ typedef struct DdGen DdGen;
 
 /* These typedefs for arbitrary precision arithmetic should agree with
 ** the corresponding constant definitions above. */
-typedef unsigned short int DdApaDigit;
+#if SIZEOF_LONG == 8
+typedef unsigned int DdApaDigit;
 typedef unsigned long int DdApaDoubleDigit;
+#else
+typedef unsigned short int DdApaDigit;
+typedef unsigned int DdApaDoubleDigit;
+#endif
 typedef DdApaDigit * DdApaNumber;
 
 /* Return type for function computing two-literal clauses. */
@@ -866,8 +877,8 @@ extern DdTlcInfo * Cudd_FindTwoLiteralClauses (DdManager * dd, DdNode * f);
 extern int Cudd_PrintTwoLiteralClauses (DdManager * dd, DdNode * f, char **names, FILE *fp);
 extern int Cudd_ReadIthClause (DdTlcInfo * tlc, int i, DdHalfWord *var1, DdHalfWord *var2, int *phase1, int *phase2);
 extern void Cudd_tlcInfoFree (DdTlcInfo * t);
-extern int Cudd_DumpBlif (DdManager *dd, int n, DdNode **f, char **inames, char **onames, char *mname, FILE *fp);
-extern int Cudd_DumpBlifBody (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
+extern int Cudd_DumpBlif (DdManager *dd, int n, DdNode **f, char **inames, char **onames, char *mname, FILE *fp, int mv);
+extern int Cudd_DumpBlifBody (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp, int mv);
 extern int Cudd_DumpDot (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
 extern int Cudd_DumpDaVinci (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
 extern int Cudd_DumpDDcal (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
@@ -901,6 +912,9 @@ extern DdNode * Cudd_Xeqy (DdManager *dd, int N, DdNode **x, DdNode **y);
 extern DdNode * Cudd_addXeqy (DdManager *dd, int N, DdNode **x, DdNode **y);
 extern DdNode * Cudd_Dxygtdxz (DdManager *dd, int N, DdNode **x, DdNode **y, DdNode **z);
 extern DdNode * Cudd_Dxygtdyz (DdManager *dd, int N, DdNode **x, DdNode **y, DdNode **z);
+extern DdNode * Cudd_Inequality (DdManager * dd, int  N, int c, DdNode ** x, DdNode ** y);
+extern DdNode * Cudd_Disequality (DdManager * dd, int  N, int c, DdNode ** x, DdNode ** y);
+extern DdNode * Cudd_bddInterval (DdManager * dd, int  N, DdNode ** x, unsigned int lowerB, unsigned int upperB);
 extern DdNode * Cudd_CProjection (DdManager *dd, DdNode *R, DdNode *Y);
 extern DdNode * Cudd_addHamming (DdManager *dd, DdNode **xVars, DdNode **yVars, int nVars);
 extern int Cudd_MinHammingDist (DdManager *dd, DdNode *f, int *minterm, int upperBound);
