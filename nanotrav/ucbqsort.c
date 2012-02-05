@@ -5,7 +5,7 @@
 #endif
 
 #ifndef lint
-static char rcsid[] UNUSED = "$Id: ucbqsort.c,v 1.4 2004/01/01 07:06:06 fabio Exp fabio $";
+static char rcsid[] UNUSED = "$Id: ucbqsort.c,v 1.4 2004/01/01 07:06:06 fabio Exp $";
 #endif
 
 /* @(#)qsort.c	4.2 (Berkeley) 3/9/83 */

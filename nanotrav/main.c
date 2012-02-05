@@ -12,7 +12,7 @@
 
   Author      [Fabio Somenzi]
 
-  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
+  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -71,7 +71,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: main.c,v 1.40 2009/02/21 06:00:31 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: main.c,v 1.41 2012/02/05 01:53:01 fabio Exp fabio $";
 #endif
 
 static  char    buffer[BUFLENGTH];

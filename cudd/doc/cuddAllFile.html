@@ -88,8 +88,7 @@
  <DT> <A HREF="#cuddReorder.c"><CODE>cuddReorder.c</CODE></A>
  <DD> Functions for dynamic variable reordering.
  <DT> <A HREF="#cuddSat.c"><CODE>cuddSat.c</CODE></A>
- <DD> Functions for the solution of satisfiability related
-  problems.
+ <DD> Functions for the solution of satisfiability related problems.
  <DT> <A HREF="#cuddSign.c"><CODE>cuddSign.c</CODE></A>
  <DD> Computation of signatures.
  <DT> <A HREF="#cuddSolve.c"><CODE>cuddSolve.c</CODE></A>
@@ -622,6 +621,16 @@ External procedures included in this module:
 		<li> Cudd_zddVarsFromBddVars()
 		<li> Cudd_addConst()
 		<li> Cudd_IsNonConstant()
+		<li> Cudd_ReadStartTime()
+                <li> Cudd_ReadElapsedTime()
+		<li> Cudd_SetStartTime()
+                <li> Cudd_ResetStartTime()
+		<li> Cudd_ReadTimeLimit()
+		<li> Cudd_SetTimeLimit()
+                <li> Cudd_UpdateTimeLimit()
+                <li> Cudd_IncreaseTimeLimit()
+                <li> Cudd_UnsetTimeLimit()
+                <li> Cudd_TimeLimited()
 		<li> Cudd_AutodynEnable()
 		<li> Cudd_AutodynDisable()
 		<li> Cudd_ReorderingStatus()
@@ -661,6 +670,8 @@ External procedures included in this module:
 		<li> Cudd_ReadDead()
 		<li> Cudd_ReadMinDead()
 		<li> Cudd_ReadReorderings()
+		<li> Cudd_ReadMaxReorderings()
+		<li> Cudd_SetMaxReorderings()
 		<li> Cudd_ReadReorderingTime()
 		<li> Cudd_ReadGarbageCollections()
 		<li> Cudd_ReadGarbageCollectionTime()
@@ -706,6 +717,8 @@ External procedures included in this module:
 		<li> Cudd_SetPopulationSize()
 		<li> Cudd_ReadNumberXovers()
 		<li> Cudd_SetNumberXovers()
+                <li> Cudd_ReadOrderRandomization()
+                <li> Cudd_SetOrderRandomization()
 		<li> Cudd_ReadMemoryInUse()
 		<li> Cudd_PrintInfo()
 		<li> Cudd_ReadPeakNodeCount()
@@ -720,6 +733,10 @@ External procedures included in this module:
 		<li> Cudd_EnableReorderingReporting()
 		<li> Cudd_DisableReorderingReporting()
 		<li> Cudd_ReorderingReporting()
+                <li> Cudd_PrintGroupedOrder()
+                <li> Cudd_EnableOrderingMonitoring()
+                <li> Cudd_DisableOrderingMonitoring()
+                <li> Cudd_OrderingMonitoring()
 		<li> Cudd_ReadErrorCode()
 		<li> Cudd_ClearErrorCode()
 		<li> Cudd_ReadStdout()
@@ -786,6 +803,36 @@ External procedures included in this module:
 
  <DT> <A HREF="cuddAllDet.html#Cudd_IsNonConstant" TARGET="MAIN"><CODE>Cudd_IsNonConstant()</CODE></A>
  <DD> Returns 1 if a DD node is not constant.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_ReadStartTime" TARGET="MAIN"><CODE>Cudd_ReadStartTime()</CODE></A>
+ <DD> Returns the start time of the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_ReadElapsedTime" TARGET="MAIN"><CODE>Cudd_ReadElapsedTime()</CODE></A>
+ <DD> Returns the time elapsed since the start time of the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_SetStartTime" TARGET="MAIN"><CODE>Cudd_SetStartTime()</CODE></A>
+ <DD> Sets the start time of the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_ResetStartTime" TARGET="MAIN"><CODE>Cudd_ResetStartTime()</CODE></A>
+ <DD> Resets the start time of the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_ReadTimeLimit" TARGET="MAIN"><CODE>Cudd_ReadTimeLimit()</CODE></A>
+ <DD> Returns the time limit for the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_SetTimeLimit" TARGET="MAIN"><CODE>Cudd_SetTimeLimit()</CODE></A>
+ <DD> Sets the time limit for the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_UpdateTimeLimit" TARGET="MAIN"><CODE>Cudd_UpdateTimeLimit()</CODE></A>
+ <DD> Updates the time limit for the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_IncreaseTimeLimit" TARGET="MAIN"><CODE>Cudd_IncreaseTimeLimit()</CODE></A>
+ <DD> Increases the time limit for the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_UnsetTimeLimit" TARGET="MAIN"><CODE>Cudd_UnsetTimeLimit()</CODE></A>
+ <DD> Unsets the time limit for the manager.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_TimeLimited" TARGET="MAIN"><CODE>Cudd_TimeLimited()</CODE></A>
+ <DD> Returns true if the time limit for the manager is set.
 
  <DT> <A HREF="cuddAllDet.html#Cudd_AutodynEnable" TARGET="MAIN"><CODE>Cudd_AutodynEnable()</CODE></A>
  <DD> Enables automatic dynamic reordering of BDDs and ADDs.
@@ -915,6 +962,12 @@ External procedures included in this module:
 
  <DT> <A HREF="cuddAllDet.html#Cudd_ReadReorderings" TARGET="MAIN"><CODE>Cudd_ReadReorderings()</CODE></A>
  <DD> Returns the number of times reordering has occurred.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_ReadMaxReorderings" TARGET="MAIN"><CODE>Cudd_ReadMaxReorderings()</CODE></A>
+ <DD> Returns the maximum number of times reordering may be invoked.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_SetMaxReorderings" TARGET="MAIN"><CODE>Cudd_SetMaxReorderings()</CODE></A>
+ <DD> Sets the maximum number of times reordering may be invoked.
 
  <DT> <A HREF="cuddAllDet.html#Cudd_ReadReorderingTime" TARGET="MAIN"><CODE>Cudd_ReadReorderingTime()</CODE></A>
  <DD> Returns the time spent in reordering.
@@ -1080,6 +1133,12 @@ External procedures included in this module:
  <DD> Sets the number of crossovers used by the
   genetic algorithm for reordering.
 
+ <DT> <A HREF="cuddAllDet.html#Cudd_ReadOrderRandomization" TARGET="MAIN"><CODE>Cudd_ReadOrderRandomization()</CODE></A>
+ <DD> Returns the order randomization factor.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_SetOrderRandomization" TARGET="MAIN"><CODE>Cudd_SetOrderRandomization()</CODE></A>
+ <DD> Sets the order randomization factor.
+
  <DT> <A HREF="cuddAllDet.html#Cudd_ReadMemoryInUse" TARGET="MAIN"><CODE>Cudd_ReadMemoryInUse()</CODE></A>
  <DD> Returns the memory in use by the manager measured in bytes.
 
@@ -1121,6 +1180,18 @@ External procedures included in this module:
 
  <DT> <A HREF="cuddAllDet.html#Cudd_ReorderingReporting" TARGET="MAIN"><CODE>Cudd_ReorderingReporting()</CODE></A>
  <DD> Returns 1 if reporting of reordering stats is enabled.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_PrintGroupedOrder" TARGET="MAIN"><CODE>Cudd_PrintGroupedOrder()</CODE></A>
+ <DD> Hook function to print the current variable order.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_EnableOrderingMonitoring" TARGET="MAIN"><CODE>Cudd_EnableOrderingMonitoring()</CODE></A>
+ <DD> Enables monitoring of ordering.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_DisableOrderingMonitoring" TARGET="MAIN"><CODE>Cudd_DisableOrderingMonitoring()</CODE></A>
+ <DD> Disables monitoring of ordering.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_OrderingMonitoring" TARGET="MAIN"><CODE>Cudd_OrderingMonitoring()</CODE></A>
+ <DD> Returns 1 if monitoring of ordering is enabled.
 
  <DT> <A HREF="cuddAllDet.html#Cudd_ReadErrorCode" TARGET="MAIN"><CODE>Cudd_ReadErrorCode()</CODE></A>
  <DD> Returns the code of the last error.
@@ -1243,15 +1314,17 @@ External procedures provided by this module:
 		</ul>
 	       Static procedures included in this module:
 		<ul>
+                <li> updateParity()
 		<li> gatherInfoAux()
 		<li> gatherInfo()
 		<li> computeSavings()
+		<li> updateRefs()
 		<li> UAmarkNodes()
 		<li> UAbuildSubset()
-		<li> updateRefs()
 		<li> RAmarkNodes()
 		<li> BAmarkNodes()
 		<li> RAbuildSubset()
+                <li> BAapplyBias()
 		</ul> <P>
 <P><B>See Also</B><A HREF="#cuddSubsetHB.c"><CODE>cuddSubsetHB.c</CODE></A>
 <A HREF="#cuddSubsetSP.c"><CODE>cuddSubsetSP.c</CODE></A>
@@ -1333,6 +1406,7 @@ Quantification functions for BDDs. <P>
 External procedures included in this module:
 		<ul>
 		<li> Cudd_bddExistAbstract()
+                <li> Cudd_bddExistAbstractLimit()
 		<li> Cudd_bddXorExistAbstract()
 		<li> Cudd_bddUnivAbstract()
 		<li> Cudd_bddBooleanDiff()
@@ -1350,6 +1424,9 @@ External procedures included in this module:
 		</ul> <P>
 <DL>
  <DT> <A HREF="cuddAllDet.html#Cudd_bddExistAbstract" TARGET="MAIN"><CODE>Cudd_bddExistAbstract()</CODE></A>
+ <DD> Existentially abstracts all the variables in cube from f.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_bddExistAbstractLimit" TARGET="MAIN"><CODE>Cudd_bddExistAbstractLimit()</CODE></A>
  <DD> Existentially abstracts all the variables in cube from f.
 
  <DT> <A HREF="cuddAllDet.html#Cudd_bddXorExistAbstract" TARGET="MAIN"><CODE>Cudd_bddXorExistAbstract()</CODE></A>
@@ -1429,15 +1506,18 @@ BDD ITE function and satellites. <P>
 External procedures included in this module:
 		<ul>
                 <li> Cudd_bddIte()
+                <li> Cudd_bddIteLimit()
        	        <li> Cudd_bddIteConstant()
 		<li> Cudd_bddIntersect()
 		<li> Cudd_bddAnd()
 		<li> Cudd_bddAndLimit()
 		<li> Cudd_bddOr()
+		<li> Cudd_bddOrLimit()
 		<li> Cudd_bddNand()
 		<li> Cudd_bddNor()
 		<li> Cudd_bddXor()
 		<li> Cudd_bddXnor()
+		<li> Cudd_bddXnorLimit()
 		<li> Cudd_bddLeq()
 		</ul>
        Internal procedures included in this module:
@@ -1457,6 +1537,10 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#Cudd_bddIte" TARGET="MAIN"><CODE>Cudd_bddIte()</CODE></A>
  <DD> Implements ITE(f,g,h).
 
+ <DT> <A HREF="cuddAllDet.html#Cudd_bddIteLimit" TARGET="MAIN"><CODE>Cudd_bddIteLimit()</CODE></A>
+ <DD> Implements ITE(f,g,h).  Returns
+  NULL if too many nodes are required.
+
  <DT> <A HREF="cuddAllDet.html#Cudd_bddIteConstant" TARGET="MAIN"><CODE>Cudd_bddIteConstant()</CODE></A>
  <DD> Implements ITEconstant(f,g,h).
 
@@ -1473,6 +1557,10 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#Cudd_bddOr" TARGET="MAIN"><CODE>Cudd_bddOr()</CODE></A>
  <DD> Computes the disjunction of two BDDs f and g.
 
+ <DT> <A HREF="cuddAllDet.html#Cudd_bddOrLimit" TARGET="MAIN"><CODE>Cudd_bddOrLimit()</CODE></A>
+ <DD> Computes the disjunction of two BDDs f and g.  Returns
+  NULL if too many nodes are required.
+
  <DT> <A HREF="cuddAllDet.html#Cudd_bddNand" TARGET="MAIN"><CODE>Cudd_bddNand()</CODE></A>
  <DD> Computes the NAND of two BDDs f and g.
 
@@ -1484,6 +1572,10 @@ External procedures included in this module:
 
  <DT> <A HREF="cuddAllDet.html#Cudd_bddXnor" TARGET="MAIN"><CODE>Cudd_bddXnor()</CODE></A>
  <DD> Computes the exclusive NOR of two BDDs f and g.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_bddXnorLimit" TARGET="MAIN"><CODE>Cudd_bddXnorLimit()</CODE></A>
+ <DD> Computes the exclusive NOR of two BDDs f and g.  Returns
+  NULL if too many nodes are required.
 
  <DT> <A HREF="cuddAllDet.html#Cudd_bddLeq" TARGET="MAIN"><CODE>Cudd_bddLeq()</CODE></A>
  <DD> Determines whether f is less than or equal to g.
@@ -1614,7 +1706,8 @@ Internal procedures included in this module:
  <DD> Initializes the computed table.
 
  <DT> <A HREF="cuddAllDet.html#cuddCacheInsert" TARGET="MAIN"><CODE>cuddCacheInsert()</CODE></A>
- <DD> Inserts a result in the cache.
+ <DD> Inserts a result in the cache for a function with three
+  operands.
 
  <DT> <A HREF="cuddAllDet.html#cuddCacheInsert2" TARGET="MAIN"><CODE>cuddCacheInsert2()</CODE></A>
  <DD> Inserts a result in the cache for a function with two
@@ -1756,22 +1849,22 @@ Cofactoring functions. <P>
 External procedures included in this module:
 		<ul>
 		<li> Cudd_Cofactor()
+		<li> Cudd_CheckCube()
 		</ul>
 	       Internal procedures included in this module:
 		<ul>
 		<li> cuddGetBranches()
-		<li> cuddCheckCube()
 		<li> cuddCofactorRecur()
 		</ul> <P>
 <DL>
  <DT> <A HREF="cuddAllDet.html#Cudd_Cofactor" TARGET="MAIN"><CODE>Cudd_Cofactor()</CODE></A>
  <DD> Computes the cofactor of f with respect to g.
 
+ <DT> <A HREF="cuddAllDet.html#Cudd_CheckCube" TARGET="MAIN"><CODE>Cudd_CheckCube()</CODE></A>
+ <DD> Checks whether g is the BDD of a cube.
+
  <DT> <A HREF="cuddAllDet.html#cuddGetBranches" TARGET="MAIN"><CODE>cuddGetBranches()</CODE></A>
  <DD> Computes the children of g.
-
- <DT> <A HREF="cuddAllDet.html#cuddCheckCube" TARGET="MAIN"><CODE>cuddCheckCube()</CODE></A>
- <DD> Checks whether g is the BDD of a cube.
 
  <DT> <A HREF="cuddAllDet.html#cuddCofactorRecur" TARGET="MAIN"><CODE>cuddCofactorRecur()</CODE></A>
  <DD> Performs the recursive step of Cudd_Cofactor.
@@ -1889,10 +1982,10 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#cuddBddVectorComposeRecur" TARGET="MAIN"><CODE>cuddBddVectorComposeRecur()</CODE></A>
  <DD> Performs the recursive step of Cudd_bddVectorCompose.
 
- <DT> <A HREF="cuddAllDet.html#ddIsIthAddVar" TARGET="MAIN"><CODE>ddIsIthAddVar()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Comparison of a function to the i-th ADD variable.
 
- <DT> <A HREF="cuddAllDet.html#ddIsIthAddVarPair" TARGET="MAIN"><CODE>ddIsIthAddVarPair()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Comparison of a pair of functions to the i-th ADD variable.
 
 </DL>
@@ -2065,16 +2158,16 @@ External procedures included in this file:
  <DT> <A HREF="cuddAllDet.html#bitVectorAlloc" TARGET="MAIN"><CODE>bitVectorAlloc()</CODE></A>
  <DD> Allocates a bit vector.
 
- <DT> <A HREF="cuddAllDet.html#bitVectorClear" TARGET="MAIN"><CODE>bitVectorClear()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Clears a bit vector.
 
  <DT> <A HREF="cuddAllDet.html#bitVectorFree" TARGET="MAIN"><CODE>bitVectorFree()</CODE></A>
  <DD> Frees a bit vector.
 
- <DT> <A HREF="cuddAllDet.html#bitVectorRead" TARGET="MAIN"><CODE>bitVectorRead()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Returns the i-th entry of a bit vector.
 
- <DT> <A HREF="cuddAllDet.html#bitVectorSet" TARGET="MAIN"><CODE>bitVectorSet()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Sets the i-th entry of a bit vector to a value.
 
  <DT> <A HREF="cuddAllDet.html#tlcInfoAlloc" TARGET="MAIN"><CODE>tlcInfoAlloc()</CODE></A>
@@ -2229,6 +2322,7 @@ External procedures included in this module:
 		<li> Cudd_bddCharToVect()
 		<li> Cudd_bddLICompaction()
 		<li> Cudd_bddSqueeze()
+                <li> Cudd_bddMinimize()
 		<li> Cudd_SubsetCompress()
 		<li> Cudd_SupersetCompress()
 		</ul>
@@ -2247,6 +2341,9 @@ External procedures included in this module:
 		<li> cuddBddCharToVect()
 		<li> cuddBddLICMarkEdges()
 		<li> cuddBddLICBuildResult()
+                <li> MarkCacheHash()
+                <li> MarkCacheCompare()
+                <li> MarkCacheCleanUp()
 		<li> cuddBddSqueeze()
 		</ul> <P>
 <DL>
@@ -2401,7 +2498,7 @@ Internal procedures included in this file:
  <DT> <A HREF="cuddAllDet.html#find_best" TARGET="MAIN"><CODE>find_best()</CODE></A>
  <DD> Returns the index of the fittest individual.
 
- <DT> <A HREF="cuddAllDet.html#find_average_fitness" TARGET="MAIN"><CODE>find_average_fitness()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Returns the average fitness of the population.
 
  <DT> <A HREF="cuddAllDet.html#PMX" TARGET="MAIN"><CODE>PMX()</CODE></A>
@@ -2447,6 +2544,7 @@ External procedures included in this file:
 		<li> ddSetVarHandled()
 		<li> ddResetVarHandled()
 		<li> ddIsVarHandled()
+                <li> ddFixTree()
 		</ul> <P>
 <DL>
  <DT> <A HREF="cuddAllDet.html#Cudd_MakeTreeNode" TARGET="MAIN"><CODE>Cudd_MakeTreeNode()</CODE></A>
@@ -2601,8 +2699,9 @@ Internal procedures included in this file:
   only external references. The matrix is stored as a packed array of bits;
   since it is symmetric, only the upper triangle is kept in memory.
   As a final remark, we note that there may be variables that do
-  intercat, but that for a given variable order have no arc connecting
-  their layers when they are adjacent. <P>
+  interact, but that for a given variable order have no arc connecting
+  their layers when they are adjacent.  For instance, in ite(a,b,c) with
+  the order a<b<c, b and c interact, but are not connected. <P>
 <DL>
  <DT> <A HREF="cuddAllDet.html#cuddSetInteract" TARGET="MAIN"><CODE>cuddSetInteract()</CODE></A>
  <DD> Set interaction matrix entries.
@@ -2642,8 +2741,11 @@ Internal procedures included in this module:
 		<li> cuddLocalCacheProfile()
 		<li> cuddHashTableInit()
 		<li> cuddHashTableQuit()
+		<li> cuddHashTableGenericQuit()
 		<li> cuddHashTableInsert()
 		<li> cuddHashTableLookup()
+		<li> cuddHashTableGenericInsert()
+		<li> cuddHashTableGenericLookup()
 		<li> cuddHashTableInsert2()
 		<li> cuddHashTableLookup2()
 		<li> cuddHashTableInsert3()
@@ -2686,6 +2788,9 @@ Internal procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#cuddHashTableQuit" TARGET="MAIN"><CODE>cuddHashTableQuit()</CODE></A>
  <DD> Shuts down a hash table.
 
+ <DT> <A HREF="cuddAllDet.html#cuddHashTableGenericQuit" TARGET="MAIN"><CODE>cuddHashTableGenericQuit()</CODE></A>
+ <DD> Shuts down a hash table.
+
  <DT> <A HREF="cuddAllDet.html#cuddHashTableInsert" TARGET="MAIN"><CODE>cuddHashTableInsert()</CODE></A>
  <DD> Inserts an item in a hash table.
 
@@ -2696,6 +2801,12 @@ Internal procedures included in this module:
  <DD> Inserts an item in a hash table.
 
  <DT> <A HREF="cuddAllDet.html#cuddHashTableLookup1" TARGET="MAIN"><CODE>cuddHashTableLookup1()</CODE></A>
+ <DD> Looks up a key consisting of one pointer in a hash table.
+
+ <DT> <A HREF="cuddAllDet.html#cuddHashTableGenericInsert" TARGET="MAIN"><CODE>cuddHashTableGenericInsert()</CODE></A>
+ <DD> Inserts an item in a hash table.
+
+ <DT> <A HREF="cuddAllDet.html#cuddHashTableGenericLookup" TARGET="MAIN"><CODE>cuddHashTableGenericLookup()</CODE></A>
  <DD> Looks up a key consisting of one pointer in a hash table.
 
  <DT> <A HREF="cuddAllDet.html#cuddHashTableInsert2" TARGET="MAIN"><CODE>cuddHashTableInsert2()</CODE></A>
@@ -2713,7 +2824,7 @@ Internal procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#cuddLocalCacheResize" TARGET="MAIN"><CODE>cuddLocalCacheResize()</CODE></A>
  <DD> Resizes a local cache.
 
- <DT> <A HREF="cuddAllDet.html#ddLCHash" TARGET="MAIN"><CODE>ddLCHash()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Computes the hash value for a local cache.
 
  <DT> <A HREF="cuddAllDet.html#cuddLocalCacheAddToList" TARGET="MAIN"><CODE>cuddLocalCacheAddToList()</CODE></A>
@@ -2725,7 +2836,7 @@ Internal procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#cuddHashTableResize" TARGET="MAIN"><CODE>cuddHashTableResize()</CODE></A>
  <DD> Resizes a hash table.
 
- <DT> <A HREF="cuddAllDet.html#cuddHashTableAlloc" TARGET="MAIN"><CODE>cuddHashTableAlloc()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Fast storage allocation for items in a hash table.
 
 </DL>
@@ -2773,6 +2884,9 @@ The functions in this file allow an application to
 
  <DT> <A HREF="cuddAllDet.html#cuddLevelQueueEnqueue" TARGET="MAIN"><CODE>cuddLevelQueueEnqueue()</CODE></A>
  <DD> Inserts a new key in a level queue.
+
+ <DT> <A HREF="cuddAllDet.html#cuddLevelQueueFirst" TARGET="MAIN"><CODE>cuddLevelQueueFirst()</CODE></A>
+ <DD> Inserts the first key in a level queue.
 
  <DT> <A HREF="cuddAllDet.html#cuddLevelQueueDequeue" TARGET="MAIN"><CODE>cuddLevelQueueDequeue()</CODE></A>
  <DD> Remove an item from the front of a level queue.
@@ -3203,8 +3317,7 @@ External procedures included in this file:
 </DL>
 <HR>
 <A NAME="cuddSat.c"><H1>cuddSat.c</H1></A>
-Functions for the solution of satisfiability related
-  problems. <P>
+Functions for the solution of satisfiability related problems. <P>
 <B>By: Seh-Woong Jeong, Fabio Somenzi</B><P>
 External procedures included in this file:
 		<ul>
@@ -3218,6 +3331,8 @@ External procedures included in this file:
 		<li> Cudd_bddLeqUnless()
 		<li> Cudd_EqualSupNorm()
 		<li> Cudd_bddMakePrime()
+                <li> Cudd_bddMaximallyExpand()
+                <li> Cudd_bddLargestPrimeUnate()
 		</ul>
 	Internal procedures included in this module:
 	        <ul>
@@ -3230,6 +3345,8 @@ External procedures included in this file:
 		<li> getPath()
 		<li> getLargest()
 		<li> getCube()
+                <li> ddBddMaximallyExpand()
+                <li> ddShortestPathUnate()
 		</ul> <P>
 <DL>
  <DT> <A HREF="cuddAllDet.html#Cudd_Eval" TARGET="MAIN"><CODE>Cudd_Eval()</CODE></A>
@@ -3264,6 +3381,12 @@ External procedures included in this file:
  <DT> <A HREF="cuddAllDet.html#Cudd_bddMakePrime" TARGET="MAIN"><CODE>Cudd_bddMakePrime()</CODE></A>
  <DD> Expands cube to a prime implicant of f.
 
+ <DT> <A HREF="cuddAllDet.html#Cudd_bddMaximallyExpand" TARGET="MAIN"><CODE>Cudd_bddMaximallyExpand()</CODE></A>
+ <DD> Expands lb to prime implicants of (f and ub).
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_bddLargestPrimeUnate" TARGET="MAIN"><CODE>Cudd_bddLargestPrimeUnate()</CODE></A>
+ <DD> Find a largest prime of a unate function.
+
  <DT> <A HREF="cuddAllDet.html#cuddBddMakePrime" TARGET="MAIN"><CODE>cuddBddMakePrime()</CODE></A>
  <DD> Performs the recursive step of Cudd_bddMakePrime.
 
@@ -3281,6 +3404,15 @@ External procedures included in this file:
 
  <DT> <A HREF="cuddAllDet.html#getCube" TARGET="MAIN"><CODE>getCube()</CODE></A>
  <DD> Build a BDD for a largest cube of f.
+
+ <DT> <A HREF="cuddAllDet.html#ddBddMaximallyExpand" TARGET="MAIN"><CODE>ddBddMaximallyExpand()</CODE></A>
+ <DD> Performs the recursive step of Cudd_bddMaximallyExpand.
+
+ <DT> <A HREF="cuddAllDet.html#ddBddShortestPathUnate" TARGET="MAIN"><CODE>ddBddShortestPathUnate()</CODE></A>
+ <DD> Performs shortest path computation on a unate function.
+
+ <DT> <A HREF="cuddAllDet.html#ddGetLargestCubeUnate" TARGET="MAIN"><CODE>ddGetLargestCubeUnate()</CODE></A>
+ <DD> Extracts largest prime of a unate function.
 
 </DL>
 <HR>
@@ -3586,6 +3718,7 @@ Unique table management functions. <P>
 External procedures included in this module:
 		<ul>
 		<li> Cudd_Prime()
+                <li> Cudd_Reserve()
 		</ul>
 	Internal procedures included in this module:
 		<ul>
@@ -3621,6 +3754,9 @@ External procedures included in this module:
 <DL>
  <DT> <A HREF="cuddAllDet.html#Cudd_Prime" TARGET="MAIN"><CODE>Cudd_Prime()</CODE></A>
  <DD> Returns the next prime &gt;= p.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_Reserve" TARGET="MAIN"><CODE>Cudd_Reserve()</CODE></A>
+ <DD> Expand manager without creating variables.
 
  <DT> <A HREF="cuddAllDet.html#cuddAllocNode" TARGET="MAIN"><CODE>cuddAllocNode()</CODE></A>
  <DD> Fast storage allocation for DdNodes in the table.
@@ -3684,7 +3820,7 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#cuddFindParent" TARGET="MAIN"><CODE>cuddFindParent()</CODE></A>
  <DD> Searches the subtables above node for a parent.
 
- <DT> <A HREF="cuddAllDet.html#ddFixLimits" TARGET="MAIN"><CODE>ddFixLimits()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Adjusts the values of table limits.
 
  <DT> <A HREF="cuddAllDet.html#cuddOrderedInsert" TARGET="MAIN"><CODE>cuddOrderedInsert()</CODE></A>
@@ -3693,10 +3829,10 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#cuddOrderedThread" TARGET="MAIN"><CODE>cuddOrderedThread()</CODE></A>
  <DD> Threads all the nodes of a search tree into a linear list.
 
- <DT> <A HREF="cuddAllDet.html#cuddRotateLeft" TARGET="MAIN"><CODE>cuddRotateLeft()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Performs the left rotation for red/black trees.
 
- <DT> <A HREF="cuddAllDet.html#cuddRotateRight" TARGET="MAIN"><CODE>cuddRotateRight()</CODE></A>
+ <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
  <DD> Performs the right rotation for red/black trees.
 
  <DT> <A HREF="cuddAllDet.html#cuddDoRebalance" TARGET="MAIN"><CODE>cuddDoRebalance()</CODE></A>
@@ -3729,9 +3865,11 @@ External procedures included in this module:
 		<li> Cudd_EpdCountMinterm()
 		<li> Cudd_CountPath()
 		<li> Cudd_CountPathsToNonZero()
+                <li> Cudd_SupportIndices()
 		<li> Cudd_Support()
 		<li> Cudd_SupportIndex()
 		<li> Cudd_SupportSize()
+		<li> Cudd_VectorSupportIndices()
 		<li> Cudd_VectorSupport()
 		<li> Cudd_VectorSupportIndex()
 		<li> Cudd_VectorSupportSize()
@@ -3777,6 +3915,9 @@ External procedures included in this module:
 		<li> ddPickArbitraryMinterms()
 		<li> ddPickRepresentativeCube()
 		<li> ddEpdFree()
+                <li> ddFindSupport()
+                <li> ddClearVars()
+                <li> indexCompare()
 		</ul> <P>
 <DL>
  <DT> <A HREF="cuddAllDet.html#Cudd_PrintMinterm" TARGET="MAIN"><CODE>Cudd_PrintMinterm()</CODE></A>
@@ -3812,6 +3953,9 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#Cudd_CountPathsToNonZero" TARGET="MAIN"><CODE>Cudd_CountPathsToNonZero()</CODE></A>
  <DD> Counts the number of paths to a non-zero terminal of a DD.
 
+ <DT> <A HREF="cuddAllDet.html#Cudd_SupportIndices" TARGET="MAIN"><CODE>Cudd_SupportIndices()</CODE></A>
+ <DD> Finds the variables on which a DD depends.
+
  <DT> <A HREF="cuddAllDet.html#Cudd_Support" TARGET="MAIN"><CODE>Cudd_Support()</CODE></A>
  <DD> Finds the variables on which a DD depends.
 
@@ -3820,6 +3964,9 @@ External procedures included in this module:
 
  <DT> <A HREF="cuddAllDet.html#Cudd_SupportSize" TARGET="MAIN"><CODE>Cudd_SupportSize()</CODE></A>
  <DD> Counts the variables on which a DD depends.
+
+ <DT> <A HREF="cuddAllDet.html#Cudd_VectorSupportIndices" TARGET="MAIN"><CODE>Cudd_VectorSupportIndices()</CODE></A>
+ <DD> Finds the variables on which a set of DDs depends.
 
  <DT> <A HREF="cuddAllDet.html#Cudd_VectorSupport" TARGET="MAIN"><CODE>Cudd_VectorSupport()</CODE></A>
  <DD> Finds the variables on which a set of DDs depends.
@@ -3972,6 +4119,15 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#ddEpdFree" TARGET="MAIN"><CODE>ddEpdFree()</CODE></A>
  <DD> Frees the memory used to store the minterm counts recorded
   in the visited table.
+
+ <DT> <A HREF="cuddAllDet.html#ddFindSupport" TARGET="MAIN"><CODE>ddFindSupport()</CODE></A>
+ <DD> Recursively find the support of f.
+
+ <DT> <A HREF="cuddAllDet.html#ddClearVars" TARGET="MAIN"><CODE>ddClearVars()</CODE></A>
+ <DD> Clears visited flags for variables.
+
+ <DT> <A HREF="cuddAllDet.html#indexCompare" TARGET="MAIN"><CODE>indexCompare()</CODE></A>
+ <DD> Compares indices for qsort.
 
 </DL>
 <HR>
@@ -4265,10 +4421,10 @@ External procedures included in this module:
 
  <DT> <A HREF="cuddAllDet.html#Cudd_bddIsop" TARGET="MAIN"><CODE>Cudd_bddIsop()</CODE></A>
  <DD> Computes a BDD in the interval between L and U with a
-  simple sum-of-produuct cover.
+  simple sum-of-product cover.
 
  <DT> <A HREF="cuddAllDet.html#Cudd_MakeBddFromZddCover" TARGET="MAIN"><CODE>Cudd_MakeBddFromZddCover()</CODE></A>
- <DD> Converts a ZDD cover to a BDD graph.
+ <DD> Converts a ZDD cover to a BDD.
 
  <DT> <A HREF="cuddAllDet.html#cuddZddIsop" TARGET="MAIN"><CODE>cuddZddIsop()</CODE></A>
  <DD> Performs the recursive step of Cudd_zddIsop.
@@ -4277,7 +4433,7 @@ External procedures included in this module:
  <DD> Performs the recursive step of Cudd_bddIsop.
 
  <DT> <A HREF="cuddAllDet.html#cuddMakeBddFromZddCover" TARGET="MAIN"><CODE>cuddMakeBddFromZddCover()</CODE></A>
- <DD> Converts a ZDD cover to a BDD graph.
+ <DD> Converts a ZDD cover to a BDD.
 
 </DL>
 <HR>
@@ -4654,6 +4810,7 @@ External procedures included in this module:
 		    <li> Cudd_zddFirstPath()
 		    <li> Cudd_zddNextPath()
 		    <li> Cudd_zddCoverPathToString()
+                    <li> Cudd_zddSupport()
 		    <li> Cudd_zddDumpDot()
 		    </ul>
 	       Internal procedures included in this module:
@@ -4665,6 +4822,8 @@ External procedures included in this module:
 		    <li> zp2()
 		    <li> zdd_print_minterm_aux()
 		    <li> zddPrintCoverAux()
+                    <li> zddSupportStep()
+                    <li> zddClearFlag()
 		    </ul> <P>
 <DL>
  <DT> <A HREF="cuddAllDet.html#Cudd_zddPrintMinterm" TARGET="MAIN"><CODE>Cudd_zddPrintMinterm()</CODE></A>
@@ -4685,6 +4844,9 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#Cudd_zddCoverPathToString" TARGET="MAIN"><CODE>Cudd_zddCoverPathToString()</CODE></A>
  <DD> Converts a path of a ZDD representing a cover to a string.
 
+ <DT> <A HREF="cuddAllDet.html#Cudd_zddSupport" TARGET="MAIN"><CODE>Cudd_zddSupport()</CODE></A>
+ <DD> Finds the variables on which a ZDD depends.
+
  <DT> <A HREF="cuddAllDet.html#Cudd_zddDumpDot" TARGET="MAIN"><CODE>Cudd_zddDumpDot()</CODE></A>
  <DD> Writes a dot file representing the argument ZDDs.
 
@@ -4701,7 +4863,14 @@ External procedures included in this module:
  <DT> <A HREF="cuddAllDet.html#zddPrintCoverAux" TARGET="MAIN"><CODE>zddPrintCoverAux()</CODE></A>
  <DD> Performs the recursive step of Cudd_zddPrintCover.
 
+ <DT> <A HREF="cuddAllDet.html#zddSupportStep" TARGET="MAIN"><CODE>zddSupportStep()</CODE></A>
+ <DD> Performs the recursive step of Cudd_zddSupport.
+
+ <DT> <A HREF="cuddAllDet.html#zddClearFlag" TARGET="MAIN"><CODE>zddClearFlag()</CODE></A>
+ <DD> Performs a DFS from f, clearing the LSB of the next
+  pointers.
+
 </DL>
 <HR>
-Last updated on 20090220 23h06
+Last updated on 20120204 17h33
 </BODY></HTML>

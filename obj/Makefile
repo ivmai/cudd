@@ -4,7 +4,7 @@
 #---------------------------------------------------------------------------
 .SUFFIXES: .o .cc .u
 
-CPP	= g++
+CXX	= g++
 RANLIB	= ranlib
 # Define EXE as .exe for MS-DOS and derivatives.
 PURE	=
@@ -14,8 +14,8 @@ EXE	=
 MFLAG	=
 ICFLAGS = -g
 XCFLAGS =
-CPPFLAGS =
-CFLAGS	= $(ICFLAGS) $(MFLAG) $(XCFLAGS) $(CPPFLAGS)
+CXXFLAGS =
+CFLAGS	= $(ICFLAGS) $(MFLAG) $(XCFLAGS) $(CXXFLAGS)
 DDDEBUG =
 
 LINTFLAGS = -u -n -DDD_STATS -DDD_CACHE_PROFILE -DDD_VERBOSE -DDD_DEBUG -DDD_UNIQUE_PROFILE
@@ -62,7 +62,7 @@ lib$(P).a: $(POBJ)
 	$(RANLIB) $@
 
 .cc.o: $(PHDR)
-	$(CPP) -c $< -I$(INCLUDE) $(CFLAGS) $(DDDEBUG)
+	$(CXX) -c $< -I$(INCLUDE) $(CFLAGS) $(DDDEBUG)
 
 optimize_dec: lib$(P).b
 
@@ -80,7 +80,7 @@ $(OBJ): $(PHDR)
 $(UBJ): $(PHDR)
 
 $(TARGET): $(SRC) $(OBJ) $(HDR) $(LIBS) $(MNEMLIB)
-	$(PURE) $(CPP) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LIBS) $(MNEMLIB) -lm
+	$(PURE) $(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LIBS) $(MNEMLIB) -lm
 
 # optimize (DECstations and Alphas only: uses u-code)
 $(TARGETu): $(SRC) $(UBJ) $(HDR) $(LIBS:.a=.b)

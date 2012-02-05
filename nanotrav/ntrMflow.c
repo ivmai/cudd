@@ -15,7 +15,7 @@
 
   Author      [Fabio Somenzi, Gary Hachtel]
 
-  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
+  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -83,7 +83,7 @@ typedef struct flowStatsStruct {
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrMflow.c,v 1.7 2009/02/20 02:19:02 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: ntrMflow.c,v 1.8 2012/02/05 01:53:01 fabio Exp fabio $";
 #endif
 
 static DdNode *xcube, *ycube, *zcube;

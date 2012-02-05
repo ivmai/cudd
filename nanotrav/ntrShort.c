@@ -12,7 +12,7 @@
 
   Author      [Fabio Somenzi, Iris Bahar]
 
-  Copyright   [Copyright (c) 1995-2004, Regents of the University of Colorado
+  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -66,7 +66,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrShort.c,v 1.4 2004/08/13 18:28:28 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: ntrShort.c,v 1.5 2012/02/05 01:53:01 fabio Exp fabio $";
 #endif
 
 /*---------------------------------------------------------------------------*/

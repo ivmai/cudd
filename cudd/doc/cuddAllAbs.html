@@ -157,6 +157,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_CProjection" TARGET="MAIN"><CODE>Cudd_CProjection()</CODE></A>
 <DD> Computes the compatible projection of R w.r.t. cube Y.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_CheckCube" TARGET="MAIN"><CODE>Cudd_CheckCube()</CODE></A>
+<DD> Checks whether g is the BDD of a cube.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_CheckKeys" TARGET="MAIN"><CODE>Cudd_CheckKeys()</CODE></A>
 <DD> Checks for several conditions that should not occur.
 
@@ -218,6 +221,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_DisableGarbageCollection" TARGET="MAIN"><CODE>Cudd_DisableGarbageCollection()</CODE></A>
 <DD> Disables garbage collection.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_DisableOrderingMonitoring" TARGET="MAIN"><CODE>Cudd_DisableOrderingMonitoring()</CODE></A>
+<DD> Disables monitoring of ordering.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_DisableReorderingReporting" TARGET="MAIN"><CODE>Cudd_DisableReorderingReporting()</CODE></A>
 <DD> Disables reporting of reordering stats.
 
@@ -250,6 +256,9 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_EnableGarbageCollection" TARGET="MAIN"><CODE>Cudd_EnableGarbageCollection()</CODE></A>
 <DD> Enables garbage collection.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_EnableOrderingMonitoring" TARGET="MAIN"><CODE>Cudd_EnableOrderingMonitoring()</CODE></A>
+<DD> Enables monitoring of ordering.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_EnableReorderingReporting" TARGET="MAIN"><CODE>Cudd_EnableReorderingReporting()</CODE></A>
 <DD> Enables reporting of reordering stats.
@@ -303,6 +312,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_GenFree" TARGET="MAIN"><CODE>Cudd_GenFree()</CODE></A>
 <DD> Frees a CUDD generator.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_IncreaseTimeLimit" TARGET="MAIN"><CODE>Cudd_IncreaseTimeLimit()</CODE></A>
+<DD> Increases the time limit for the manager.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_Increasing" TARGET="MAIN"><CODE>Cudd_Increasing()</CODE></A>
 <DD> Determines whether a BDD is positive unate in a
   variable.
@@ -332,7 +344,7 @@
 <DD> Finds a largest cube in a DD.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_MakeBddFromZddCover" TARGET="MAIN"><CODE>Cudd_MakeBddFromZddCover()</CODE></A>
-<DD> Converts a ZDD cover to a BDD graph.
+<DD> Converts a ZDD cover to a BDD.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_MakeTreeNode" TARGET="MAIN"><CODE>Cudd_MakeTreeNode()</CODE></A>
 <DD> Creates a new variable group.
@@ -358,6 +370,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_NodeReadIndex" TARGET="MAIN"><CODE>Cudd_NodeReadIndex()</CODE></A>
 <DD> Returns the index of the node.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_OrderingMonitoring" TARGET="MAIN"><CODE>Cudd_OrderingMonitoring()</CODE></A>
+<DD> Returns 1 if monitoring of ordering is enabled.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_OutOfMem" TARGET="MAIN"><CODE>Cudd_OutOfMem()</CODE></A>
 <DD> Warns that a memory allocation failed.
 
@@ -370,6 +385,9 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_PrintDebug" TARGET="MAIN"><CODE>Cudd_PrintDebug()</CODE></A>
 <DD> Prints to the standard output a DD and its statistics.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_PrintGroupedOrder" TARGET="MAIN"><CODE>Cudd_PrintGroupedOrder()</CODE></A>
+<DD> Hook function to print the current variable order.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_PrintInfo" TARGET="MAIN"><CODE>Cudd_PrintInfo()</CODE></A>
 <DD> Prints out statistics and settings for a CUDD manager.
@@ -416,6 +434,9 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadDead" TARGET="MAIN"><CODE>Cudd_ReadDead()</CODE></A>
 <DD> Returns the number of dead nodes in the unique table.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_ReadElapsedTime" TARGET="MAIN"><CODE>Cudd_ReadElapsedTime()</CODE></A>
+<DD> Returns the time elapsed since the start time of the manager.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadEpsilon" TARGET="MAIN"><CODE>Cudd_ReadEpsilon()</CODE></A>
 <DD> Reads the epsilon parameter of the manager.
@@ -473,6 +494,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadMaxMemory" TARGET="MAIN"><CODE>Cudd_ReadMaxMemory()</CODE></A>
 <DD> Reads the maximum allowed memory.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_ReadMaxReorderings" TARGET="MAIN"><CODE>Cudd_ReadMaxReorderings()</CODE></A>
+<DD> Returns the maximum number of times reordering may be invoked.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadMemoryInUse" TARGET="MAIN"><CODE>Cudd_ReadMemoryInUse()</CODE></A>
 <DD> Returns the memory in use by the manager measured in bytes.
 
@@ -504,6 +528,9 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadOne" TARGET="MAIN"><CODE>Cudd_ReadOne()</CODE></A>
 <DD> Returns the one constant of the manager.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_ReadOrderRandomization" TARGET="MAIN"><CODE>Cudd_ReadOrderRandomization()</CODE></A>
+<DD> Returns the order randomization factor.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadPeakLiveNodeCount" TARGET="MAIN"><CODE>Cudd_ReadPeakLiveNodeCount()</CODE></A>
 <DD> Reports the peak number of live nodes.
@@ -554,6 +581,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadSlots" TARGET="MAIN"><CODE>Cudd_ReadSlots()</CODE></A>
 <DD> Returns the total number of slots of the unique table.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_ReadStartTime" TARGET="MAIN"><CODE>Cudd_ReadStartTime()</CODE></A>
+<DD> Returns the start time of the manager.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadStderr" TARGET="MAIN"><CODE>Cudd_ReadStderr()</CODE></A>
 <DD> Reads the stderr of a manager.
 
@@ -566,6 +596,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadSymmviolation" TARGET="MAIN"><CODE>Cudd_ReadSymmviolation()</CODE></A>
 <DD> Returns the current value of the symmviolation parameter used
   in group sifting.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_ReadTimeLimit" TARGET="MAIN"><CODE>Cudd_ReadTimeLimit()</CODE></A>
+<DD> Returns the time limit for the manager.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_ReadTree" TARGET="MAIN"><CODE>Cudd_ReadTree()</CODE></A>
 <DD> Returns the variable group tree of the manager.
@@ -628,6 +661,12 @@
 <DD> Reports the status of automatic dynamic reordering of BDDs
   and ADDs.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_Reserve" TARGET="MAIN"><CODE>Cudd_Reserve()</CODE></A>
+<DD> Expand manager without creating variables.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_ResetStartTime" TARGET="MAIN"><CODE>Cudd_ResetStartTime()</CODE></A>
+<DD> Resets the start time of the manager.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_SetArcviolation" TARGET="MAIN"><CODE>Cudd_SetArcviolation()</CODE></A>
 <DD> Sets the value of the arcviolation parameter used
   in group sifting.
@@ -659,6 +698,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_SetMaxMemory" TARGET="MAIN"><CODE>Cudd_SetMaxMemory()</CODE></A>
 <DD> Sets the maximum allowed memory.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_SetMaxReorderings" TARGET="MAIN"><CODE>Cudd_SetMaxReorderings()</CODE></A>
+<DD> Sets the maximum number of times reordering may be invoked.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_SetMinHit" TARGET="MAIN"><CODE>Cudd_SetMinHit()</CODE></A>
 <DD> Sets the hit rate that causes resizinig of the computed
   table.
@@ -669,6 +711,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_SetNumberXovers" TARGET="MAIN"><CODE>Cudd_SetNumberXovers()</CODE></A>
 <DD> Sets the number of crossovers used by the
   genetic algorithm for reordering.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_SetOrderRandomization" TARGET="MAIN"><CODE>Cudd_SetOrderRandomization()</CODE></A>
+<DD> Sets the order randomization factor.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_SetPopulationSize" TARGET="MAIN"><CODE>Cudd_SetPopulationSize()</CODE></A>
 <DD> Sets the size of the population used by the
@@ -687,6 +732,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_SetSiftMaxVar" TARGET="MAIN"><CODE>Cudd_SetSiftMaxVar()</CODE></A>
 <DD> Sets the siftMaxVar parameter of the manager.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_SetStartTime" TARGET="MAIN"><CODE>Cudd_SetStartTime()</CODE></A>
+<DD> Sets the start time of the manager.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_SetStderr" TARGET="MAIN"><CODE>Cudd_SetStderr()</CODE></A>
 <DD> Sets the stderr of a manager.
 
@@ -696,6 +744,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_SetSymmviolation" TARGET="MAIN"><CODE>Cudd_SetSymmviolation()</CODE></A>
 <DD> Sets the value of the symmviolation parameter used
   in group sifting.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_SetTimeLimit" TARGET="MAIN"><CODE>Cudd_SetTimeLimit()</CODE></A>
+<DD> Sets the time limit for the manager.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_SetTree" TARGET="MAIN"><CODE>Cudd_SetTree()</CODE></A>
 <DD> Sets the variable group tree of the manager.
@@ -761,6 +812,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_SupportIndex" TARGET="MAIN"><CODE>Cudd_SupportIndex()</CODE></A>
 <DD> Finds the variables on which a DD depends.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_SupportIndices" TARGET="MAIN"><CODE>Cudd_SupportIndices()</CODE></A>
+<DD> Finds the variables on which a DD depends.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_SupportSize" TARGET="MAIN"><CODE>Cudd_SupportSize()</CODE></A>
 <DD> Counts the variables on which a DD depends.
 
@@ -769,6 +823,9 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_SymmProfile" TARGET="MAIN"><CODE>Cudd_SymmProfile()</CODE></A>
 <DD> Prints statistics on symmetric variables.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_TimeLimited" TARGET="MAIN"><CODE>Cudd_TimeLimited()</CODE></A>
+<DD> Returns true if the time limit for the manager is set.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_TurnOffCountDead" TARGET="MAIN"><CODE>Cudd_TurnOffCountDead()</CODE></A>
 <DD> Causes the dead nodes not to be counted towards triggering
@@ -782,7 +839,16 @@
 <DD> Extracts a dense subset from a BDD with Shiple's
   underapproximation method.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_UnsetTimeLimit" TARGET="MAIN"><CODE>Cudd_UnsetTimeLimit()</CODE></A>
+<DD> Unsets the time limit for the manager.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_UpdateTimeLimit" TARGET="MAIN"><CODE>Cudd_UpdateTimeLimit()</CODE></A>
+<DD> Updates the time limit for the manager.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_VectorSupportIndex" TARGET="MAIN"><CODE>Cudd_VectorSupportIndex()</CODE></A>
+<DD> Finds the variables on which a set of DDs depends.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_VectorSupportIndices" TARGET="MAIN"><CODE>Cudd_VectorSupportIndices()</CODE></A>
 <DD> Finds the variables on which a set of DDs depends.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_VectorSupportSize" TARGET="MAIN"><CODE>Cudd_VectorSupportSize()</CODE></A>
@@ -1054,6 +1120,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_bddCorrelation" TARGET="MAIN"><CODE>Cudd_bddCorrelation()</CODE></A>
 <DD> Computes the correlation of f and g.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_bddExistAbstractLimit" TARGET="MAIN"><CODE>Cudd_bddExistAbstractLimit()</CODE></A>
+<DD> Existentially abstracts all the variables in cube from f.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_bddExistAbstract" TARGET="MAIN"><CODE>Cudd_bddExistAbstract()</CODE></A>
 <DD> Existentially abstracts all the variables in cube from f.
 
@@ -1093,10 +1162,14 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddIsop" TARGET="MAIN"><CODE>Cudd_bddIsop()</CODE></A>
 <DD> Computes a BDD in the interval between L and U with a
-  simple sum-of-produuct cover.
+  simple sum-of-product cover.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddIteConstant" TARGET="MAIN"><CODE>Cudd_bddIteConstant()</CODE></A>
 <DD> Implements ITEconstant(f,g,h).
+
+<DT> <A HREF="cuddAllDet.html#Cudd_bddIteLimit" TARGET="MAIN"><CODE>Cudd_bddIteLimit()</CODE></A>
+<DD> Implements ITE(f,g,h).  Returns
+  NULL if too many nodes are required.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddIterConjDecomp" TARGET="MAIN"><CODE>Cudd_bddIterConjDecomp()</CODE></A>
 <DD> Performs two-way conjunctive decomposition of a BDD.
@@ -1113,6 +1186,9 @@
 <DT> <A HREF="cuddAllDet.html#Cudd_bddLICompaction" TARGET="MAIN"><CODE>Cudd_bddLICompaction()</CODE></A>
 <DD> Performs safe minimization of a BDD.
 
+<DT> <A HREF="cuddAllDet.html#Cudd_bddLargestPrimeUnate" TARGET="MAIN"><CODE>Cudd_bddLargestPrimeUnate()</CODE></A>
+<DD> Find a largest prime of a unate function.
+
 <DT> <A HREF="cuddAllDet.html#Cudd_bddLeqUnless" TARGET="MAIN"><CODE>Cudd_bddLeqUnless()</CODE></A>
 <DD> Tells whether f is less than of equal to G unless D is 1.
 
@@ -1125,6 +1201,9 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddMakePrime" TARGET="MAIN"><CODE>Cudd_bddMakePrime()</CODE></A>
 <DD> Expands cube to a prime implicant of f.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_bddMaximallyExpand" TARGET="MAIN"><CODE>Cudd_bddMaximallyExpand()</CODE></A>
+<DD> Expands lb to prime implicants of (f and ub).
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddMinimize" TARGET="MAIN"><CODE>Cudd_bddMinimize()</CODE></A>
 <DD> Finds a small BDD that agrees with <code>f</code> over
@@ -1144,6 +1223,10 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddNor" TARGET="MAIN"><CODE>Cudd_bddNor()</CODE></A>
 <DD> Computes the NOR of two BDDs f and g.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_bddOrLimit" TARGET="MAIN"><CODE>Cudd_bddOrLimit()</CODE></A>
+<DD> Computes the disjunction of two BDDs f and g.  Returns
+  NULL if too many nodes are required.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddOr" TARGET="MAIN"><CODE>Cudd_bddOr()</CODE></A>
 <DD> Computes the disjunction of two BDDs f and g.
@@ -1241,6 +1324,10 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddVectorCompose" TARGET="MAIN"><CODE>Cudd_bddVectorCompose()</CODE></A>
 <DD> Composes a BDD with a vector of BDDs.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_bddXnorLimit" TARGET="MAIN"><CODE>Cudd_bddXnorLimit()</CODE></A>
+<DD> Computes the exclusive NOR of two BDDs f and g.  Returns
+  NULL if too many nodes are required.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_bddXnor" TARGET="MAIN"><CODE>Cudd_bddXnor()</CODE></A>
 <DD> Computes the exclusive NOR of two BDDs f and g.
@@ -1354,6 +1441,9 @@
 
 <DT> <A HREF="cuddAllDet.html#Cudd_zddSubset1" TARGET="MAIN"><CODE>Cudd_zddSubset1()</CODE></A>
 <DD> Computes the positive cofactor of a ZDD w.r.t. a variable.
+
+<DT> <A HREF="cuddAllDet.html#Cudd_zddSupport" TARGET="MAIN"><CODE>Cudd_zddSupport()</CODE></A>
+<DD> Finds the variables on which a ZDD depends.
 
 <DT> <A HREF="cuddAllDet.html#Cudd_zddSymmProfile" TARGET="MAIN"><CODE>Cudd_zddSymmProfile()</CODE></A>
 <DD> Prints statistics on symmetric ZDD variables.
@@ -1517,17 +1607,8 @@
 <DT> <A HREF="cuddAllDet.html#bitVectorAlloc" TARGET="MAIN"><CODE>bitVectorAlloc()</CODE></A>
 <DD> Allocates a bit vector.
 
-<DT> <A HREF="cuddAllDet.html#bitVectorClear" TARGET="MAIN"><CODE>bitVectorClear()</CODE></A>
-<DD> Clears a bit vector.
-
 <DT> <A HREF="cuddAllDet.html#bitVectorFree" TARGET="MAIN"><CODE>bitVectorFree()</CODE></A>
 <DD> Frees a bit vector.
-
-<DT> <A HREF="cuddAllDet.html#bitVectorRead" TARGET="MAIN"><CODE>bitVectorRead()</CODE></A>
-<DD> Returns the i-th entry of a bit vector.
-
-<DT> <A HREF="cuddAllDet.html#bitVectorSet" TARGET="MAIN"><CODE>bitVectorSet()</CODE></A>
-<DD> Sets the i-th entry of a bit vector to a value.
 
 <DT> <A HREF="cuddAllDet.html#build_dd" TARGET="MAIN"><CODE>build_dd()</CODE></A>
 <DD> Builds a DD from a given order.
@@ -1744,7 +1825,8 @@
   operands.
 
 <DT> <A HREF="cuddAllDet.html#cuddCacheInsert" TARGET="MAIN"><CODE>cuddCacheInsert()</CODE></A>
-<DD> Inserts a result in the cache.
+<DD> Inserts a result in the cache for a function with three
+  operands.
 
 <DT> <A HREF="cuddAllDet.html#cuddCacheLookup1Zdd" TARGET="MAIN"><CODE>cuddCacheLookup1Zdd()</CODE></A>
 <DD> Looks up in the cache for the result of op applied to f.
@@ -1776,9 +1858,6 @@
 
 <DT> <A HREF="cuddAllDet.html#cuddCheckCollisionOrdering" TARGET="MAIN"><CODE>cuddCheckCollisionOrdering()</CODE></A>
 <DD> Checks whether a collision list is ordered.
-
-<DT> <A HREF="cuddAllDet.html#cuddCheckCube" TARGET="MAIN"><CODE>cuddCheckCube()</CODE></A>
-<DD> Checks whether g is the BDD of a cube.
 
 <DT> <A HREF="cuddAllDet.html#cuddClearDeathRow" TARGET="MAIN"><CODE>cuddClearDeathRow()</CODE></A>
 <DD> Clears the death row.
@@ -1833,8 +1912,14 @@
 <DT> <A HREF="cuddAllDet.html#cuddGetBranches" TARGET="MAIN"><CODE>cuddGetBranches()</CODE></A>
 <DD> Computes the children of g.
 
-<DT> <A HREF="cuddAllDet.html#cuddHashTableAlloc" TARGET="MAIN"><CODE>cuddHashTableAlloc()</CODE></A>
-<DD> Fast storage allocation for items in a hash table.
+<DT> <A HREF="cuddAllDet.html#cuddHashTableGenericInsert" TARGET="MAIN"><CODE>cuddHashTableGenericInsert()</CODE></A>
+<DD> Inserts an item in a hash table.
+
+<DT> <A HREF="cuddAllDet.html#cuddHashTableGenericLookup" TARGET="MAIN"><CODE>cuddHashTableGenericLookup()</CODE></A>
+<DD> Looks up a key consisting of one pointer in a hash table.
+
+<DT> <A HREF="cuddAllDet.html#cuddHashTableGenericQuit" TARGET="MAIN"><CODE>cuddHashTableGenericQuit()</CODE></A>
+<DD> Shuts down a hash table.
 
 <DT> <A HREF="cuddAllDet.html#cuddHashTableInit" TARGET="MAIN"><CODE>cuddHashTableInit()</CODE></A>
 <DD> Initializes a hash table.
@@ -1896,6 +1981,9 @@
 <DT> <A HREF="cuddAllDet.html#cuddLevelQueueEnqueue" TARGET="MAIN"><CODE>cuddLevelQueueEnqueue()</CODE></A>
 <DD> Inserts a new key in a level queue.
 
+<DT> <A HREF="cuddAllDet.html#cuddLevelQueueFirst" TARGET="MAIN"><CODE>cuddLevelQueueFirst()</CODE></A>
+<DD> Inserts the first key in a level queue.
+
 <DT> <A HREF="cuddAllDet.html#cuddLevelQueueInit" TARGET="MAIN"><CODE>cuddLevelQueueInit()</CODE></A>
 <DD> Initializes a level queue.
 
@@ -1940,7 +2028,7 @@
 <DD> Resizes a local cache.
 
 <DT> <A HREF="cuddAllDet.html#cuddMakeBddFromZddCover" TARGET="MAIN"><CODE>cuddMakeBddFromZddCover()</CODE></A>
-<DD> Converts a ZDD cover to a BDD graph.
+<DD> Converts a ZDD cover to a BDD.
 
 <DT> <A HREF="cuddAllDet.html#cuddMinHammingDistRecur" TARGET="MAIN"><CODE>cuddMinHammingDistRecur()</CODE></A>
 <DD> Performs the recursive step of Cudd_MinHammingDist.
@@ -1991,12 +2079,6 @@
 <DT> <A HREF="cuddAllDet.html#cuddResizeTableZdd" TARGET="MAIN"><CODE>cuddResizeTableZdd()</CODE></A>
 <DD> Increases the number of ZDD subtables in a unique table so
   that it meets or exceeds index.
-
-<DT> <A HREF="cuddAllDet.html#cuddRotateLeft" TARGET="MAIN"><CODE>cuddRotateLeft()</CODE></A>
-<DD> Performs the left rotation for red/black trees.
-
-<DT> <A HREF="cuddAllDet.html#cuddRotateRight" TARGET="MAIN"><CODE>cuddRotateRight()</CODE></A>
-<DD> Performs the right rotation for red/black trees.
 
 <DT> <A HREF="cuddAllDet.html#cuddSetInteract" TARGET="MAIN"><CODE>cuddSetInteract()</CODE></A>
 <DD> Set interaction matrix entries.
@@ -2275,6 +2357,12 @@
 <DT> <A HREF="cuddAllDet.html#cuddZddWeakDiv" TARGET="MAIN"><CODE>cuddZddWeakDiv()</CODE></A>
 <DD> Performs the recursive step of Cudd_zddWeakDiv.
 
+<DT> <A HREF="cuddAllDet.html#ddBddMaximallyExpand" TARGET="MAIN"><CODE>ddBddMaximallyExpand()</CODE></A>
+<DD> Performs the recursive step of Cudd_bddMaximallyExpand.
+
+<DT> <A HREF="cuddAllDet.html#ddBddShortestPathUnate" TARGET="MAIN"><CODE>ddBddShortestPathUnate()</CODE></A>
+<DD> Performs shortest path computation on a unate function.
+
 <DT> <A HREF="cuddAllDet.html#ddBddToAddRecur" TARGET="MAIN"><CODE>ddBddToAddRecur()</CODE></A>
 <DD> Performs the recursive step for Cudd_BddToAdd.
 
@@ -2293,6 +2381,9 @@
 
 <DT> <A HREF="cuddAllDet.html#ddClearLocal" TARGET="MAIN"><CODE>ddClearLocal()</CODE></A>
 <DD> Performs a DFS from f, clearing the LSB of the then pointers.
+
+<DT> <A HREF="cuddAllDet.html#ddClearVars" TARGET="MAIN"><CODE>ddClearVars()</CODE></A>
+<DD> Clears visited flags for variables.
 
 <DT> <A HREF="cuddAllDet.html#ddCofMintermAux" TARGET="MAIN"><CODE>ddCofMintermAux()</CODE></A>
 <DD> Recursive Step for Cudd_CofMinterm function.
@@ -2354,11 +2445,14 @@
 <DD> Finds the lower and upper bounds of the group represented
   by treenode.
 
+<DT> <A HREF="cuddAllDet.html#ddFindSupport" TARGET="MAIN"><CODE>ddFindSupport()</CODE></A>
+<DD> Recursively find the support of f.
+
 <DT> <A HREF="cuddAllDet.html#ddFindTwoLiteralClausesRecur" TARGET="MAIN"><CODE>ddFindTwoLiteralClausesRecur()</CODE></A>
 <DD> Implements the recursive step of Cudd_FindTwoLiteralClauses.
 
-<DT> <A HREF="cuddAllDet.html#ddFixLimits" TARGET="MAIN"><CODE>ddFixLimits()</CODE></A>
-<DD> Adjusts the values of table limits.
+<DT> <A HREF="cuddAllDet.html#ddGetLargestCubeUnate" TARGET="MAIN"><CODE>ddGetLargestCubeUnate()</CODE></A>
+<DD> Extracts largest prime of a unate function.
 
 <DT> <A HREF="cuddAllDet.html#ddGroupMoveBackward" TARGET="MAIN"><CODE>ddGroupMoveBackward()</CODE></A>
 <DD> Undoes the swap two groups.
@@ -2384,12 +2478,6 @@
 <DT> <A HREF="cuddAllDet.html#ddGroupSifting" TARGET="MAIN"><CODE>ddGroupSifting()</CODE></A>
 <DD> Sifts from treenode->low to treenode->high.
 
-<DT> <A HREF="cuddAllDet.html#ddIsIthAddVarPair" TARGET="MAIN"><CODE>ddIsIthAddVarPair()</CODE></A>
-<DD> Comparison of a pair of functions to the i-th ADD variable.
-
-<DT> <A HREF="cuddAllDet.html#ddIsIthAddVar" TARGET="MAIN"><CODE>ddIsIthAddVar()</CODE></A>
-<DD> Comparison of a function to the i-th ADD variable.
-
 <DT> <A HREF="cuddAllDet.html#ddIsVarHandled" TARGET="MAIN"><CODE>ddIsVarHandled()</CODE></A>
 <DD> Checks whether a variables is already handled.
 
@@ -2401,9 +2489,6 @@
 
 <DT> <A HREF="cuddAllDet.html#ddJumpingUp" TARGET="MAIN"><CODE>ddJumpingUp()</CODE></A>
 <DD> This function is for jumping up.
-
-<DT> <A HREF="cuddAllDet.html#ddLCHash" TARGET="MAIN"><CODE>ddLCHash()</CODE></A>
-<DD> Computes the hash value for a local cache.
 
 <DT> <A HREF="cuddAllDet.html#ddLeavesInt" TARGET="MAIN"><CODE>ddLeavesInt()</CODE></A>
 <DD> Performs the recursive step of Cudd_CountLeaves.
@@ -2604,9 +2689,6 @@
 <DT> <A HREF="cuddAllDet.html#equalp" TARGET="MAIN"><CODE>equalp()</CODE></A>
 <DD> Returns true iff the two arguments are identical clauses.
 
-<DT> <A HREF="cuddAllDet.html#find_average_fitness" TARGET="MAIN"><CODE>find_average_fitness()</CODE></A>
-<DD> Returns the average fitness of the population.
-
 <DT> <A HREF="cuddAllDet.html#find_best" TARGET="MAIN"><CODE>find_best()</CODE></A>
 <DD> Returns the index of the fittest individual.
 
@@ -2665,6 +2747,9 @@
 <DT> <A HREF="cuddAllDet.html#impliedp" TARGET="MAIN"><CODE>impliedp()</CODE></A>
 <DD> Returns true iff either literal of a clause is in a set of
   literals.
+
+<DT> <A HREF="cuddAllDet.html#indexCompare" TARGET="MAIN"><CODE>indexCompare()</CODE></A>
+<DD> Compares indices for qsort.
 
 <DT> <A HREF="cuddAllDet.html#initSymmInfo" TARGET="MAIN"><CODE>initSymmInfo()</CODE></A>
 <DD> Gathers symmetry information.
@@ -2742,6 +2827,10 @@
 <DT> <A HREF="cuddAllDet.html#updateUB" TARGET="MAIN"><CODE>updateUB()</CODE></A>
 <DD> Updates the upper bound and saves the best order seen so far.
 
+<DT> <A HREF="cuddAllDet.html#zddClearFlag" TARGET="MAIN"><CODE>zddClearFlag()</CODE></A>
+<DD> Performs a DFS from f, clearing the LSB of the next
+  pointers.
+
 <DT> <A HREF="cuddAllDet.html#zddCountInternalMtrNodes" TARGET="MAIN"><CODE>zddCountInternalMtrNodes()</CODE></A>
 <DD> Counts the number of internal nodes of the group tree.
 
@@ -2805,6 +2894,9 @@
 <DT> <A HREF="cuddAllDet.html#zddSiftUp" TARGET="MAIN"><CODE>zddSiftUp()</CODE></A>
 <DD> Moves one ZDD variable up.
 
+<DT> <A HREF="cuddAllDet.html#zddSupportStep" TARGET="MAIN"><CODE>zddSupportStep()</CODE></A>
+<DD> Performs the recursive step of Cudd_zddSupport.
+
 <DT> <A HREF="cuddAllDet.html#zddSwapAny" TARGET="MAIN"><CODE>zddSwapAny()</CODE></A>
 <DD> Swaps any two variables.
 
@@ -2843,13 +2935,28 @@
 <DD> Adds node to the head of the free list.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Adjusts the values of table limits.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Clears a bit vector.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Clears the 4 least significant bits of a pointer.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Comparison of a function to the i-th ADD variable.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Comparison of a pair of functions to the i-th ADD variable.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Complements a DD if a condition is true.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Complements a DD.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Computes hash function for keys of one operand.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Computes hash function for keys of three operands.
@@ -2859,6 +2966,9 @@
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Computes the absolute value of a number.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Computes the hash value for a local cache.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Computes the maximum of two numbers.
@@ -2878,6 +2988,9 @@
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Extract the most significant digit of a double digit.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Fast storage allocation for items in a hash table.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Finds the current position of ZDD variable index in the
@@ -2920,6 +3033,12 @@
 <DD> Outputs a line of stats.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Performs the left rotation for red/black trees.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Performs the right rotation for red/black trees.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Returns 1 if a pointer is complemented.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
@@ -2936,6 +3055,9 @@
 <DD> Returns the arithmetic 0 constant node.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Returns the average fitness of the population.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Returns the complemented version of a pointer.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
@@ -2950,6 +3072,9 @@
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Returns the else child of an internal node.
+
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Returns the i-th entry of a bit vector.
 
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Returns the minus infinity constant node.
@@ -2978,9 +3103,12 @@
 <DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
 <DD> Saturating increment operator.
 
+<DT> <A HREF="cuddAllDet.html#" TARGET="MAIN"><CODE>()</CODE></A>
+<DD> Sets the i-th entry of a bit vector to a value.
+
 </DL>
 
 <HR>
 
-Last updated on 20090220 23h06
+Last updated on 20120204 17h33
 </BODY></HTML>
