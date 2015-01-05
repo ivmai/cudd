@@ -14,5 +14,6 @@ if test -d include
     $CREATE ../obj/cuddObj.hh .
     $CREATE ../st/st.h .
     $CREATE ../util/util.h .
+    $CREATE ../util/cstringstream.h .
     $CREATE ../mnemosyne/mnemosyne.h .
 fi

@@ -1,11 +1,11 @@
 # Nanotrav Version #0.12, Release date 2003/12/31
 # ./nanotrav -p 1 -autodyn -reordering sifting -trav mult32a.blif
-# CUDD Version 2.4.2
-BDD reordering with sifting: from 4001 to ... 268 nodes in 0.005 sec
-BDD reordering with sifting: from 537 to ... 246 nodes in 0.006 sec
-BDD reordering with sifting: from 493 to ... 250 nodes in 0.009 sec
-BDD reordering with sifting: from 501 to ... 280 nodes in 0.012 sec
-BDD reordering with sifting: from 561 to ... 296 nodes in 0.015 sec
+# CUDD Version 2.5.1
+BDD reordering with sifting: from 4001 to ... 268 nodes in 0.001 sec
+BDD reordering with sifting: from 537 to ... 246 nodes in 0.002 sec
+BDD reordering with sifting: from 493 to ... 250 nodes in 0.002 sec
+BDD reordering with sifting: from 501 to ... 280 nodes in 0.004 sec
+BDD reordering with sifting: from 561 to ... 296 nodes in 0.005 sec
 Order before final reordering
 2 34 33 66 32 65 31 64 
 63 30 62 29 28 61 27 60 
@@ -17,7 +17,7 @@ Order before final reordering
 41 8 42 9 43 10 44 11 
 1 
 Number of inputs = 65
-BDD reordering with sifting: from 380 to ... 317 nodes in 0.012 sec
+BDD reordering with sifting: from 380 to ... 317 nodes in 0.005 sec
 New order
 1 2 34 66 33 65 32 64 
 31 63 30 62 29 61 28 60 
@@ -28,19 +28,19 @@ New order
 3 4 37 5 38 6 39 7 
 40 8 41 9 42 10 43 44 
 11 
-Building transition relation. Time = 0.06 sec
-BDD reordering with sifting: from 670 to ... 453 nodes in 0.029 sec
-@@BDD reordering with sifting: from 940 to ... 700 nodes in 0.03 sec
-@@BDD reordering with sifting: from 1433 to ... 832 nodes in 0.039 sec
-@@BDD reordering with sifting: from 1697 to ... 1063 nodes in 0.045 sec
-@@@BDD reordering with sifting: from 2159 to ... 786 nodes in 0.049 sec
-@@@@BDD reordering with sifting: from 1605 to ... 893 nodes in 0.043 sec
-@@@@BDD reordering with sifting: from 1819 to ... 951 nodes in 0.048 sec
-@@@@@BDD reordering with sifting: from 1935 to ... 965 nodes in 0.055 sec
-@@@@@BDD reordering with sifting: from 1963 to ... 1055 nodes in 0.059 sec
+Building transition relation. Time = 0.02 sec
+BDD reordering with sifting: from 669 to ... 452 nodes in 0.011 sec
+@@BDD reordering with sifting: from 939 to ... 705 nodes in 0.011 sec
+@@BDD reordering with sifting: from 1443 to ... 847 nodes in 0.015 sec
+@@BDD reordering with sifting: from 1727 to ... 1076 nodes in 0.017 sec
+@@@BDD reordering with sifting: from 2185 to ... 770 nodes in 0.017 sec
+@@@@BDD reordering with sifting: from 1573 to ... 922 nodes in 0.015 sec
+@@@@BDD reordering with sifting: from 1877 to ... 1013 nodes in 0.018 sec
+@@@@@BDD reordering with sifting: from 2059 to ... 873 nodes in 0.021 sec
+@@@@@BDD reordering with sifting: from 1779 to ... 975 nodes in 0.021 sec
 @@@@@
-Transition relation: 1 parts 32 latches 199 nodes
-Traversing. Time = 0.46 sec
+Transition relation: 1 parts 32 latches 196 nodes
+Traversing. Time = 0.17 sec
 S0: 33 nodes 1 leaves 1 minterms
 From[1]: 33 nodes 1 leaves 2.14748e+09 minterms
 Reached[1]: 2 nodes 1 leaves 2.14748e+09 minterms
@@ -174,19 +174,19 @@ depth = 32
 R: 33 nodes 1 leaves 4.29497e+09 minterms
 Order at the end of reachability analysis
 1 2 34 33 66 32 65 31 
-64 63 30 29 62 28 61 60 
-27 59 26 58 25 57 24 56 
+64 63 30 29 62 28 61 27 
+60 59 26 58 25 57 24 56 
 23 55 22 54 21 20 53 19 
-52 18 51 17 50 16 49 15 
+52 18 51 17 50 49 16 15 
 48 14 47 13 46 12 45 11 
 44 10 43 3 36 4 37 5 
 38 6 39 7 40 8 41 42 
 9 
 **** CUDD modifiable parameters ****
-Hard limit for cache size: 7645866
+Hard limit for cache size: 21845333
 Cache hit threshold for resizing: 30%
 Garbage collection enabled: yes
-Limit for fast unique table growth: 4587520
+Limit for fast unique table growth: 13107200
 Maximum number of variables sifted per reordering: 1000000
 Maximum number of variable swaps per reordering: 1000000000
 Maximum growth while sifting a variable: 1.2
@@ -203,56 +203,60 @@ Symmetry violation threshold: 10
 Arc violation threshold: 10
 GA population size: 0
 Number of crossovers for GA: 0
-Next reordering threshold: 2178
+Next reordering threshold: 2018
 **** CUDD non-modifiable parameters ****
-Memory in use: 5461692
+Memory in use: 19305908
 Peak number of nodes: 7154
 Peak number of live nodes: 4004
 Number of BDD variables: 97
 Number of ZDD variables: 0
 Number of cache entries: 65536
-Number of cache look-ups: 48730
-Number of cache hits: 20857
-Number of cache insertions: 27828
-Number of cache collisions: 997
-Number of cache deletions: 20076
-Cache used slots = 17.56% (expected 10.31%)
+Number of cache look-ups: 49884
+Number of cache hits: 20823
+Number of cache insertions: 29322
+Number of cache collisions: 1344
+Number of cache deletions: 21077
+Cache used slots = 17.74% (expected 10.53%)
 Soft limit for cache size: 100352
 Number of buckets in unique table: 25088
-Used buckets in unique table: 12.29% (expected 12.30%)
-Number of BDD and ADD nodes: 3533
+Used buckets in unique table: 12.24% (expected 12.44%)
+Unique lookups: 43172
+Unique links: 3616 (0.083758 per lookup)
+Number of BDD and ADD nodes: 3613
 Number of ZDD nodes: 0
-Number of dead BDD and ADD nodes: 3186
+Number of dead BDD and ADD nodes: 3266
 Number of dead ZDD nodes: 0
-Total number of nodes allocated: 23948
-Total number of nodes reclaimed: 3937
+Total number of nodes allocated: 26901
+Total number of nodes reclaimed: 16739
+Number of recursive calls: 114112
 Garbage collections so far: 15
 Time for garbage collection: 0.00 sec
 Reorderings so far: 15
-Time for reordering: 0.46 sec
+Time for reordering: 0.17 sec
+Node swaps in reordering: 938162
 Final size: 275
-total time = 0.47 sec
+total time = 0.17 sec
 Runtime Statistics
 ------------------
 Machine name: jobim.colorado.edu
-User time      0.5 seconds
+User time      0.2 seconds
 System time    0.0 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            =     0K
+Maximum resident size            =  9128K
 
-Virtual text size                = 131815K
-Virtual data size                =   297K
-    data size initialized        =    25K
+Virtual text size                =  4621K
+Virtual data size                = 12442K
+    data size initialized        =  2135K
     data size uninitialized      =   137K
-    data size sbrk               =   135K
-Virtual memory limit             = 358400K (4194304K)
+    data size sbrk               = 10170K
+Virtual memory limit             = 2048000K (18014398509481984K)
 
 Major page faults = 0
-Minor page faults = 1754
+Minor page faults = 1770
 Swaps = 0
-Input blocks = 0
-Output blocks = 0
+Input blocks = 16
+Output blocks = 16
 Context switch (voluntary) = 1
-Context switch (involuntary) = 21
+Context switch (involuntary) = 2

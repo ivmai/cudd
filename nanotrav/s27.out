@@ -1,6 +1,6 @@
 # Nanotrav Version #0.12, Release date 2003/12/31
 # ./nanotrav -p 1 -trav s27.blif
-# CUDD Version 2.4.2
+# CUDD Version 2.5.1
 Order before final reordering
 G0 G1 G2 G3 G5 G6 G7 
 Number of inputs = 7
@@ -20,10 +20,10 @@ Reached[2]: 3 nodes 1 leaves 6 minterms
 depth = 2
 R: 3 nodes 1 leaves 6 minterms
 **** CUDD modifiable parameters ****
-Hard limit for cache size: 7645866
+Hard limit for cache size: 21845333
 Cache hit threshold for resizing: 30%
 Garbage collection enabled: yes
-Limit for fast unique table growth: 4587520
+Limit for fast unique table growth: 13107200
 Maximum number of variables sifted per reordering: 1000
 Maximum number of variable swaps per reordering: 2000000
 Maximum growth while sifting a variable: 1.2
@@ -42,13 +42,13 @@ GA population size: 0
 Number of crossovers for GA: 0
 Next reordering threshold: 4004
 **** CUDD non-modifiable parameters ****
-Memory in use: 4737772
+Memory in use: 17862904
 Peak number of nodes: 1022
 Peak number of live nodes: 95
 Number of BDD variables: 10
 Number of ZDD variables: 0
 Number of cache entries: 32768
-Number of cache look-ups: 180
+Number of cache look-ups: 173
 Number of cache hits: 26
 Number of cache insertions: 151
 Number of cache collisions: 1
@@ -56,17 +56,21 @@ Number of cache deletions: 0
 Cache used slots = 0.46% (expected 0.46%)
 Soft limit for cache size: 11264
 Number of buckets in unique table: 2816
-Used buckets in unique table: 4.97% (expected 5.15%)
+Used buckets in unique table: 5.11% (expected 5.15%)
+Unique lookups: 194
+Unique links: 0 (0 per lookup)
 Number of BDD and ADD nodes: 150
 Number of ZDD nodes: 0
 Number of dead BDD and ADD nodes: 75
 Number of dead ZDD nodes: 0
 Total number of nodes allocated: 150
 Total number of nodes reclaimed: 12
+Number of recursive calls: 507
 Garbage collections so far: 0
 Time for garbage collection: 0.00 sec
 Reorderings so far: 0
 Time for reordering: 0.00 sec
+Node swaps in reordering: 0
 Final size: 16
 total time = 0.00 sec
 Runtime Statistics
@@ -77,19 +81,19 @@ System time    0.0 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            =     0K
+Maximum resident size            =  9218K
 
-Virtual text size                = 131815K
-Virtual data size                =   297K
-    data size initialized        =    25K
+Virtual text size                =  4621K
+Virtual data size                = 24114K
+    data size initialized        =  2135K
     data size uninitialized      =   137K
-    data size sbrk               =   135K
-Virtual memory limit             = 358400K (4194304K)
+    data size sbrk               = 21842K
+Virtual memory limit             = 2048000K (18014398509481984K)
 
 Major page faults = 0
-Minor page faults = 1424
+Minor page faults = 1123
 Swaps = 0
-Input blocks = 0
-Output blocks = 0
+Input blocks = 8
+Output blocks = 2088
 Context switch (voluntary) = 1
-Context switch (involuntary) = 0
+Context switch (involuntary) = 1

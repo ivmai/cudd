@@ -143,7 +143,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddUtil.c,v 1.83 2012/02/05 01:07:19 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddUtil.c,v 1.84 2013/09/19 19:46:35 fabio Exp $";
 #endif
 
 static	DdNode	*background, *zero;
@@ -3488,6 +3488,9 @@ ddCountMintermAux(
 	ptrint fanout = (ptrint) N->ref;
 	cuddSatDec(fanout);
 	res = cuddUniqueConst(table->manager,min);
+	if (!res) {
+	    return((double)CUDD_OUT_OF_MEM);
+	}
 	if (!cuddHashTableInsert1(table,node,res,fanout)) {
 	    cuddRef(res); Cudd_RecursiveDeref(table->manager, res);
 	    return((double)CUDD_OUT_OF_MEM);

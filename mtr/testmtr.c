@@ -54,7 +54,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] MTR_UNUSED = "$Id: testmtr.c,v 1.5 2012/02/05 06:10:35 fabio Exp $";
+static char rcsid[] MTR_UNUSED = "$Id: testmtr.c,v 1.7 2015/01/05 20:12:13 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -72,6 +72,7 @@ static char rcsid[] MTR_UNUSED = "$Id: testmtr.c,v 1.5 2012/02/05 06:10:35 fabio
 
 static void usage (char *prog);
 static FILE * open_file (const char *filename, const char *mode);
+static void printHeader(int argc, char **argv);
 
 /**AutomaticEnd***************************************************************/
 
@@ -105,27 +106,16 @@ main(
     FILE    *fp;
     const char *file = NULL;
     
-    (void) printf("# %s\n", TESTMTR_VERSION);
-    /* Echo command line and arguments. */
-    (void) printf("#");
-    for(i = 0; i < argc; i++) {
-	(void) printf(" %s", argv[i]);
-    }
-    (void) printf("\n");
-    (void) fflush(stdout);
-
     while ((c = getopt(argc, argv, "Mhp:")) != EOF) {
 	switch(c) {
 	case 'M':
-#ifdef MNEMOSYNE
-	    (void) mnem_setrecording(0);
-#endif
 	    break;
 	case 'p':
 	    pr = atoi(optarg);
 	    break;
 	case 'h':
 	default:
+            printHeader(argc, argv);
 	    usage(argv[0]);
 	    break;
 	}
@@ -136,8 +126,11 @@ main(
     } else if (argc - optind == 1) {
 	file = argv[optind];
     } else {
+        printHeader(argc, argv);
 	usage(argv[0]);
     }
+    if (pr > 0)
+        printHeader(argc, argv);
 
     /* Create and print a simple tree. */
     root = Mtr_InitTree();
@@ -149,68 +142,88 @@ main(
     node = Mtr_CreateFirstChild(root);
     node->flags = 3;
     node = Mtr_AllocNode();
+    node->child = NULL;
     node->flags = 4;
     Mtr_MakeNextSibling(root->child,node);
-    Mtr_PrintTree(root);
+    if (pr > 0) {
+        Mtr_PrintTree(root);
+        (void) printf("#------------------------\n");
+    }
     Mtr_FreeTree(root);
-    (void) printf("#------------------------\n");
 
     /* Create an initial tree in which all variables belong to one group. */
     root = Mtr_InitGroupTree(0,12);
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    if (pr > 0) {
+        Mtr_PrintTree(root); (void) printf("#  ");
+        Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    }
     node = Mtr_MakeGroup(root,0,6,MTR_DEFAULT);
     node = Mtr_MakeGroup(root,6,6,MTR_DEFAULT);
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    if (pr > 0) {
+        Mtr_PrintTree(root); (void) printf("#  ");
+        Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    }
     for (i = 0; i < 6; i+=2) {
 	node = Mtr_MakeGroup(root,(unsigned) i,(unsigned) 2,MTR_DEFAULT);
     }
     node = Mtr_MakeGroup(root,0,12,MTR_FIXED);
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
-    /* Print a partial tree. */
-    (void) printf("#  ");
-    Mtr_PrintGroups(root->child,pr == 0); (void) printf("\n");
+    if (pr > 0) {
+        Mtr_PrintTree(root); (void) printf("#  ");
+        Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+        /* Print a partial tree. */
+        (void) printf("#  ");
+        Mtr_PrintGroups(root->child,pr == 0); (void) printf("\n");
+    }
     node = Mtr_FindGroup(root,0,6);
     node = Mtr_DissolveGroup(node);
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    if (pr > 0) {
+        Mtr_PrintTree(root); (void) printf("#  ");
+        Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    }
     node = Mtr_FindGroup(root,4,2);
     if (!Mtr_SwapGroups(node,node->younger)) {
 	(void) printf("error in Mtr_SwapGroups\n");
-	exit(3);
+	return 3;
     }
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0);
+    if (pr > 0) {
+        Mtr_PrintTree(root); (void) printf("#  ");
+        Mtr_PrintGroups(root,pr == 0);
+        (void) printf("#------------------------\n");
+    }
     Mtr_FreeTree(root);
-    (void) printf("#------------------------\n");
 
     /* Create a group tree with fixed subgroups. */
     root = Mtr_InitGroupTree(0,4);
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    if (pr > 0) {
+        Mtr_PrintTree(root); (void) printf("#  ");
+        Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    }
     node = Mtr_MakeGroup(root,0,2,MTR_FIXED);
     node = Mtr_MakeGroup(root,2,2,MTR_FIXED);
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    if (pr > 0) {
+        Mtr_PrintTree(root); (void) printf("#  ");
+        Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+    }
     Mtr_FreeTree(root);
-    (void) printf("#------------------------\n");
+    if (pr > 0) {
+        (void) printf("#------------------------\n");
+    }
 
     /* Open input file. */
     fp = open_file(file, "r");
     root = Mtr_ReadGroups(fp,12);
-    Mtr_PrintTree(root); (void) printf("#  ");
-    Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
-
+    fclose(fp);
+    if (pr > 0) {
+        if (root) {
+            Mtr_PrintTree(root); (void) printf("#  ");
+            Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
+        } else {
+            (void) printf("error in group file\n");
+        }
+    }
     Mtr_FreeTree(root);
 
-#ifdef MNEMOSYNE
-    mnem_writestats();
-#endif
-
-    exit(0);
-    /* NOTREACHED */
+    return 0;
 
 } /* end of main */
 
@@ -268,3 +281,31 @@ open_file(
 
 } /* end of open_file */
 
+
+/**Function********************************************************************
+
+  Synopsis    [Prints the header of the program output.]
+
+  Description [Prints the header of the program output.]
+
+  SideEffects [None]
+
+  SeeAlso     []
+
+******************************************************************************/
+static void
+printHeader(
+  int argc,
+  char **argv)
+{
+    int i;
+
+    (void) printf("# %s\n", TESTMTR_VERSION);
+    /* Echo command line and arguments. */
+    (void) printf("#");
+    for(i = 0; i < argc; i++) {
+	(void) printf(" %s", argv[i]);
+    }
+    (void) printf("\n");
+    (void) fflush(stdout);
+}

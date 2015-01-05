@@ -50,7 +50,7 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.]
 
-  Revision    [$Id: cudd.h,v 1.180 2012/02/05 01:07:18 fabio Exp $]
+  Revision    [$Id: cudd.h,v 1.182 2015/01/03 18:21:34 fabio Exp $]
 
 ******************************************************************************/
 
@@ -72,7 +72,7 @@ extern "C" {
 /* Constant declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#define CUDD_VERSION "2.5.0"
+#define CUDD_VERSION "2.5.1"
 
 #ifndef SIZEOF_VOID_P
 #define SIZEOF_VOID_P 4
@@ -219,6 +219,7 @@ typedef enum {
     CUDD_TOO_MANY_NODES,
     CUDD_MAX_MEM_EXCEEDED,
     CUDD_TIMEOUT_EXPIRED,
+    CUDD_TERMINATION,
     CUDD_INVALID_ARG,
     CUDD_INTERNAL_ERROR
 } Cudd_ErrorType;
@@ -311,6 +312,8 @@ typedef DdNode * (*DD_CTFP1)(DdManager *, DdNode *);
 typedef void (*DD_OOMFP)(long);
 /* Type of comparison function for qsort. */
 typedef int (*DD_QSFP)(const void *, const void *);
+/* Type of termination handler. */
+typedef int (*DD_THFP)(const void *);
 
 /*---------------------------------------------------------------------------*/
 /* Variable declarations                                                     */
@@ -620,6 +623,7 @@ extern DdNode * Cudd_addNewVar (DdManager *dd);
 extern DdNode * Cudd_addNewVarAtLevel (DdManager *dd, int level);
 extern DdNode * Cudd_bddNewVar (DdManager *dd);
 extern DdNode * Cudd_bddNewVarAtLevel (DdManager *dd, int level);
+extern int Cudd_bddIsVar(DdManager * dd, DdNode * f);
 extern DdNode * Cudd_addIthVar (DdManager *dd, int i);
 extern DdNode * Cudd_bddIthVar (DdManager *dd, int i);
 extern DdNode * Cudd_zddIthVar (DdManager *dd, int i);
@@ -636,6 +640,8 @@ extern void Cudd_UpdateTimeLimit(DdManager * unique);
 extern void Cudd_IncreaseTimeLimit(DdManager * unique, unsigned long increase);
 extern void Cudd_UnsetTimeLimit(DdManager *unique);
 extern int Cudd_TimeLimited(DdManager *unique);
+extern void Cudd_RegisterTerminationCallback(DdManager *unique, DD_THFP callback, void * callback_arg);
+extern void Cudd_UnregisterTerminationCallback(DdManager *unique);
 extern void Cudd_AutodynEnable (DdManager *unique, Cudd_ReorderingType method);
 extern void Cudd_AutodynDisable (DdManager *unique);
 extern int Cudd_ReorderingStatus (DdManager *unique, Cudd_ReorderingType *method);
@@ -748,6 +754,8 @@ extern int Cudd_PrintGroupedOrder(DdManager * dd, const char *str, void *data);
 extern int Cudd_EnableOrderingMonitoring(DdManager *dd);
 extern int Cudd_DisableOrderingMonitoring(DdManager *dd);
 extern int Cudd_OrderingMonitoring(DdManager *dd);
+extern void Cudd_SetApplicationHook(DdManager *dd, void * value);
+extern void * Cudd_ReadApplicationHook(DdManager *dd);
 extern Cudd_ErrorType Cudd_ReadErrorCode (DdManager *dd);
 extern void Cudd_ClearErrorCode (DdManager *dd);
 extern FILE * Cudd_ReadStdout (DdManager *dd);
@@ -888,12 +896,13 @@ extern DdTlcInfo * Cudd_FindTwoLiteralClauses (DdManager * dd, DdNode * f);
 extern int Cudd_PrintTwoLiteralClauses (DdManager * dd, DdNode * f, char **names, FILE *fp);
 extern int Cudd_ReadIthClause (DdTlcInfo * tlc, int i, DdHalfWord *var1, DdHalfWord *var2, int *phase1, int *phase2);
 extern void Cudd_tlcInfoFree (DdTlcInfo * t);
-extern int Cudd_DumpBlif (DdManager *dd, int n, DdNode **f, char **inames, char **onames, char *mname, FILE *fp, int mv);
-extern int Cudd_DumpBlifBody (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp, int mv);
-extern int Cudd_DumpDot (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
-extern int Cudd_DumpDaVinci (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
-extern int Cudd_DumpDDcal (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
-extern int Cudd_DumpFactoredForm (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
+extern int Cudd_DumpBlif (DdManager *dd, int n, DdNode **f, char const * const *inames, char const * const *onames, char *mname, FILE *fp, int mv);
+extern int Cudd_DumpBlifBody (DdManager *dd, int n, DdNode **f, char const * const *inames, char const * const *onames, FILE *fp, int mv);
+extern int Cudd_DumpDot (DdManager *dd, int n, DdNode **f, char const * const *inames, char const * const *onames, FILE *fp);
+extern int Cudd_DumpDaVinci (DdManager *dd, int n, DdNode **f, char const * const *inames, char const * const *onames, FILE *fp);
+extern int Cudd_DumpDDcal (DdManager *dd, int n, DdNode **f, char const * const *inames, char const * const *onames, FILE *fp);
+extern int Cudd_DumpFactoredForm (DdManager *dd, int n, DdNode **f, char const * const *inames, char const * const *onames, FILE *fp);
+extern char * Cudd_FactoredFormString(DdManager *dd, DdNode *f, char const * const * inames);
 extern DdNode * Cudd_bddConstrain (DdManager *dd, DdNode *f, DdNode *c);
 extern DdNode * Cudd_bddRestrict (DdManager *dd, DdNode *f, DdNode *c);
 extern DdNode * Cudd_bddNPAnd (DdManager *dd, DdNode *f, DdNode *c);
@@ -1044,7 +1053,7 @@ extern DdGen * Cudd_zddFirstPath (DdManager *zdd, DdNode *f, int **path);
 extern int Cudd_zddNextPath (DdGen *gen, int **path);
 extern char * Cudd_zddCoverPathToString (DdManager *zdd, int *path, char *str);
 extern DdNode * Cudd_zddSupport(DdManager * dd, DdNode * f);
-extern int Cudd_zddDumpDot (DdManager *dd, int n, DdNode **f, char **inames, char **onames, FILE *fp);
+extern int Cudd_zddDumpDot (DdManager *dd, int n, DdNode **f, char const * const *inames, char const * const *onames, FILE *fp);
 extern int Cudd_bddSetPiVar (DdManager *dd, int index);
 extern int Cudd_bddSetPsVar (DdManager *dd, int index);
 extern int Cudd_bddSetNsVar (DdManager *dd, int index);

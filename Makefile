@@ -8,6 +8,7 @@
 
 # C++ compiler
 CXX	= g++
+#CXX	= clang++
 #CXX	= icpc
 #CXX	= ecpc
 #CXX	= CC
@@ -25,9 +26,10 @@ CXXFLAGS =
 #CXXFLAGS = +a1
 
 # C compiler used for all targets except optimize_dec, which always uses cc.
+CC	= gcc
+#CC	= clang
 #CC	= cc
 #CC	= /usr/local/opt/SUNWspro/bin/cc
-CC	= gcc
 #CC	= icc
 #CC	= ecc
 #CC	= /usr/ucb/cc
@@ -59,13 +61,13 @@ ICFLAGS	= -g -O3
 #  Linux
 #
 # Gcc 4.2.4 or higher on i686.
-XCFLAGS	= -mtune=native -malign-double -DHAVE_IEEE_754 -DBSD
+#XCFLAGS	= -mtune=native -malign-double -DHAVE_IEEE_754 -DBSD
 # Gcc 3.2.2 or higher on i686.
 #XCFLAGS	= -mtune=pentium4 -malign-double -DHAVE_IEEE_754 -DBSD
 # Gcc 2.8.1 on i686.
 #XCFLAGS	= -mcpu=pentiumpro -malign-double -DHAVE_IEEE_754 -DBSD
 # Gcc 4.2.4 or higher on x86_64 (64-bit compilation)
-#XCFLAGS	= -mtune=native -DHAVE_IEEE_754 -DBSD -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8
+XCFLAGS	= -mtune=native -DHAVE_IEEE_754 -DBSD -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8
 # Gcc 4.2.4 or higher on x86_64 (32-bit compilation)
 #XCFLAGS	= -m32 -mtune=native -malign-double -DHAVE_IEEE_754 -DBSD
 # Icc on i686 (older versions may not support -xHost).
@@ -208,7 +210,7 @@ DIRS	= $(BDIRS) nanotrav
 .PHONY : check_leaks
 .PHONY : optimize_dec
 .PHONY : testcudd
-.PHONY : libobj
+.PHONY : objlib
 .PHONY : testobj
 .PHONY : testdddmp
 .PHONY : testmtr
@@ -220,7 +222,7 @@ DIRS	= $(BDIRS) nanotrav
 
 build:
 	sh ./setup.sh
-	@for dir in $(DIRS); do \
+	@+for dir in $(DIRS); do \
 		(cd $$dir; \
 		echo Making $$dir ...; \
 		make CC=$(CC) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" )\
@@ -230,7 +232,7 @@ nanotrav: build
 
 check_leaks:
 	sh ./setup.sh
-	@for dir in mnemosyne $(DIRS); do \
+	@+for dir in mnemosyne $(DIRS); do \
 		(cd $$dir; \
 		echo Making $$dir ...; \
 		make CC=$(CC) RANLIB=$(RANLIB) MFLAG=$(MFLAG) MNEMLIB=$(MNEMLIB) ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" EXE="$(EXE)" )\
@@ -238,7 +240,7 @@ check_leaks:
 
 optimize_dec:
 	sh ./setup.sh
-	@for dir in $(DIRS); do \
+	@+for dir in $(DIRS); do \
 		(cd $$dir; \
 		echo Making $$dir ...; \
 		make CC=$(CC) RANLIB=$(RANLIB) XCFLAGS="$(XCFLAGS)" LDFLAGS="$(LDFLAGS)" optimize_dec )\
@@ -246,7 +248,7 @@ optimize_dec:
 
 lint:
 	sh ./setup.sh
-	@for dir in $(DIRS) obj; do \
+	@+for dir in $(DIRS) obj; do \
 		(cd $$dir; \
 		echo Making lint in $$dir ...; \
 		make CC=$(CC) lint )\
@@ -254,7 +256,7 @@ lint:
 
 tags:
 	sh ./setup.sh
-	@for dir in $(DIRS) obj; do \
+	@+for dir in $(DIRS) obj; do \
 		(cd $$dir; \
 		echo Making tags in $$dir ...; \
 		make CC=$(CC) tags )\
@@ -262,7 +264,7 @@ tags:
 
 all:
 	sh ./setup.sh
-	@for dir in $(DIRS); do \
+	@+for dir in $(DIRS); do \
 		(cd $$dir; \
 		echo Making all in $$dir ...; \
 		make CC=$(CC) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" all )\
@@ -270,38 +272,38 @@ all:
 
 testcudd:
 	sh ./setup.sh
-	@for dir in util st mtr epd; do \
+	@+for dir in util st mtr epd; do \
 		(cd $$dir; \
 		echo Making $$dir ...; \
 		make CC=$(CC) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" )\
 	done
-	@(cd cudd; \
+	@+(cd cudd; \
 	echo Making testcudd ...; \
 	make CC=$(CC) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" testcudd$(EXE) )
 
 objlib:
 	sh ./setup.sh
-	@for dir in $(BDIRS); do \
+	@+for dir in $(BDIRS); do \
 		(cd $$dir; \
 		echo Making $$dir ...; \
 		make CC=$(CC) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" )\
 	done
-	@(cd obj; \
+	@+(cd obj; \
 	echo Making obj ...; \
 	make CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" )
 
 testobj: objlib
-	@(cd obj; \
+	@+(cd obj; \
 	echo Making testobj ...; \
 	make CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" testobj$(EXE) )
 
 testdddmp: build
-	@(cd dddmp; \
+	@+(cd dddmp; \
 	echo Making testdddmp ...; \
 	make CC=$(CC) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" testdddmp$(EXE) )
 
 testmtr: build
-	@(cd mtr; \
+	@+(cd mtr; \
 	echo Making testmtr ...; \
 	make CC=$(CC) RANLIB=$(RANLIB) MFLAG= MNEMLIB= ICFLAGS="$(ICFLAGS)" XCFLAGS="$(XCFLAGS)" DDDEBUG="$(DDDEBUG)" MTRDEBUG="$(MTRDEBUG)" LDFLAGS="$(LDFLAGS)" PURE="$(PURE)" EXE="$(EXE)" testmtr$(EXE) )
 

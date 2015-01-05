@@ -67,7 +67,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: bnet.c,v 1.26 2012/02/05 01:53:01 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: bnet.c,v 1.27 2014/02/11 02:41:41 fabio Exp fabio $";
 #endif
 
 static	char	BuffLine[MAXLENGTH];
@@ -921,19 +921,31 @@ Bnet_bddDump(
 
     /* Dump the BDDs. */
     if (dumpFmt == 1) {
-	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
-		 network->name,dfp,0);
+	retval = Cudd_DumpBlif(dd,noutputs,outputs,
+			       (char const * const *) inames,
+			       (char const * const *) onames,
+			       network->name,dfp,0);
     } else if (dumpFmt == 2) {
-	retval = Cudd_DumpDaVinci(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpDaVinci(dd,noutputs,outputs,
+				  (char const * const *) inames,
+				  (char const * const *) onames,dfp);
     } else if (dumpFmt == 3) {
-	retval = Cudd_DumpDDcal(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpDDcal(dd,noutputs,outputs,
+				(char const * const *) inames,
+				(char const * const *) onames,dfp);
     } else if (dumpFmt == 4) {
-	retval = Cudd_DumpFactoredForm(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpFactoredForm(dd,noutputs,outputs,
+				       (char const * const *) inames,
+				       (char const * const *) onames,dfp);
     } else if (dumpFmt == 5) {
-	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
-		 network->name,dfp,1);
+	retval = Cudd_DumpBlif(dd,noutputs,outputs,
+			       (char const * const *) inames,
+			       (char const * const *) onames,
+			       network->name,dfp,1);
     } else {
-	retval = Cudd_DumpDot(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpDot(dd,noutputs,outputs,
+			      (char const * const *) inames,
+			      (char const * const *) onames,dfp);
     }
 
 endgame:
@@ -1012,19 +1024,31 @@ Bnet_bddArrayDump(
 
     /* Dump the BDDs. */
     if (dumpFmt == 1) {
-	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
-		 network->name,dfp,0);
+	retval = Cudd_DumpBlif(dd,noutputs,outputs,
+			       (char const * const *) inames,
+			       (char const * const *) onames,
+			       network->name,dfp,0);
     } else if (dumpFmt == 2) {
-	retval = Cudd_DumpDaVinci(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpDaVinci(dd,noutputs,outputs,
+				  (char const * const *) inames,
+				  (char const * const *) onames,dfp);
     } else if (dumpFmt == 3) {
-	retval = Cudd_DumpDDcal(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpDDcal(dd,noutputs,outputs,
+				(char const * const *) inames,
+				(char const * const *) onames,dfp);
     } else if (dumpFmt == 4) {
-	retval = Cudd_DumpFactoredForm(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpFactoredForm(dd,noutputs,outputs,
+				       (char const * const *) inames,
+				       (char const * const *) onames,dfp);
     } else if (dumpFmt == 5) {
-	retval = Cudd_DumpBlif(dd,noutputs,outputs,inames,onames,
-		 network->name,dfp,1);
+	retval = Cudd_DumpBlif(dd,noutputs,outputs,
+			       (char const * const *) inames,
+			       (char const * const *) onames,
+			       network->name,dfp,1);
     } else {
-	retval = Cudd_DumpDot(dd,noutputs,outputs,inames,onames,dfp);
+	retval = Cudd_DumpDot(dd,noutputs,outputs,
+			      (char const * const *) inames,
+			      (char const * const *) onames,dfp);
     }
 
 endgame:

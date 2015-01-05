@@ -65,7 +65,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: testcudd.c,v 1.23 2012/02/05 05:30:29 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: testcudd.c,v 1.25 2014/02/11 02:39:16 fabio Exp $";
 #endif
 
 static const char *onames[] = { "C", "M" }; /* names of functions to be dumped */
@@ -570,10 +570,11 @@ main(int argc, char * const *argv)
 	    dfunc[1] = M;
 	    if (blifOrDot == 1) {
 		/* Only dump C because blif cannot handle ADDs */
-		retval = Cudd_DumpBlif(dd,1,dfunc,NULL,(char **)onames,
-				       NULL,dfp,0);
+		retval = Cudd_DumpBlif(dd,1,dfunc,NULL,
+                                       (char const * const *)onames,NULL,dfp,0);
 	    } else {
-		retval = Cudd_DumpDot(dd,2,dfunc,NULL,(char **)onames,dfp);
+		retval = Cudd_DumpDot(dd,2,dfunc,NULL,
+                                      (char const * const *)onames,dfp);
 	    }
 	    if (retval != 1) {
 		(void) fprintf(stderr,"abnormal termination\n");
@@ -619,6 +620,7 @@ main(int argc, char * const *argv)
     assert(Cudd_DebugCheck(dd) == 0);
     assert(Cudd_CheckKeys(dd) == 0);
     if (pr == 0) {
+        fclose(Cudd_ReadStdout(dd));
         Cudd_SetStdout(dd,savefp);
     }
 

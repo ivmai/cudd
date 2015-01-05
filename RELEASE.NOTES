@@ -1,4 +1,37 @@
-Release 2.5.0 of Cudd introduces the ability to set timeouts.  The
+Release 2.5.1 of Cudd improves support for multi-threaded applications.
+Specifically, an application may now register a callback function that
+is called from time to time to check whether computation should be
+terminated because another thread has found the result.
+
+The C++ interface allows the application to register variable names with
+the manager and implements operator<< for BDDs.  The interfaces of
+SolveEqn and VerifySol now take std::vectors instead of plain arrays.
+
+Fixed a few bugs in CUDD and a bug in the mtr package.
+
+Added const qualifiers to dumping function interfaces
+(Cudd_DumpDot,...).
+
+The Makefile now supports gmake's -j option.  Change "@+" back to "@" if
+this causes problems with your make program.
+
+Buggy documentation that was shipped with 2.5.0 has been fixed.
+
+New functions:
+
+extern int Cudd_bddIsVar(DdManager * dd, DdNode * f);
+
+extern void Cudd_RegisterTerminationCallback(DdManager *unique,
+
+extern void Cudd_UnregisterTerminationCallback(DdManager *unique);
+
+extern void Cudd_SetApplicationHook(DdManager *dd, void * value);
+
+extern void * Cudd_ReadApplicationHook(DdManager *dd);
+
+extern char * Cudd_FactoredFormString(DdManager *dd, DdNode *f, char const * const * inames);
+
+Releas 2.5.0 of Cudd introduces the ability to set timeouts.  The
 function that is interrupted returns NULL (which the application must
 be prepared to handle,) but the BDDs are uncorrupted and the invoking
 program can continue to use the manager.

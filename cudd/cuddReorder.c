@@ -95,7 +95,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddReorder.c,v 1.71 2012/02/05 01:07:19 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddReorder.c,v 1.73 2014/02/11 02:39:16 fabio Exp $";
 #endif
 
 static	int	*entry;
@@ -542,6 +542,11 @@ cuddSifting(
 	    break;
         if (util_cpu_time() - table->startTime + table->reordTime
             > table->timeLimit) {
+            table->autoDyn = 0; /* prevent further reordering */
+            break;
+        }
+        if (table->terminationCallback != NULL &&
+            table->terminationCallback(table->tcbArg)) {
             table->autoDyn = 0; /* prevent further reordering */
             break;
         }
@@ -1188,7 +1193,7 @@ cuddSwapInPlace(
     i = table->subtables[x].bindVar;
     table->subtables[x].bindVar = table->subtables[y].bindVar;
     table->subtables[y].bindVar = i;
-    /* Adjust filds for lazy sifting. */
+    /* Adjust fields for lazy sifting. */
     varType = table->subtables[x].varType;
     table->subtables[x].varType = table->subtables[y].varType;
     table->subtables[y].varType = varType;

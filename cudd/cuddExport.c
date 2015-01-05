@@ -14,6 +14,7 @@
 		<li> Cudd_DumpDaVinci()
 		<li> Cudd_DumpDDcal()
 		<li> Cudd_DumpFactoredForm()
+                <li> Cudd_FactoredFormString()
 		</ul>
 	Internal procedures included in this module:
 		<ul>
@@ -24,6 +25,7 @@
 		<li> ddDoDumpDaVinci()
 		<li> ddDoDumpDDcal()
 		<li> ddDoDumpFactoredForm()
+                <li> ddDoFactoredFormString()
 		</ul>]
 
   Author      [Fabio Somenzi]
@@ -63,6 +65,7 @@
 ******************************************************************************/
 
 #include "util.h"
+#include "cstringstream.h"
 #include "cuddInt.h"
 
 /*---------------------------------------------------------------------------*/
@@ -82,7 +85,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddExport.c,v 1.23 2012/02/05 01:07:18 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddExport.c,v 1.25 2014/03/13 15:37:40 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -95,11 +98,11 @@ static char rcsid[] DD_UNUSED = "$Id: cuddExport.c,v 1.23 2012/02/05 01:07:18 fa
 /* Static function prototypes                                                */
 /*---------------------------------------------------------------------------*/
 
-static int ddDoDumpBlif (DdManager *dd, DdNode *f, FILE *fp, st_table *visited, char **names, int mv);
-static int ddDoDumpDaVinci (DdManager *dd, DdNode *f, FILE *fp, st_table *visited, char **names, ptruint mask);
-static int ddDoDumpDDcal (DdManager *dd, DdNode *f, FILE *fp, st_table *visited, char **names, ptruint mask);
-static int ddDoDumpFactoredForm (DdManager *dd, DdNode *f, FILE *fp, char **names);
-
+static int ddDoDumpBlif (DdManager *dd, DdNode *f, FILE *fp, st_table *visited, char const * const *names, int mv);
+static int ddDoDumpDaVinci (DdManager *dd, DdNode *f, FILE *fp, st_table *visited, char const * const *names, ptruint mask);
+static int ddDoDumpDDcal (DdManager *dd, DdNode *f, FILE *fp, st_table *visited, char const * const *names, ptruint mask);
+static int ddDoDumpFactoredForm (DdManager *dd, DdNode *f, FILE *fp, char const * const *names);
+static int ddDoFactoredFormString(DdManager * dd, DdNode *f, cstringstream stream, char const * const * names);
 /**AutomaticEnd***************************************************************/
 
 
@@ -133,8 +136,8 @@ Cudd_DumpBlif(
   DdManager * dd /* manager */,
   int  n /* number of output nodes to be dumped */,
   DdNode ** f /* array of output nodes to be dumped */,
-  char ** inames /* array of input names (or NULL) */,
-  char ** onames /* array of output names (or NULL) */,
+  char const * const * inames /* array of input names (or NULL) */,
+  char const * const * onames /* array of output names (or NULL) */,
   char * mname /* model name (or NULL) */,
   FILE * fp /* pointer to the dump file */,
   int mv /* 0: blif, 1: blif-MV */)
@@ -214,7 +217,7 @@ Cudd_DumpBlif(
 
     return(1);
 
-failure:
+ failure:
     if (sorted != NULL) FREE(sorted);
     if (support != NULL) Cudd_RecursiveDeref(dd,support);
     return(0);
@@ -249,8 +252,8 @@ Cudd_DumpBlifBody(
   DdManager * dd /* manager */,
   int  n /* number of output nodes to be dumped */,
   DdNode ** f /* array of output nodes to be dumped */,
-  char ** inames /* array of input names (or NULL) */,
-  char ** onames /* array of output names (or NULL) */,
+  char const * const * inames /* array of input names (or NULL) */,
+  char const * const * onames /* array of output names (or NULL) */,
   FILE * fp /* pointer to the dump file */,
   int mv /* 0: blif, 1: blif-MV */)
 {
@@ -274,18 +277,20 @@ Cudd_DumpBlifBody(
     */
     for (i = 0; i < n; i++) {
 	if (onames == NULL) {
-	    retval = fprintf(fp,
 #if SIZEOF_VOID_P == 8
-		".names %lx f%d\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), i);
+	    retval = fprintf(fp,
+			     ".names %lx f%d\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), i);
 #else
-		".names %x f%d\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), i);
+	    retval = fprintf(fp,
+			     ".names %x f%d\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), i);
 #endif
 	} else {
-	    retval = fprintf(fp,
 #if SIZEOF_VOID_P == 8
-		".names %lx %s\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), onames[i]);
+	    retval = fprintf(fp,
+                             ".names %lx %s\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), onames[i]);
 #else
-		".names %x %s\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), onames[i]);
+	    retval = fprintf(fp,
+			     ".names %x %s\n", (ptruint) f[i] / (ptruint) sizeof(DdNode), onames[i]);
 #endif
 	}
 	if (retval == EOF) goto failure;
@@ -300,7 +305,7 @@ Cudd_DumpBlifBody(
     st_free_table(visited);
     return(1);
 
-failure:
+ failure:
     if (visited != NULL) st_free_table(visited);
     return(0);
 
@@ -341,8 +346,8 @@ Cudd_DumpDot(
   DdManager * dd /* manager */,
   int  n /* number of output nodes to be dumped */,
   DdNode ** f /* array of output nodes to be dumped */,
-  char ** inames /* array of input names (or NULL) */,
-  char ** onames /* array of output names (or NULL) */,
+  char const * const * inames /* array of input names (or NULL) */,
+  char const * const * onames /* array of output names (or NULL) */,
   FILE * fp /* pointer to the dump file */)
 {
     DdNode	*support = NULL;
@@ -595,7 +600,7 @@ Cudd_DumpDot(
     FREE(sorted);
     return(1);
 
-failure:
+ failure:
     if (sorted != NULL) FREE(sorted);
     if (support != NULL) Cudd_RecursiveDeref(dd,support);
     if (visited != NULL) st_free_table(visited);
@@ -627,8 +632,8 @@ Cudd_DumpDaVinci(
   DdManager * dd /* manager */,
   int  n /* number of output nodes to be dumped */,
   DdNode ** f /* array of output nodes to be dumped */,
-  char ** inames /* array of input names (or NULL) */,
-  char ** onames /* array of output names (or NULL) */,
+  char const * const * inames /* array of input names (or NULL) */,
+  char const * const * onames /* array of output names (or NULL) */,
   FILE * fp /* pointer to the dump file */)
 {
     DdNode	  *support = NULL;
@@ -741,8 +746,8 @@ Cudd_DumpDDcal(
   DdManager * dd /* manager */,
   int  n /* number of output nodes to be dumped */,
   DdNode ** f /* array of output nodes to be dumped */,
-  char ** inames /* array of input names (or NULL) */,
-  char ** onames /* array of output names (or NULL) */,
+  char const * const * inames /* array of input names (or NULL) */,
+  char const * const * onames /* array of output names (or NULL) */,
   FILE * fp /* pointer to the dump file */)
 {
     DdNode	  *support = NULL;
@@ -886,7 +891,9 @@ failure:
   exercised because a factored form may be exponentially larger than
   the argument BDD.  If the argument inames is non-null, it is assumed
   to hold the pointers to the names of the inputs. Similarly for
-  onames.]
+  onames.  If the number of output nodes is 0, it is interpreted as 1,
+  but no output name followed by equal sign is printed before the
+  factored form.]
 
   SideEffects [None]
 
@@ -899,20 +906,25 @@ Cudd_DumpFactoredForm(
   DdManager * dd /* manager */,
   int  n /* number of output nodes to be dumped */,
   DdNode ** f /* array of output nodes to be dumped */,
-  char ** inames /* array of input names (or NULL) */,
-  char ** onames /* array of output names (or NULL) */,
+  char const * const * inames /* array of input names (or NULL) */,
+  char const * const * onames /* array of output names (or NULL) */,
   FILE * fp /* pointer to the dump file */)
 {
     int		retval;
     int		i;
+    int		printName = n != 0;
+
+    if (!printName) n = 1;
 
     /* Call the function that really gets the job done. */
     for (i = 0; i < n; i++) {
-	if (onames == NULL) {
-	    retval = fprintf(fp, "f%d = ", i);
-	} else {
-	    retval = fprintf(fp, "%s = ", onames[i]);
-	}
+        if (printName) {
+            if (onames == NULL) {
+		retval = fprintf(fp, "f%d = ", i);
+            } else {
+		retval = fprintf(fp, "%s = ", onames[i]);
+            }
+        }
 	if (retval == EOF) return(0);
 	if (f[i] == DD_ONE(dd)) {
 	    retval = fprintf(fp, "CONST1");
@@ -921,11 +933,11 @@ Cudd_DumpFactoredForm(
 	    retval = fprintf(fp, "CONST0");
 	    if (retval == EOF) return(0);
 	} else {
-	    retval = fprintf(fp, "%s", Cudd_IsComplement(f[i]) ? "!(" : "");
+	    retval = fprintf(fp, "%s", Cudd_IsComplement(f[i]) ? (Cudd_bddIsVar(dd, Cudd_Regular(f[i])) ? "!" : "!(") : "");
 	    if (retval == EOF) return(0);
 	    retval = ddDoDumpFactoredForm(dd,Cudd_Regular(f[i]),fp,inames);
 	    if (retval == 0) return(0);
-	    retval = fprintf(fp, "%s", Cudd_IsComplement(f[i]) ? ")" : "");
+	    retval = fprintf(fp, "%s", Cudd_IsComplement(f[i]) && !Cudd_bddIsVar(dd, Cudd_Regular(f[i])) ? ")" : "");
 	    if (retval == EOF) return(0);
 	}
 	retval = fprintf(fp, "%s", i == n-1 ? "" : "\n");
@@ -935,6 +947,75 @@ Cudd_DumpFactoredForm(
     return(1);
 
 } /* end of Cudd_DumpFactoredForm */
+
+
+/**Function********************************************************************
+
+  Synopsis    [Returns a string with the factored form of the argument BDDs]
+
+  Description [Returns a string with the factored form of the argument BDDs.
+  The factored form uses & for conjunction, | for disjunction and ! for
+  negation.  It returns a string in case of success; NULL otherwise.
+  Caution must be
+  exercised because a factored form may be exponentially larger than
+  the argument BDD.  If the argument inames is non-null, it is assumed
+  to hold the pointers to the names of the inputs.]
+
+  SideEffects [None]
+
+  SeeAlso     [Cudd_DumpDot Cudd_PrintDebug Cudd_DumpBlif Cudd_DumpDaVinci
+  Cudd_DumpDDcal Cudd_DumpFactoredForm]
+
+******************************************************************************/
+char *
+Cudd_FactoredFormString(
+  DdManager *dd,
+  DdNode *f,
+  char const * const * inames)
+{
+    cstringstream stream = newStringStream();
+    int err, retval;
+    char * str;
+
+    /* Call the function that really gets the job done. */
+    if (f == DD_ONE(dd)) {
+        err = appendStringStringStream(stream, "true");
+        if (err) {
+            deleteStringStream(stream);
+            return(0);
+        }
+    } else if (f == Cudd_Not(DD_ONE(dd)) || f == DD_ZERO(dd)) {
+        err = appendStringStringStream(stream, "false");
+        if (err) {
+            deleteStringStream(stream);
+            return(0);
+        }
+    } else {
+        err = appendStringStringStream(
+          stream, Cudd_IsComplement(f) ?
+          (Cudd_bddIsVar(dd, Cudd_Regular(f)) ? "!" : "!(") : "");
+        if (err) {
+            deleteStringStream(stream);
+            return(0);
+        }
+        retval = ddDoFactoredFormString(dd,Cudd_Regular(f),stream,inames);
+        if (retval == 0) {
+            deleteStringStream(stream);
+            return(0);
+        }
+        err = appendStringStringStream(
+          stream, Cudd_IsComplement(f) &&
+          !Cudd_bddIsVar(dd, Cudd_Regular(f)) ? ")" : "");
+        if (err) {
+            deleteStringStream(stream);
+            return(0);
+        }
+    }
+    str = stringFromStringStream(stream);
+    deleteStringStream(stream);
+    return(str);
+
+} /* end of Cudd_FactoredFormString */
 
 
 /*---------------------------------------------------------------------------*/
@@ -967,7 +1048,7 @@ ddDoDumpBlif(
   DdNode * f,
   FILE * fp,
   st_table * visited,
-  char ** names,
+  char const * const * names,
   int mv)
 {
     DdNode	*T, *E;
@@ -1128,7 +1209,7 @@ ddDoDumpDaVinci(
   DdNode * f,
   FILE * fp,
   st_table * visited,
-  char ** names,
+  char const * const * names,
   ptruint mask)
 {
     DdNode  *T, *E;
@@ -1177,13 +1258,15 @@ ddDoDumpDaVinci(
 			 "l(\"%p\",n(\"internal\",[a(\"OBJECT\",\"%s\"),",
 			 (void *) id, names[f->index]);
     } else {
-	retval = fprintf(fp,
 #if SIZEOF_VOID_P == 8
+	retval = fprintf(fp,
 			 "l(\"%p\",n(\"internal\",[a(\"OBJECT\",\"%u\"),",
-#else
-			 "l(\"%p\",n(\"internal\",[a(\"OBJECT\",\"%hu\"),",
-#endif
 			 (void *) id, f->index);
+#else
+	retval = fprintf(fp,
+			 "l(\"%p\",n(\"internal\",[a(\"OBJECT\",\"%hu\"),",
+			 (void *) id, f->index);
+#endif
     }
     retval = fprintf(fp, "a(\"_GO\",\"ellipse\")],[e(\"then\",[a(\"EDGECOLOR\",\"blue\"),a(\"_DIR\",\"none\")],");
     if (retval == EOF) return(0);
@@ -1227,7 +1310,7 @@ ddDoDumpDDcal(
   DdNode * f,
   FILE * fp,
   st_table * visited,
-  char ** names,
+  char const * const * names,
   ptruint mask)
 {
     DdNode  *T, *E;
@@ -1282,12 +1365,15 @@ ddDoDumpDDcal(
     } else {
 #if SIZEOF_VOID_P == 8
 	retval = fprintf(fp, "n%p = v%u * n%p + v%u' * n%p%s\n",
-#else
-	retval = fprintf(fp, "n%p = v%hu * n%p + v%hu' * n%p%s\n",
-#endif
 			 (void *) id, f->index,
 			 (void *) idT, f->index,
 			 (void *) idE, Cudd_IsComplement(cuddE(f)) ? "'" : "");
+#else
+	retval = fprintf(fp, "n%p = v%hu * n%p + v%hu' * n%p%s\n",
+			 (void *) id, f->index,
+			 (void *) idT, f->index,
+			 (void *) idE, Cudd_IsComplement(cuddE(f)) ? "'" : "");
+#endif
     }
     if (retval == EOF) {
 	return(0);
@@ -1320,7 +1406,7 @@ ddDoDumpFactoredForm(
   DdManager * dd,
   DdNode * f,
   FILE * fp,
-  char ** names)
+  char const * const * names)
 {
     DdNode	*T, *E;
     int		retval;
@@ -1351,11 +1437,12 @@ ddDoDumpFactoredForm(
 	    if (retval == EOF) return(0);
 	}
 	if (T != DD_ONE(dd)) {
-	    retval = fprintf(fp, "%s(", E != DD_ONE(dd) ? " * " : "");
+            //	    retval = fprintf(fp, "%s(", E != DD_ONE(dd) ? " * " : "");
+            retval = fprintf(fp, "%s%s", E != DD_ONE(dd) ? " * " : "", Cudd_bddIsVar(dd, T) ? "" : "(");
 	    if (retval == EOF) return(0);
 	    retval = ddDoDumpFactoredForm(dd,T,fp,names);
 	    if (retval != 1) return(retval);
-	    retval = fprintf(fp, ")");
+	    retval = fprintf(fp, "%s", Cudd_bddIsVar(dd, T) ? "" : ")");
 	    if (retval == EOF) return(0);
 	}
 	if (E == Cudd_Not(DD_ONE(dd)) || E == DD_ZERO(dd)) return(1);
@@ -1376,14 +1463,110 @@ ddDoDumpFactoredForm(
 	if (retval == EOF) return(0);
     }
     if (E != DD_ONE(dd)) {
-	retval = fprintf(fp, "%s%s(", T != DD_ONE(dd) ? " * " : "",
-			 E != cuddE(f) ? "!" : "");
+	retval = fprintf(fp, "%s%s%s", T != DD_ONE(dd) ? " * " : "",
+			 E != cuddE(f) ? "!" : "", Cudd_bddIsVar(dd, E) ? "" : "(");
 	if (retval == EOF) return(0);
 	retval = ddDoDumpFactoredForm(dd,E,fp,names);
 	if (retval != 1) return(retval);
-	retval = fprintf(fp, ")");
+	retval = fprintf(fp, "%s", Cudd_bddIsVar(dd, E) ? "" : "(");
 	if (retval == EOF) return(0);
     }
     return(1);
 
 } /* end of ddDoDumpFactoredForm */
+
+
+
+
+/**Function********************************************************************
+
+  Synopsis    [Performs the recursive step of Cudd_DumpFactoredForm.]
+
+  Description [Performs the recursive step of
+  Cudd_DumpFactoredForm. Traverses the BDD f and writes a factored
+  form for each node to the file pointed by fp in terms of the
+  factored forms of the children. Constants are propagated, and
+  absorption is applied.  f is assumed to be a regular pointer and
+  ddDoDumpFActoredForm guarantees this assumption in the recursive
+  calls.]
+
+  SideEffects [None]
+
+  SeeAlso     [Cudd_DumpFactoredForm]
+
+******************************************************************************/
+static int
+ddDoFactoredFormString(
+  DdManager * dd,
+  DdNode * f,
+  cstringstream stream,
+  char const * const * names)
+{
+    DdNode	*T, *E;
+    int		retval, err;
+
+#ifdef DD_DEBUG
+    assert(!Cudd_IsComplement(f));
+    assert(!Cudd_IsConstant(f));
+#endif
+
+    /* Check for abnormal condition that should never happen. */
+    if (f == NULL)
+	return(0);
+
+    /* Recursive calls. */
+    T = cuddT(f);
+    E = cuddE(f);
+    if (T != DD_ZERO(dd)) {
+	if (E != DD_ONE(dd)) {
+	    if (names != NULL) {
+                err = appendStringStringStream(stream, names[f->index]);
+	    } else {
+                err = appendCharStringStream(stream, 'x');
+                if (err) return(0);
+                err = appendUnsignedStringStream(stream, (unsigned) f->index);
+	    }
+	    if (err) return(0);
+	}
+	if (T != DD_ONE(dd)) {
+            err = appendStringStringStream(stream, E != DD_ONE(dd) ? " & " : "");
+            if (err) return(0);
+            err = appendStringStringStream(stream, Cudd_bddIsVar(dd, T) ? "" : "(");
+	    if (err) return(0);
+	    retval = ddDoFactoredFormString(dd,T,stream,names);
+	    if (retval != 1) return(retval);
+            err = appendStringStringStream(stream, Cudd_bddIsVar(dd, T) ? "" : ")");
+	    if (err) return(0);
+	}
+	if (E == Cudd_Not(DD_ONE(dd)) || E == DD_ZERO(dd)) return(1);
+        err = appendStringStringStream(stream,  " | ");
+	if (err) return(0);
+    }
+    E = Cudd_Regular(E);
+    if (T != DD_ONE(dd)) {
+        err = appendCharStringStream(stream, '!');
+        if (err) return(0);
+	if (names != NULL) {
+            err = appendStringStringStream(stream, names[f->index]);
+	} else {
+            err = appendCharStringStream(stream, 'x');
+            if (err) return(0);
+            err = appendUnsignedStringStream(stream, (unsigned) f->index);
+	}
+	if (err) return(0);
+    }
+    if (E != DD_ONE(dd)) {
+        err = appendStringStringStream(stream, T != DD_ONE(dd) ? " & " : "");
+        if (err) return(0);
+        err = appendStringStringStream(stream, E != cuddE(f) ? "!" : "");
+        if (err) return(0);
+        err = appendStringStringStream(stream, Cudd_bddIsVar(dd, E) ? "" : "(");
+        if (err) return(0);
+	retval = ddDoFactoredFormString(dd,E,stream,names);
+	if (retval != 1) return(retval);
+        err = appendStringStringStream(stream, Cudd_bddIsVar(dd, E) ? "" : ")");
+	if (err) return(0);
+    }
+    return(1);
+
+} /* end of ddDoFactoredFormString */

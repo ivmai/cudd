@@ -44,7 +44,7 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.]
 
-  Revision    [$Id: cuddInt.h,v 1.142 2012/02/05 01:07:19 fabio Exp $]
+  Revision    [$Id: cuddInt.h,v 1.144 2015/01/03 18:25:57 fabio Exp $]
 
 ******************************************************************************/
 
@@ -415,7 +415,7 @@ struct DdManager {	/* specialized DD symbol table */
     int	numberXovers;		/* number of crossovers for GA */
     unsigned int randomizeOrder; /* perturb the next reordering threshold */
     DdLocalCache *localCaches;	/* local caches currently in existence */
-    char *hooks;		/* application-specific field (used by vis) */
+    void *hooks;		/* application-specific field (used by vis) */
     DdHook *preGCHook;		/* hooks to be called before GC */
     DdHook *postGCHook;		/* hooks to be called after GC */
     DdHook *preReorderingHook;	/* hooks to be called before reordering */
@@ -425,6 +425,8 @@ struct DdManager {	/* specialized DD symbol table */
     Cudd_ErrorType errorCode;	/* info on last error */
     unsigned long startTime;    /* start time in milliseconds */
     unsigned long timeLimit;    /* CPU time limit */
+    DD_THFP terminationCallback; /* termination callback */
+    void * tcbArg;              /* second argument passed to termination handler */
     /* Statistical counters. */
     unsigned long memused;	/* total memory allocated for the manager */
     unsigned long maxmem;	/* target maximum memory */

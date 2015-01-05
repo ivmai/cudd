@@ -118,7 +118,7 @@ typedef union hack {
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddTable.c,v 1.126 2012/02/05 01:07:19 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddTable.c,v 1.129 2014/02/11 02:39:16 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -281,6 +281,11 @@ cuddAllocNode(
 	}
         if (util_cpu_time() - unique->startTime > unique->timeLimit) {
             unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+            return(NULL);
+        }
+        if (unique->terminationCallback != NULL &&
+            unique->terminationCallback(unique->tcbArg)) {
+            unique->errorCode = CUDD_TERMINATION;
             return(NULL);
         }
 	if (unique->stash == NULL || unique->memused > unique->maxmemhard) {
@@ -649,6 +654,8 @@ cuddInitTable(
     unique->errorCode = CUDD_NO_ERROR;
     unique->startTime = util_cpu_time();
     unique->timeLimit = ~0UL;
+    unique->terminationCallback = NULL;
+    unique->tcbArg = NULL;
 
     /* Initialize statistical counters. */
     unique->maxmemhard = ~ 0UL;
@@ -1158,6 +1165,11 @@ cuddUniqueInter(
             unique->errorCode = CUDD_TIMEOUT_EXPIRED;
             return(NULL);
         }
+        if (unique->terminationCallback != NULL &&
+            unique->terminationCallback(unique->tcbArg)) {
+            unique->errorCode = CUDD_TERMINATION;
+            return(NULL);
+        }
     }
     if (index >= unique->size) {
         int amount = ddMax(DD_DEFAULT_RESIZE,unique->size/20);
@@ -1216,6 +1228,10 @@ cuddUniqueInter(
         } else if ((cpuTime = util_cpu_time()) - unique->startTime > unique->timeLimit) {
             unique->errorCode = CUDD_TIMEOUT_EXPIRED;
             unique->reordered = 0;
+        } else if (unique->terminationCallback != NULL &&
+            unique->terminationCallback(unique->tcbArg)) {
+            unique->errorCode = CUDD_TERMINATION;
+            unique->reordered = 0;
         } else if (unique->timeLimit - (cpuTime - unique->startTime)
                    < unique->reordTime) {
             unique->autoDyn = 0;
@@ -1236,6 +1252,11 @@ cuddUniqueInter(
 	    (subtable->dead > subtable->keys * 0.95)))) { /* too many dead */
             if (util_cpu_time() - unique->startTime > unique->timeLimit) {
                 unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+                return(NULL);
+            }
+            if (unique->terminationCallback != NULL &&
+                unique->terminationCallback(unique->tcbArg)) {
+                unique->errorCode = CUDD_TERMINATION;
                 return(NULL);
             }
 	    (void) cuddGarbageCollect(unique,1);
@@ -2166,7 +2187,6 @@ cuddDestroySubtables(
     for (index = firstIndex; index < lastIndex; index++) {
 	level = unique->perm[index];
 	if (level < lowestLevel) lowestLevel = level;
-	nodelist = subtables[level].nodelist;
 	if (subtables[level].keys - subtables[level].dead != 1) return(0);
 	/* The projection function should be isolated. If the ref count
 	** is 1, everything is OK. If the ref count is saturated, then
@@ -2608,7 +2628,7 @@ ddResizeTable(
 	** larger one; move all old subtables, and initialize the new
 	** subtables up to index included.
 	*/
-	newsize = (index < 0) ? amount : index + amount;
+	newsize = (index < 0) ? amount + oldsize : index + amount;
 #ifdef DD_VERBOSE
 	(void) fprintf(unique->err,
 		       "Increasing the table size from %d to %d\n",

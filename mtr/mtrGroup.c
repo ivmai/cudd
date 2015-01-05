@@ -81,7 +81,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] MTR_UNUSED = "$Id: mtrGroup.c,v 1.21 2012/02/05 01:06:19 fabio Exp $";
+static char rcsid[] MTR_UNUSED = "$Id: mtrGroup.c,v 1.23 2015/01/04 23:26:36 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -619,9 +619,9 @@ Mtr_PrintGroups(
     }
     if (!silent) {
 #if SIZEOF_VOID_P == 8
-	(void) printf("%u", root->low + root->size - 1);
+	(void) printf("%u", (MtrHalfWord) (root->low + root->size - 1));
 #else
-	(void) printf("%hu", root->low + root->size - 1);
+	(void) printf("%hu", (MtrHalfWord) (root->low + root->size - 1));
 #endif
 	if (root->flags != MTR_DEFAULT) {
 	    (void) printf("|");

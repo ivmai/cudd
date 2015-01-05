@@ -105,7 +105,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddInteract.c,v 1.14 2012/02/05 01:07:19 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddInteract.c,v 1.15 2013/09/19 19:46:35 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -155,7 +155,7 @@ cuddSetInteract(
   int  x,
   int  y)
 {
-    int posn, word, bit;
+    long posn, word, bit;
 
 #ifdef DD_DEBUG
     assert(x < y);
@@ -163,7 +163,7 @@ cuddSetInteract(
     assert(x >= 0);
 #endif
 
-    posn = ((((table->size << 1) - x - 3) * x) >> 1) + y - 1;
+    posn = (((((long)table->size << 1) - x - 3) * x) >> 1) + y - 1;
     word = posn >> LOGBPL;
     bit = posn & (BPL-1);
     table->interact[word] |= 1L << bit;
@@ -190,7 +190,8 @@ cuddTestInteract(
   int  x,
   int  y)
 {
-    int posn, word, bit, result;
+  long posn, word, bit;
+  int result;
 
     if (x > y) {
 	int tmp = x;
@@ -203,7 +204,7 @@ cuddTestInteract(
     assert(x >= 0);
 #endif
 
-    posn = ((((table->size << 1) - x - 3) * x) >> 1) + y - 1;
+    posn = (((((long)table->size << 1) - x - 3) * x) >> 1) + y - 1;
     word = posn >> LOGBPL;
     bit = posn & (BPL-1);
     result = (table->interact[word] >> bit) & 1L;

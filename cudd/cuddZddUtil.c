@@ -92,7 +92,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddZddUtil.c,v 1.29 2012/02/05 01:07:19 fabio Exp $";
+static char rcsid[] DD_UNUSED = "$Id: cuddZddUtil.c,v 1.30 2014/02/11 02:39:16 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -624,8 +624,8 @@ Cudd_zddDumpDot(
   DdManager * dd /* manager */,
   int  n /* number of output nodes to be dumped */,
   DdNode ** f /* array of output nodes to be dumped */,
-  char ** inames /* array of input names (or NULL) */,
-  char ** onames /* array of output names (or NULL) */,
+  char const * const * inames /* array of input names (or NULL) */,
+  char const * const * onames /* array of output names (or NULL) */,
   FILE * fp /* pointer to the dump file */)
 {
     DdNode	*support = NULL;

@@ -476,7 +476,7 @@ created at initialization time.
   Alphas<A NAME="217"></A>, the option <code>-ieee_with_no_inexact</code> or
   <code>-ieee_with_inexact</code> must be passed to the DEC compiler to get
   support of the IEEE standard. (The compiler still produces a
-  warning, but it can be ignored.) Compiling<A NAME="218"></A> with
+  warning, but it can be ignoredutil.) Compiling<A NAME="218"></A> with
   those options may cause substantial performance degradation on the
   Evolution IV CPUs. (Especially if the application does use the
   infinities.)  The problem is reportedly solved in the Evolution V
@@ -1366,7 +1366,7 @@ Hooks
 Hooks in CUDD are lists of application-specified functions to be run on
 certain occasions. Each hook is identified by a constant of the
 enumerated type <I>Cudd_HookType</I><A NAME="1274"></A>. In Version
-2.5.0 hooks are defined for these occasions:
+2.5.1 hooks are defined for these occasions:
 
 <UL>
 <LI>before garbage collection (CUDD_PRE_GC_HOOK);

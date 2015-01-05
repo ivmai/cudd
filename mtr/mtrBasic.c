@@ -81,7 +81,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] MTR_UNUSED = "$Id: mtrBasic.c,v 1.15 2012/02/05 01:06:19 fabio Exp $";
+static char rcsid[] MTR_UNUSED = "$Id: mtrBasic.c,v 1.16 2014/08/21 01:17:31 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -119,6 +119,7 @@ Mtr_AllocNode(void)
     MtrNode *node;
 
     node = ALLOC(MtrNode,1);
+    node->flags = node->low = node->size = node->index = 0;
     return node;
 
 } /* Mtr_AllocNode */
@@ -165,7 +166,6 @@ Mtr_InitTree(void)
     if (node == NULL) return(NULL);
 
     node->parent = node->child = node->elder = node->younger = NULL;
-    node->flags = 0;
 
     return(node);
 
@@ -342,7 +342,6 @@ Mtr_CreateFirstChild(
     if (child == NULL) return(NULL);
 
     child->child = NULL;
-    child->flags = 0;
     Mtr_MakeFirstChild(parent,child);
     return(child);
 
@@ -371,7 +370,6 @@ Mtr_CreateLastChild(
     if (child == NULL) return(NULL);
 
     child->child = NULL;
-    child->flags = 0;
     Mtr_MakeLastChild(parent,child);
     return(child);
 

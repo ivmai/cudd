@@ -67,7 +67,7 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntr.c,v 1.28 2012/02/05 01:53:01 fabio Exp fabio $";
+static char rcsid[] UTIL_UNUSED = "$Id: ntr.c,v 1.29 2015/01/03 19:41:42 fabio Exp fabio $";
 #endif
 
 static const char *onames[] = { "T", "R" };	/* names of functions to be dumped */
@@ -1625,18 +1625,22 @@ Ntr_Envelope(
 	dfunc[0] = TR->part[0];
 	dfunc[1] = envelope;
 	if (dumpFmt == 1) {
-	    retval = Cudd_DumpBlif(dd,2,dfunc,NULL,(char **)onames,NULL,dfp,0);
+	    retval = Cudd_DumpBlif(dd,2,dfunc,NULL,(char const * const *)onames,NULL,dfp,0);
 	} else if (dumpFmt == 2) {
-	    retval = Cudd_DumpDaVinci(dd,2,dfunc,NULL,(char **)onames,dfp);
+	    retval = Cudd_DumpDaVinci(dd,2,dfunc,NULL,
+                                      (char const * const *)onames,dfp);
 	} else if (dumpFmt == 3) {
-	    retval = Cudd_DumpDDcal(dd,2,dfunc,NULL,(char **)onames,dfp);
+	    retval = Cudd_DumpDDcal(dd,2,dfunc,NULL,
+                                    (char const * const *)onames,dfp);
 	} else if (dumpFmt == 4) {
 	    retval = Cudd_DumpFactoredForm(dd,2,dfunc,NULL,
-					   (char **)onames,dfp);
+					   (char const * const *)onames,dfp);
 	} else if (dumpFmt == 5) {
-	    retval = Cudd_DumpBlif(dd,2,dfunc,NULL,(char **)onames,NULL,dfp,1);
+	    retval = Cudd_DumpBlif(dd,2,dfunc,NULL,
+                                   (char const * const *)onames,NULL,dfp,1);
 	} else {
-	    retval = Cudd_DumpDot(dd,2,dfunc,NULL,(char **)onames,dfp);
+	    retval = Cudd_DumpDot(dd,2,dfunc,NULL,
+                                  (char const * const *)onames,dfp);
 	}
 	if (retval != 1) {
 	    (void) fprintf(stderr,"abnormal termination\n");

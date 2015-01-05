@@ -46,7 +46,7 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.]
 
-  Revision    [$Id: cuddObj.hh,v 1.13 2012/02/05 01:06:40 fabio Exp fabio $]
+  Revision    [$Id: cuddObj.hh,v 1.15 2015/01/05 13:24:42 fabio Exp fabio $]
 
 ******************************************************************************/
 
@@ -102,10 +102,13 @@ class Capsule {
     friend class ADD;
     friend class ZDD;
     friend class Cudd;
+    friend std::ostream & operator<<(std::ostream & os, BDD const & f);
 private:
     DdManager *manager;
     PFC errorHandler;
     PFC timeoutHandler;
+    PFC terminationHandler;
+    std::vector<char *> varnames;
     bool verbose;
     int ref;
 };
@@ -125,11 +128,12 @@ class DD {
     friend class BDD;
     friend class ADD;
     friend class ZDD;
+    friend std::ostream & operator<<(std::ostream & os, BDD const & f);
 private:
     Capsule *p;
     DdNode *node;
     inline DdManager * checkSameManager(const DD &other) const;
-    inline void checkReturnValue(const DdNode *result) const;
+    inline void checkReturnValue(const void *result) const;
     inline void checkReturnValue(const int result, const int expected = 1)
 	const;
 public:
@@ -161,6 +165,7 @@ class ABDD : public DD {
     friend class BDD;
     friend class ADD;
     friend class Cudd;
+    friend std::ostream & operator<<(std::ostream & os, BDD const & f);
 public:
     ABDD();
     ABDD(Capsule *cap, DdNode *bddNode);
@@ -232,7 +237,9 @@ public:
     BDD operator^=(const BDD& other);
     BDD operator-(const BDD& other) const;
     BDD operator-=(const BDD& other);
+    friend std::ostream & operator<<(std::ostream & os, BDD const & f);
     bool IsZero() const;
+    bool IsVar() const;
     BDD AndAbstract(const BDD& g, const BDD& cube, unsigned int limit = 0)
 	const;
     BDD UnderApprox(
@@ -312,8 +319,8 @@ public:
     BDD MakePrime(const BDD& F) const;
     BDD MaximallyExpand(const BDD& ub, const BDD& f);
     BDD LargestPrimeUnate(const BDD& phases);
-    BDD SolveEqn(const BDD& Y, BDD* G, int ** yIndex, int n) const;
-    BDD VerifySol(BDD* G, int * yIndex, int n) const;
+    BDD SolveEqn(const BDD& Y, std::vector<BDD> & G, int ** yIndex, int n) const;
+    BDD VerifySol(std::vector<BDD> const & G, int * yIndex) const;
     BDD SplitSet(std::vector<BDD> xVars, double m) const;
     BDD SubsetHeavyBranch(int numVars, int threshold) const;
     BDD SupersetHeavyBranch(int numVars, int threshold) const;
@@ -329,6 +336,8 @@ public:
     BDD zddIsop(const BDD& U, ZDD* zdd_I) const;
     BDD Isop(const BDD& U) const;
     ZDD PortToZdd() const;
+    void PrintFactoredForm(char const * const * inames = 0, FILE * fp = stdout) const;
+    std::string FactoredFormString(char const * const * inames = 0) const;
 
 }; // BDD
 
@@ -497,6 +506,7 @@ class Cudd {
     friend class BDD;
     friend class ADD;
     friend class ZDD;
+    friend std::ostream & operator<<(std::ostream & os, BDD const & f);
 private:
     Capsule *p;
 public:
@@ -507,144 +517,151 @@ public:
       unsigned int cacheSize = CUDD_CACHE_SLOTS,
       unsigned long maxMemory = 0);
     Cudd(const Cudd& x);
-    ~Cudd();
+    ~Cudd(void);
     PFC setHandler(PFC newHandler) const;
-    PFC getHandler() const;
+    PFC getHandler(void) const;
     PFC setTimeoutHandler(PFC newHandler) const;
-    PFC getTimeoutHandler() const;
-    DdManager *getManager() const {return p->manager;}
-    inline void makeVerbose() const {p->verbose = 1;}
-    inline void makeTerse() {p->verbose = 0;}
-    inline bool isVerbose() const {return p->verbose;}
-    inline void checkReturnValue(const DdNode *result) const;
-    inline void checkReturnValue(const int result) const;
+    PFC getTimeoutHandler(void) const;
+    PFC setTerminationHandler(PFC newHandler) const;
+    PFC getTerminationHandler(void) const;
+    void pushVariableName(std::string s);
+    void clearVariableNames(void);
+    std::string getVariableName(size_t i);
+    DdManager *getManager(void) const {return p->manager;}
+    void makeVerbose(void) const {p->verbose = 1;}
+    void makeTerse(void) {p->verbose = 0;}
+    bool isVerbose(void) const {return p->verbose;}
+    void checkReturnValue(const DdNode *result) const;
+    void checkReturnValue(const int result) const;
     Cudd& operator=(const Cudd& right);
-    void info() const;
-    BDD bddVar() const;
+    void info(void) const;
+    BDD bddVar(void) const;
     BDD bddVar(int index) const;
-    BDD bddOne() const;
-    BDD bddZero() const;
-    ADD addVar() const;
+    BDD bddOne(void) const;
+    BDD bddZero(void) const;
+    ADD addVar(void) const;
     ADD addVar(int index) const;
-    ADD addOne() const;
-    ADD addZero() const;
+    ADD addOne(void) const;
+    ADD addZero(void) const;
     ADD constant(CUDD_VALUE_TYPE c) const;
-    ADD plusInfinity() const;
-    ADD minusInfinity() const;
+    ADD plusInfinity(void) const;
+    ADD minusInfinity(void) const;
     ZDD zddVar(int index) const;
     ZDD zddOne(int i) const;
-    ZDD zddZero() const;
+    ZDD zddZero(void) const;
     ADD addNewVarAtLevel(int level) const;
     BDD bddNewVarAtLevel(int level) const;
     void zddVarsFromBddVars(int multiplicity) const;
-    unsigned long ReadStartTime() const;
-    unsigned long ReadElapsedTime() const;
+    unsigned long ReadStartTime(void) const;
+    unsigned long ReadElapsedTime(void) const;
     void SetStartTime(unsigned long st) const;
-    void ResetStartTime() const;
-    unsigned long ReadTimeLimit() const;
+    void ResetStartTime(void) const;
+    unsigned long ReadTimeLimit(void) const;
     void SetTimeLimit(unsigned long tl) const;
-    void UpdateTimeLimit() const;
+    void UpdateTimeLimit(void) const;
     void IncreaseTimeLimit(unsigned long increase) const;
-    void UnsetTimeLimit() const;
-    bool TimeLimited() const;
+    void UnsetTimeLimit(void) const;
+    bool TimeLimited(void) const;
+    void RegisterTerminationCallback(DD_THFP callback, void * callback_arg) const;
+    void UnregisterTerminationCallback(void) const;
     void AutodynEnable(Cudd_ReorderingType method) const;
-    void AutodynDisable() const;
+    void AutodynDisable(void) const;
     bool ReorderingStatus(Cudd_ReorderingType * method) const;
     void AutodynEnableZdd(Cudd_ReorderingType method) const;
-    void AutodynDisableZdd() const;
+    void AutodynDisableZdd(void) const;
     bool ReorderingStatusZdd(Cudd_ReorderingType * method) const;
-    bool zddRealignmentEnabled() const;
-    void zddRealignEnable() const;
-    void zddRealignDisable() const;
-    bool bddRealignmentEnabled() const;
-    void bddRealignEnable() const;
-    void bddRealignDisable() const;
-    ADD background() const;
+    bool zddRealignmentEnabled(void) const;
+    void zddRealignEnable(void) const;
+    void zddRealignDisable(void) const;
+    bool bddRealignmentEnabled(void) const;
+    void bddRealignEnable(void) const;
+    void bddRealignDisable(void) const;
+    ADD background(void) const;
     void SetBackground(ADD bg) const;
-    unsigned int ReadCacheSlots() const;
-    double ReadCacheUsedSlots() const;
-    double ReadCacheLookUps() const;
-    double ReadCacheHits() const;
-    unsigned int ReadMinHit() const;
+    unsigned int ReadCacheSlots(void) const;
+    double ReadCacheUsedSlots(void) const;
+    double ReadCacheLookUps(void) const;
+    double ReadCacheHits(void) const;
+    unsigned int ReadMinHit(void) const;
     void SetMinHit(unsigned int hr) const;
-    unsigned int ReadLooseUpTo() const;
+    unsigned int ReadLooseUpTo(void) const;
     void SetLooseUpTo(unsigned int lut) const;
-    unsigned int ReadMaxCache() const;
-    unsigned int ReadMaxCacheHard() const;
+    unsigned int ReadMaxCache(void) const;
+    unsigned int ReadMaxCacheHard(void) const;
     void SetMaxCacheHard(unsigned int mc) const;
-    int ReadSize() const;
-    int ReadZddSize() const;
-    unsigned int ReadSlots() const;
-    unsigned int ReadKeys() const;
-    unsigned int ReadDead() const;
-    unsigned int ReadMinDead() const;
-    unsigned int ReadReorderings() const;
-    unsigned int ReadMaxReorderings() const;
+    int ReadSize(void) const;
+    int ReadZddSize(void) const;
+    unsigned int ReadSlots(void) const;
+    unsigned int ReadKeys(void) const;
+    unsigned int ReadDead(void) const;
+    unsigned int ReadMinDead(void) const;
+    unsigned int ReadReorderings(void) const;
+    unsigned int ReadMaxReorderings(void) const;
     void SetMaxReorderings(unsigned int mr) const;
-    long ReadReorderingTime() const;
-    int ReadGarbageCollections() const;
-    long ReadGarbageCollectionTime() const;
-    int ReadSiftMaxVar() const;
+    long ReadReorderingTime(void) const;
+    int ReadGarbageCollections(void) const;
+    long ReadGarbageCollectionTime(void) const;
+    int ReadSiftMaxVar(void) const;
     void SetSiftMaxVar(int smv) const;
-    int ReadSiftMaxSwap() const;
+    int ReadSiftMaxSwap(void) const;
     void SetSiftMaxSwap(int sms) const;
-    double ReadMaxGrowth() const;
+    double ReadMaxGrowth(void) const;
     void SetMaxGrowth(double mg) const;
-    MtrNode * ReadTree() const;
+    MtrNode * ReadTree(void) const;
     void SetTree(MtrNode * tree) const;
-    void FreeTree() const;
-    MtrNode * ReadZddTree() const;
+    void FreeTree(void) const;
+    MtrNode * ReadZddTree(void) const;
     void SetZddTree(MtrNode * tree) const;
-    void FreeZddTree() const;
+    void FreeZddTree(void) const;
     int ReadPerm(int i) const;
     int ReadPermZdd(int i) const;
     int ReadInvPerm(int i) const;
     int ReadInvPermZdd(int i) const;
     BDD ReadVars(int i) const;
-    CUDD_VALUE_TYPE ReadEpsilon() const;
+    CUDD_VALUE_TYPE ReadEpsilon(void) const;
     void SetEpsilon(CUDD_VALUE_TYPE ep) const;
-    Cudd_AggregationType ReadGroupcheck() const;
+    Cudd_AggregationType ReadGroupcheck(void) const;
     void SetGroupcheck(Cudd_AggregationType gc) const;
-    bool GarbageCollectionEnabled() const;
-    void EnableGarbageCollection() const;
-    void DisableGarbageCollection() const;
-    bool DeadAreCounted() const;
-    void TurnOnCountDead() const;
-    void TurnOffCountDead() const;
-    int ReadRecomb() const;
+    bool GarbageCollectionEnabled(void) const;
+    void EnableGarbageCollection(void) const;
+    void DisableGarbageCollection(void) const;
+    bool DeadAreCounted(void) const;
+    void TurnOnCountDead(void) const;
+    void TurnOffCountDead(void) const;
+    int ReadRecomb(void) const;
     void SetRecomb(int recomb) const;
-    int ReadSymmviolation() const;
+    int ReadSymmviolation(void) const;
     void SetSymmviolation(int symmviolation) const;
-    int ReadArcviolation() const;
+    int ReadArcviolation(void) const;
     void SetArcviolation(int arcviolation) const;
-    int ReadPopulationSize() const;
+    int ReadPopulationSize(void) const;
     void SetPopulationSize(int populationSize) const;
-    int ReadNumberXovers() const;
+    int ReadNumberXovers(void) const;
     void SetNumberXovers(int numberXovers) const;
-    unsigned int ReadOrderRandomization() const;
+    unsigned int ReadOrderRandomization(void) const;
     void SetOrderRandomization(unsigned int factor) const;
-    unsigned long ReadMemoryInUse() const;
-    long ReadPeakNodeCount() const;
-    long ReadNodeCount() const;
-    long zddReadNodeCount() const;
+    unsigned long ReadMemoryInUse(void) const;
+    long ReadPeakNodeCount(void) const;
+    long ReadNodeCount(void) const;
+    long zddReadNodeCount(void) const;
     void AddHook(DD_HFP f, Cudd_HookType where) const;
     void RemoveHook(DD_HFP f, Cudd_HookType where) const;
     bool IsInHook(DD_HFP f, Cudd_HookType where) const;
-    void EnableReorderingReporting() const;
-    void DisableReorderingReporting() const;
-    bool ReorderingReporting() const;
-    int ReadErrorCode() const;
-    void ClearErrorCode() const;
-    FILE *ReadStdout() const;
+    void EnableReorderingReporting(void) const;
+    void DisableReorderingReporting(void) const;
+    bool ReorderingReporting(void) const;
+    int ReadErrorCode(void) const;
+    void ClearErrorCode(void) const;
+    FILE *ReadStdout(void) const;
     void SetStdout(FILE *) const;
-    FILE *ReadStderr() const;
+    FILE *ReadStderr(void) const;
     void SetStderr(FILE *) const;
-    unsigned int ReadNextReordering() const;
+    unsigned int ReadNextReordering(void) const;
     void SetNextReordering(unsigned int) const;
-    double ReadSwapSteps() const;
-    unsigned int ReadMaxLive() const;
+    double ReadSwapSteps(void) const;
+    unsigned int ReadMaxLive(void) const;
     void SetMaxLive(unsigned int) const;
-    unsigned long ReadMaxMemory() const;
+    unsigned long ReadMaxMemory(void) const;
     void SetMaxMemory(unsigned long) const;
     int bddBindVar(int) const;
     int bddUnbindVar(int) const;
@@ -667,11 +684,11 @@ public:
     void ApaPowerOfTwo(int digits, DdApaNumber number, int power) const;
     void ApaPrintHex(FILE * fp, int digits, DdApaNumber number) const;
     void ApaPrintDecimal(FILE * fp, int digits, DdApaNumber number) const;
-    void DebugCheck();
-    void CheckKeys();
+    void DebugCheck(void);
+    void CheckKeys(void);
     MtrNode * MakeTreeNode(unsigned int low, unsigned int size, unsigned int type) const;
     // void Harwell(FILE * fp, ADD* E, ADD** x, ADD** y, ADD** xn, ADD** yn_, int * nx, int * ny, int * m, int * n, int bx, int sx, int by, int sy, int pr);
-    void PrintLinear();
+    void PrintLinear(void);
     int ReadLinear(int x, int y);
     BDD Xgty(std::vector<BDD> z, std::vector<BDD> x, std::vector<BDD> y);
     BDD Xeqy(std::vector<BDD> x, std::vector<BDD> y);
@@ -696,8 +713,8 @@ public:
     int NextNode(DdGen * gen, BDD * nnode);
     BDD IndicesToCube(int * array, int n);
     void PrintVersion(FILE * fp) const;
-    double AverageDistance() const;
-    long Random() const;
+    double AverageDistance(void) const;
+    long Random(void) const;
     void Srandom(long seed) const;
     MtrNode * MakeZddTreeNode(unsigned int low, unsigned int size, unsigned int type);
     void zddPrintSubtable() const;
@@ -706,52 +723,54 @@ public:
     void zddSymmProfile(int lower, int upper) const;
     void DumpDot(
       const std::vector<BDD>& nodes, 
-      char ** inames = 0, 
-      char ** onames = 0, 
+      char const * const * inames = 0, 
+      char const * const * onames = 0, 
       FILE * fp = stdout) const;
     void DumpDaVinci(
       const std::vector<BDD>& nodes, 
-      char ** inames = 0,
-      char ** onames = 0,
+      char const * const * inames = 0,
+      char const * const * onames = 0,
       FILE * fp = stdout) const;
     void DumpBlif(
       const std::vector<BDD>& nodes, 
-      char ** inames = 0,
-      char ** onames = 0,
+      char const * const * inames = 0,
+      char const * const * onames = 0,
       char * mname = 0,
       FILE * fp = stdout,
       int mv = 0) const;
     void DumpDDcal(
       const std::vector<BDD>& nodes, 
-      char ** inames = 0, 
-      char ** onames = 0, 
+      char const * const * inames = 0, 
+      char const * const * onames = 0, 
       FILE * fp = stdout) const;
     void DumpFactoredForm(
       const std::vector<BDD>& nodes, 
-      char ** inames = 0,
-      char ** onames = 0,
+      char const * const * inames = 0,
+      char const * const * onames = 0,
       FILE * fp = stdout) const;
     BDD VectorSupport(const std::vector<BDD>& roots) const;
     std::vector<unsigned int> 
-    SupportIndices(const std::vector<ABDD>& roots) const;
+    SupportIndices(const std::vector<BDD>& roots) const;
+    std::vector<unsigned int> 
+    SupportIndices(const std::vector<ADD>& roots) const;
     int nodeCount(const std::vector<BDD>& roots) const;
     int VectorSupportSize(const std::vector<BDD>& roots) const;
     void DumpDot(
       const std::vector<ADD>& nodes,
-      char ** inames = 0, 
-      char ** onames = 0, 
+      char const * const * inames = 0, 
+      char const * const * onames = 0, 
       FILE * fp = stdout) const;
     void DumpDaVinci(
       const std::vector<ADD>& nodes,
-      char ** inames = 0,
-      char ** onames = 0,
+      char const * const * inames = 0,
+      char const * const * onames = 0,
       FILE * fp = stdout) const;
     BDD VectorSupport(const std::vector<ADD>& roots) const;
     int VectorSupportSize(const std::vector<ADD>& roots) const;
     void DumpDot(
       const std::vector<ZDD>& nodes,
-      char ** inames = 0,
-      char ** onames = 0,
+      char const * const * inames = 0,
+      char const * const * onames = 0,
       FILE * fp = stdout) const;
 
 }; // Cudd
