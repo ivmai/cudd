@@ -1,28 +1,15 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [chkMterm.c]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief Functions to check that the minterm counts have not changed
+  during reordering.
 
-  Synopsis    [Functions to check that the minterm counts have not
-  changed.]
+  @author Fabio Somenzi
 
-  Description [Functions to check that the minterm counts have not
-  changed during reordering.<p>
-  Internal procedures included in this module:
-		<ul>
-		<li> check_minterms()
-		</ul>
-  Static procedures included in this module:
-		<ul>
-		<li> stFree()
-		</ul>]
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -52,9 +39,10 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "ntr.h"
 
@@ -74,23 +62,21 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: chkMterm.c,v 1.9 2012/02/05 01:53:01 fabio Exp fabio $";
-#endif
 
 /*---------------------------------------------------------------------------*/
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
 /*---------------------------------------------------------------------------*/
 
-static enum st_retval stFree (char *key, char *value, char *arg);
+static enum st_retval stFree (void *key, void *value, void *arg);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
@@ -101,29 +87,27 @@ static enum st_retval stFree (char *key, char *value, char *arg);
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Check that minterm counts have not changed.
 
-  Synopsis    [Check that minterm counts have not changed.]
-
-  Description [Counts the minterms in the global functions of the
+  @details Counts the minterms in the global functions of the
   primary outputs of the network passed as argument.
   When it is calld with the second argument set to NULL, it allocates
   a symbol table and stores, for each output, the minterm count. If
-  an output does not have a BDD, it stores a NULL pointer for it.
+  an output does not have a %BDD, it stores a NULL pointer for it.
   If it is called with a non-null second argument, it assumes that
   the symbol table contains the minterm counts measured previously
   and it compares the new counts to the old ones. Finally, it frees
   the symbol table.
   check_minterms is designed so that it can be called twice: once before
   reordering, and once after reordering.
-  Returns a pointer to the symbol table on the first invocation and NULL
-  on the second invocation.]
 
-  SideEffects [None]
+  @return a pointer to the symbol table on the first invocation and
+  NULL on the second invocation.
 
-  SeeAlso     []
+  @sideeffect None
 
-******************************************************************************/
+*/
 st_table *
 checkMinterms(
   BnetNetwork * net,
@@ -139,20 +123,20 @@ checkMinterms(
     numPi = net->ninputs;
 
     if (previous == NULL) {
-	previous = st_init_table(strcmp,st_strhash);
+      previous = st_init_table((st_compare_t) strcmp, st_strhash);
 	if (previous == NULL) {
 	    (void) printf("checkMinterms out-of-memory\n");
 	    return(NULL);
 	}
 	for (i = 0; i < net->noutputs; i++) {
-	    if (!st_lookup(net->hash,net->outputs[i],&po)) {
+	    if (!st_lookup(net->hash,net->outputs[i],(void **)&po)) {
 		exit(2);
 	    }
 	    name = net->outputs[i];
 	    if (po->dd != NULL) {
 		count = ALLOC(double,1);
 		*count = Cudd_CountMinterm(dd,po->dd,numPi);
-		err = st_insert(previous, name, (char *) count);
+		err = st_insert(previous, name, (void *) count);
 	    } else {
 		err = st_insert(previous, name, NULL);
 	    }
@@ -170,11 +154,11 @@ checkMinterms(
 	    flag = 1;
 	}
 	for (i = 0; i < net->noutputs; i++) {
-	    if (!st_lookup(net->hash,net->outputs[i],&po)) {
+	    if (!st_lookup(net->hash,net->outputs[i],(void **)&po)) {
 		exit(2);
 	    }
 	    name = net->outputs[i];
-	    if (st_lookup(previous,name,&oldcount)) {
+	    if (st_lookup(previous,name,(void **)&oldcount)) {
 		if (po->dd != NULL) {
 		    newcount = Cudd_CountMinterm(dd,po->dd,numPi);
 		    if (newcount != *oldcount) {
@@ -193,7 +177,7 @@ checkMinterms(
 	    }
 	}
 	/*st_foreach(previous,(enum st_retval)stFree,NULL);*/
-	st_foreach(previous,(ST_PFSR)stFree,NULL);
+	st_foreach(previous,stFree,NULL);
 	st_free_table(previous);
 	if (flag) {
 	    return((st_table *) 1);
@@ -210,23 +194,20 @@ checkMinterms(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Frees the data of the symbol table.
 
-  Synopsis    [Frees the data of the symbol table.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 static enum st_retval
 stFree(
-  char *key,
-  char *value,
-  char *arg)
+  void *key,
+  void *value,
+  void *arg)
 {
+    (void) key; /* avoid warning */
+    (void) arg; /* avoid warning */
     if (value != NULL) {
 	FREE(value);
     }

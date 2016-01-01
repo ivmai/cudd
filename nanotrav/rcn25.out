@@ -1,6 +1,6 @@
-# Nanotrav Version #0.12, Release date 2003/12/31
-# ./nanotrav -p 1 -envelope rcn25.blif
-# CUDD Version 2.5.1
+# Nanotrav Version #0.13, Release date 2015/7/15
+# nanotrav/nanotrav -p 1 -envelope ./nanotrav/rcn25.blif
+# CUDD Version 3.0.0
 Order before final reordering
 n0 n1 n2 n3 n4 n5 n6 n7 
 n8 n9 n10 n11 n12 n13 n14 n15 
@@ -446,10 +446,10 @@ Envelope[434]: 27 nodes 1 leaves 4 minterms
 depth = 434
 Envelope: 27 nodes 1 leaves 4 minterms
 **** CUDD modifiable parameters ****
-Hard limit for cache size: 21845333
+Hard limit for cache size: 2796202
 Cache hit threshold for resizing: 30%
 Garbage collection enabled: yes
-Limit for fast unique table growth: 13107200
+Limit for fast unique table growth: 1677721
 Maximum number of variables sifted per reordering: 1000
 Maximum number of variable swaps per reordering: 2000000
 Maximum growth while sifting a variable: 1.2
@@ -468,58 +468,48 @@ GA population size: 0
 Number of crossovers for GA: 0
 Next reordering threshold: 4004
 **** CUDD non-modifiable parameters ****
-Memory in use: 636752432
-Peak number of nodes: 10040128
-Peak number of live nodes: 3282827
+Memory in use: 250182096
+Peak number of nodes: 5201980
+Peak number of live nodes: 2068734
 Number of BDD variables: 50
 Number of ZDD variables: 0
-Number of cache entries: 8388608
-Number of cache look-ups: 51892624
-Number of cache hits: 30178402
-Number of cache insertions: 21714185
-Number of cache collisions: 12689396
-Number of cache deletions: 4624639
-Cache used slots = 78.75% (expected 81.52%)
-Soft limit for cache size: 14976000
-Number of buckets in unique table: 3744000
-Used buckets in unique table: 68.46% (expected 68.47%)
-Unique lookups: 33512010
-Unique links: 32618550 (0.973339 per lookup)
-Number of BDD and ADD nodes: 5643397
+Number of cache entries: 2097152
+Number of cache look-ups: 57137789
+Number of cache hits: 32454226
+Number of cache insertions: 24683505
+Number of cache collisions: 17087296
+Number of cache deletions: 7366016
+Cache used slots = 99.98% (expected 100.00%)
+Soft limit for cache size: 2796202
+Number of buckets in unique table: 1795072
+Used buckets in unique table: 5.77% (expected 5.77%)
+Number of BDD and ADD nodes: 193317
 Number of ZDD nodes: 0
-Number of dead BDD and ADD nodes: 4177950
+Number of dead BDD and ADD nodes: 140806
 Number of dead ZDD nodes: 0
-Total number of nodes allocated: 15252693
-Total number of nodes reclaimed: 7810612
-Number of recursive calls: 143147002
-Garbage collections so far: 1
-Time for garbage collection: 0.69 sec
+Total number of nodes allocated: 15634687
+Total number of nodes reclaimed: 8157933
+Garbage collections so far: 7
+Time for garbage collection: 0.83 sec
 Reorderings so far: 0
 Time for reordering: 0.00 sec
-Node swaps in reordering: 0
 Final size: 869
-total time = 24.38 sec
+total time = 16.95 sec
 Runtime Statistics
 ------------------
-Machine name: jobim.colorado.edu
-User time     24.4 seconds
-System time    0.5 seconds
+Machine name: crozzon
+User time     17.0 seconds
+System time    0.1 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 312212K
+Maximum resident size            = 249384K
 
-Virtual text size                =  4621K
-Virtual data size                = 31862K
-    data size initialized        =  2135K
-    data size uninitialized      =   137K
-    data size sbrk               = 29590K
-Virtual memory limit             = 2048000K (18014398509481984K)
-
+Virtual memory limit             = unlimited (unlimited)
 Major page faults = 0
-Minor page faults = 216887
+Minor page faults = 48366
 Swaps = 0
 Input blocks = 8
 Output blocks = 48
 Context switch (voluntary) = 1
-Context switch (involuntary) = 99
+Context switch (involuntary) = 18

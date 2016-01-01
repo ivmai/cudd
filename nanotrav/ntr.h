@@ -1,18 +1,14 @@
-/**CHeaderFile*****************************************************************
+/**
+  @file 
 
-  FileName    [ntr.h]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief Simple-minded package to do traversal.
 
-  Synopsis    [Simple-minded package to do traversal.]
+  @author Fabio Somenzi
 
-  Description []
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,11 +38,10 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-  Revision    [$Id: ntr.h,v 1.28 2012/02/05 01:53:01 fabio Exp fabio $]
-
-******************************************************************************/
+*/
 
 #ifndef _NTR
 #define _NTR
@@ -103,106 +98,112 @@ extern "C" {
 /* Type declarations                                                         */
 /*---------------------------------------------------------------------------*/
 
+/**
+   @brief Options for nanotrav.
+*/
 typedef	struct	NtrOptions {
-    long	initialTime;	/* this is here for convenience */
-    int		verify;		/* read two networks and compare them */
-    char	*file1;		/* first network file name */
-    char	*file2;		/* second network file name */
-    int		second;		/* a second network is given */
-    int		traverse;	/* do reachability analysis */
-    int		depend;		/* do latch dependence analysis */
-    int		image;		/* monolithic, partitioned, or clip */
-    double	imageClip;	/* clipping depth in image computation */
-    int		approx;		/* under or over approximation */
-    int		threshold;	/* approximation threshold */
-    int		from;		/* method to compute from states */
-    int		groupnsps;	/* group present state and next state vars */
-    int		closure;	/* use transitive closure */
-    double	closureClip;	/* clipping depth in closure computation */
-    int		envelope;	/* compute outer envelope */
-    int		scc;		/* compute strongly connected components */
-    int		zddtest;	/* do zdd test */
-    int		printcover;	/* print ISOP covers when testing ZDDs */
-    int		maxflow;	/* compute maximum flow in network */
-    int		shortPath;	/* compute shortest paths in network */
-    int		selectiveTrace;	/* use selective trace in shortest paths */
-    char	*sinkfile;	/* file for externally provided sink node */
-    int		partition;	/* test McMillan conjunctive partitioning */
-    int		char2vect;	/* test char-to-vect decomposition */
-    int		density;	/* test density-related functions */
-    double	quality;	/* quality parameter for density functions */
-    int		decomp;		/* test decomposition functions */
-    int		cofest;		/* test cofactor estimation */
-    double	clip;		/* test clipping functions */
-    int		dontcares;	/* test equivalence and containment with DCs */
-    int		closestCube;	/* test Cudd_bddClosestCube */
-    int		clauses;	/* test extraction of two-literal clauses */
-    int		noBuild;	/* do not build BDDs; just echo order */
-    int		stateOnly;	/* ignore primary outputs */
-    char	*node;		/* only node for which to build BDD */
-    int		locGlob;	/* build global or local BDDs */
-    int		progress;	/* report output names while building BDDs */
-    int		cacheSize;	/* computed table initial size */
-    unsigned long maxMemory;	/* target maximum memory */
-    unsigned long maxMemHard;	/* maximum allowed memory */
-    unsigned int maxLive;	/* maximum number of nodes */
-    int		slots;		/* unique subtable initial slots */
-    int		ordering;	/* FANIN DFS ... */
-    char	*orderPiPs;	/* file for externally provided order */
-    Cudd_ReorderingType	reordering; /* NONE RANDOM PIVOT SIFTING ... */
-    int		autoDyn;	/* ON OFF */
-    Cudd_ReorderingType autoMethod; /* RANDOM PIVOT SIFTING CONVERGE ... */
-    char	*treefile;	/* file name for variable tree */
-    int		firstReorder;	/* when to do first reordering */
-    int		countDead;	/* count dead nodes toward triggering
-				   reordering */
-    int		maxGrowth;	/* maximum growth during reordering (%) */
-    Cudd_AggregationType groupcheck; /* grouping function */
-    int		arcviolation;   /* percent violation of arcs in
-				   extended symmetry check */
-    int		symmviolation;  /* percent symm violation in
-				   extended symmetry check */
-    int		recomb;		/* recombination parameter for grouping */
-    int		nodrop;		/* don't drop intermediate BDDs ASAP */
-    int		signatures;	/* computation of signatures */
-    int		gaOnOff;	/* whether to run GA at the end */
-    int		populationSize;	/* population size for GA */
-    int		numberXovers;	/* number of crossovers for GA */
-    int		bdddump;	/* ON OFF */
-    int		dumpFmt;	/* 0 -> dot 1 -> blif 2 ->daVinci 3 -> DDcal
-				** 4 -> factored form */
-    char	*dumpfile;	/* filename for dump */
-    int		store;		/* iteration at which to store Reached */
-    char	*storefile;	/* filename for storing Reached */
-    int		load;		/* load initial states from file */
-    char	*loadfile;	/* filename for loading states */
-    int		verb;		/* level of verbosity */
+    long	initialTime;	/**< this is here for convenience */
+    int		verify;		/**< read two networks and compare them */
+    char	*file1;		/**< first network file name */
+    char	*file2;		/**< second network file name */
+    int		second;		/**< a second network is given */
+    int		traverse;	/**< do reachability analysis */
+    int		depend;		/**< do latch dependence analysis */
+    int		image;		/**< monolithic, partitioned, or clip */
+    double	imageClip;	/**< clipping depth in image computation */
+    int		approx;		/**< under or over approximation */
+    int		threshold;	/**< approximation threshold */
+    int		from;		/**< method to compute from states */
+    int		groupnsps;	/**< group present state and next state vars */
+    int		closure;	/**< use transitive closure */
+    double	closureClip;	/**< clipping depth in closure computation */
+    int		envelope;	/**< compute outer envelope */
+    int		scc;		/**< compute strongly connected components */
+    int		zddtest;	/**< do zdd test */
+    int		printcover;	/**< print ISOP covers when testing ZDDs */
+    int		maxflow;	/**< compute maximum flow in network */
+    int		shortPath;	/**< compute shortest paths in network */
+    int		selectiveTrace;	/**< use selective trace in shortest paths */
+    char	*sinkfile;	/**< file for externally provided sink node */
+    int		partition;	/**< test McMillan conjunctive partitioning */
+    int		char2vect;	/**< test char-to-vect decomposition */
+    int		density;	/**< test density-related functions */
+    double	quality;	/**< quality parameter for density functions */
+    int		decomp;		/**< test decomposition functions */
+    int		cofest;		/**< test cofactor estimation */
+    double	clip;		/**< test clipping functions */
+    int		dontcares;	/**< test equivalence and containment with DCs */
+    int		closestCube;	/**< test Cudd_bddClosestCube */
+    int		clauses;	/**< test extraction of two-literal clauses */
+    int		noBuild;	/**< do not build BDDs; just echo order */
+    int		stateOnly;	/**< ignore primary outputs */
+    char	*node;		/**< only node for which to build %BDD */
+    int		locGlob;	/**< build global or local BDDs */
+    int		progress;	/**< report output names while building BDDs */
+    int		cacheSize;	/**< computed table initial size */
+    size_t	 maxMemory;	/**< target maximum memory */
+    size_t	 maxMemHard;	/**< maximum allowed memory */
+    unsigned int maxLive;	/**< maximum number of nodes */
+    int		slots;		/**< unique subtable initial slots */
+    int		ordering;	/**< FANIN DFS ... */
+    char	*orderPiPs;	/**< file for externally provided order */
+    Cudd_ReorderingType	reordering; /**< NONE RANDOM PIVOT SIFTING ... */
+    int		autoDyn;	/**< ON OFF */
+    Cudd_ReorderingType autoMethod; /**< RANDOM PIVOT SIFTING CONVERGE ... */
+    char	*treefile;	/**< file name for variable tree */
+    int		firstReorder;	/**< when to do first reordering */
+    int		countDead;	/**< count dead nodes toward triggering
+				     reordering */
+    int		maxGrowth;	/**< maximum growth during reordering (%) */
+    Cudd_AggregationType groupcheck; /**< grouping function */
+    int		arcviolation;   /**< percent violation of arcs in
+				     extended symmetry check */
+    int		symmviolation;  /**< percent symm violation in
+				     extended symmetry check */
+    int		recomb;		/**< recombination parameter for grouping */
+    int		nodrop;		/**< don't drop intermediate BDDs ASAP */
+    int		signatures;	/**< computation of signatures */
+    int		gaOnOff;	/**< whether to run GA at the end */
+    int		populationSize;	/**< population size for GA */
+    int		numberXovers;	/**< number of crossovers for GA */
+    int		bdddump;	/**< ON OFF */
+    int		dumpFmt;	/**< 0 -> dot 1 -> blif 2 ->daVinci 3 -> DDcal
+				 ** 4 -> factored form */
+    char	*dumpfile;	/**< filename for dump */
+    int		store;		/**< iteration at which to store Reached */
+    char	*storefile;	/**< filename for storing Reached */
+    int		load;		/**< load initial states from file */
+    char	*loadfile;	/**< filename for loading states */
+    int		verb;		/**< level of verbosity */
+    int32_t	seed;		/**< seed for random number generator */
 } NtrOptions;
 
-typedef struct NtrHeapSlot {
-    void *item;
-    int key;
-} NtrHeapSlot;
+/**
+   @brief Type of entry of NtrHeap.
+*/
+typedef struct NtrHeapSlot NtrHeapSlot;
 
-typedef struct NtrHeap {
-    int size;
-    int nslots;
-    NtrHeapSlot *slots;
-} NtrHeap;
+/**
+   @brief Type of heap-based priority queue.
+*/
+typedef struct NtrHeap NtrHeap;
 
+/**
+   @brief Data structure for partitioned transition relation.
+*/
 typedef struct NtrPartTR {
-    int nparts;			/* number of parts */
-    DdNode **part;		/* array of parts */
-    DdNode **icube;		/* quantification cubes for image */
-    DdNode **pcube;		/* quantification cubes for preimage */
-    DdNode **nscube;		/* next state variables in each part */
-    DdNode *preiabs;		/* present state vars and inputs in no part */
-    DdNode *prepabs;		/* inputs in no part */
-    DdNode *xw;			/* cube of all present states and PIs */
-    NtrHeap *factors;		/* factors extracted from the image */
-    int nlatches;		/* number of latches */
-    DdNode **x;			/* array of present state variables */
-    DdNode **y;			/* array of next state variables */
+    int nparts;			/**< number of parts */
+    DdNode **part;		/**< array of parts */
+    DdNode **icube;		/**< quantification cubes for image */
+    DdNode **pcube;		/**< quantification cubes for preimage */
+    DdNode **nscube;		/**< next state variables in each part */
+    DdNode *preiabs;		/**< present state vars and inputs in no part */
+    DdNode *prepabs;		/**< inputs in no part */
+    DdNode *xw;			/**< cube of all present states and PIs */
+    NtrHeap *factors;		/**< factors extracted from the image */
+    int nlatches;		/**< number of latches */
+    DdNode **x;			/**< array of present state variables */
+    DdNode **y;			/**< array of next state variables */
 } NtrPartTR;
 
 /*---------------------------------------------------------------------------*/
@@ -220,21 +221,16 @@ typedef struct NtrPartTR {
 #   define FALSE 0
 #endif
 
-/**Macro***********************************************************************
+/**
+  @brief Returns 1 if the two arguments are identical strings.
 
-  Synopsis     [Returns 1 if the two arguments are identical strings.]
+  @sideeffect none
 
-  Description  []
-
-  SideEffects  [none]
-
-  SeeAlso      []
-
-******************************************************************************/
+*/
 #define STRING_EQUAL(s1,s2) (strcmp((s1),(s2)) == 0)
 
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Function prototypes                                                       */
@@ -271,10 +267,12 @@ extern int Ntr_HeapInsert (NtrHeap *heap, void *item, int key);
 extern int Ntr_HeapExtractMin (NtrHeap *heap, void *item, int *key);
 extern int Ntr_HeapCount (NtrHeap *heap);
 extern NtrHeap * Ntr_HeapClone (NtrHeap *source);
+extern void Ntr_HeapForeach (NtrHeap *heap, void (*f)(void *e, void *arg), void *arg);
 extern int Ntr_TestHeap (NtrHeap *heap, int i);
 extern int Ntr_ShortestPaths (DdManager *dd, BnetNetwork *net, NtrOptions *option);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 #ifdef __cplusplus
 }

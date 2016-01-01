@@ -1,20 +1,20 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [ntrHeap.c]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief Functions for heap-based priority queues.
 
-  Synopsis    [Functions for heap-based priority queue.]
+  @details The functions in this file manage a priority queue
+  implemented as a heap. The first element of the heap is the one with
+  the smallest key.  The queue stores generic pointers, but the key
+  must be an int.  Refer to Chapter 7 of Cormen, Leiserson, and Rivest
+  for the theory.
 
-  Description [The functions in this file manage a priority queue implemented
-  as a heap. The first element of the heap is the one with the smallest key.
-  Refer to Chapter 7 of Cormen, Leiserson, and Rivest for the theory.]
+  @author Fabio Somenzi
 
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -44,9 +44,10 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "ntr.h"
 
@@ -59,6 +60,23 @@
 /* Stucture declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
+/**
+   @brief Entry of NtrHeap.
+*/
+struct NtrHeapSlot {
+    void *item;
+    int key;
+};
+
+/**
+   @brief Heap-based priority queue.
+*/
+struct NtrHeap {
+    int size;
+    int nslots;
+    NtrHeapSlot *slots;
+};
+
 /*---------------------------------------------------------------------------*/
 /* Type declarations                                                         */
 /*---------------------------------------------------------------------------*/
@@ -67,9 +85,6 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrHeap.c,v 1.6 2012/02/05 01:53:01 fabio Exp fabio $";
-#endif
 
 /*---------------------------------------------------------------------------*/
 /* Macro declarations                                                        */
@@ -81,7 +96,7 @@ static char rcsid[] UTIL_UNUSED = "$Id: ntrHeap.c,v 1.6 2012/02/05 01:53:01 fabi
 #define ITEM(p,i)	((p)[i].item)
 #define KEY(p,i)	((p)[i].key)
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -90,25 +105,24 @@ static char rcsid[] UTIL_UNUSED = "$Id: ntrHeap.c,v 1.6 2012/02/05 01:53:01 fabi
 static void ntrHeapify (NtrHeap *heap, int i);
 static int ntrHeapResize (NtrHeap *heap);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Initializes a priority queue.
 
-  Synopsis    [Initializes a priority queue.]
+  @return a pointer to the heap if successful; NULL otherwise.
 
-  Description [Initializes a priority queue. Returns a pointer to the heap
-  if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_FreeHeap
 
-  SeeAlso     [Ntr_FreeHeap]
-
-******************************************************************************/
+*/
 NtrHeap *
 Ntr_InitHeap(
   int size)
@@ -129,17 +143,14 @@ Ntr_InitHeap(
 } /* end of Ntr_InitHeap */
 
 
-/**Function********************************************************************
+/**
+  @brief Frees a priority queue.
 
-  Synopsis    [Frees a priority queue.]
+  @sideeffect None
 
-  Description []
+  @see Ntr_InitHeap
 
-  SideEffects [None]
-
-  SeeAlso     [Ntr_InitHeap]
-
-******************************************************************************/
+*/
 void
 Ntr_FreeHeap(
   NtrHeap *heap)
@@ -151,18 +162,16 @@ Ntr_FreeHeap(
 } /* end of Ntr_FreeHeap */
 
 
-/**Function********************************************************************
+/**
+  @brief Inserts an item in a priority queue.
 
-  Synopsis    [Inserts an item in a priority queue.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Inserts an item in a priority queue. Returns 1 if successful;
-  0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_HeapExtractMin
 
-  SeeAlso     [Ntr_HeapExtractMin]
-
-******************************************************************************/
+*/
 int
 Ntr_HeapInsert(
   NtrHeap *heap,
@@ -187,20 +196,18 @@ Ntr_HeapInsert(
 } /* end of Ntr_HeapInsert */
 
 
-/**Function********************************************************************
+/**
+  @brief Extracts the element with the minimum key from a priority
+  queue.
 
-  Synopsis    [Extracts the element with the minimum key from a priority
-  queue.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Extracts the element with the minimum key from a priority
-  queue. Returns 1 if successful; 0 otherwise.]
+  @sideeffect The minimum key and the associated item are returned as
+  side effects.
 
-  SideEffects [The minimum key and the associated item are returned as
-  side effects.]
+  @see Ntr_HeapInsert
 
-  SeeAlso     [Ntr_HeapInsert]
-
-******************************************************************************/
+*/
 int
 Ntr_HeapExtractMin(
   NtrHeap *heap,
@@ -222,17 +229,12 @@ Ntr_HeapExtractMin(
 } /* end of Ntr_HeapExtractMin */
 
 
-/**Function********************************************************************
+/**
+  @brief Returns the number of items in a priority queue.
 
-  Synopsis    [Returns the number of items in a priority queue.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_HeapCount(
   NtrHeap *heap)
@@ -242,17 +244,14 @@ Ntr_HeapCount(
 } /* end of Ntr_HeapCount */
 
 
-/**Function********************************************************************
+/**
+  @brief Clones a priority queue.
 
-  Synopsis    [Clones a priority queue.]
+  @sideeffect None
 
-  Description []
+  @see Ntr_InitHeap
 
-  SideEffects [None]
-
-  SeeAlso     [Ntr_InitHeap]
-
-******************************************************************************/
+*/
 NtrHeap *
 Ntr_HeapClone(
   NtrHeap *source)
@@ -276,18 +275,32 @@ Ntr_HeapClone(
 } /* end of Ntr_HeapClone */
 
 
-/**Function********************************************************************
+/**
+  @brief Calls a function on all items in a heap.
+*/
+void
+Ntr_HeapForeach(
+  NtrHeap *heap,
+  void (*f)(void * e, void * arg),
+  void * arg)
+{
+    int i;
 
-  Synopsis    [Tests the heap property of a priority queue.]
+    for (i = 0; i < heap->nslots; i++) {
+        f(heap->slots[i].item, arg);
+    }
 
-  Description [Tests the heap property of a priority queue. Returns 1 if
-  Successful; 0 otherwise.]
+} /* end of Ntr_HeapForeach */
 
-  SideEffects [None]
 
-  SeeAlso     []
+/**
+  @brief Tests the heap property of a priority queue.
 
-******************************************************************************/
+  @return 1 if Successful; 0 otherwise.
+
+  @sideeffect None
+
+*/
 int
 Ntr_TestHeap(
   NtrHeap *heap,
@@ -316,17 +329,14 @@ Ntr_TestHeap(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Maintains the heap property of a priority queue.
 
-  Synopsis    [Maintains the heap property of a priority queue.]
+  @sideeffect None
 
-  Description []
+  @see Ntr_HeapExtractMin
 
-  SideEffects [None]
-
-  SeeAlso     [Ntr_HeapExtractMin]
-
-******************************************************************************/
+*/
 static void
 ntrHeapify(
   NtrHeap *heap,
@@ -361,18 +371,19 @@ ntrHeapify(
 } /* end of ntrHeapify */
 
 
-/**Function********************************************************************
+/**
+  @brief Resizes a priority queue.
 
-  Synopsis    [Resizes a priority queue.]
+  @details Resizes a priority queue by doubling the number of
+  available slots.
 
-  Description [Resizes a priority queue by doubling the number of
-  available slots.  Returns 1 if successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [Ntr_HeapInsert]
+  @see Ntr_HeapInsert
 
-******************************************************************************/
+*/
 static int
 ntrHeapResize(
   NtrHeap *heap)

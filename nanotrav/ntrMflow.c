@@ -1,21 +1,21 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [ntrMflow.c]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief Symbolic maxflow algorithm.
 
-  Synopsis    [Symbolic maxflow algorithm.]
-
-  Description [This file contains the functions that implement the
+  @details This file contains the functions that implement the
   symbolic version of Dinits's maxflow algorithm described in the
   ICCAD93 paper. The present implementation differs from the algorithm
   described in the paper in that more than one matching techniques is
   used. The technique of the paper is the one applied to
-  hourglass-type bilayers here.]
+  hourglass-type bilayers here.
 
-  Author      [Fabio Somenzi, Gary Hachtel]
+  @author Fabio Somenzi, Gary Hachtel
 
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -45,9 +45,10 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "ntr.h"
 
@@ -70,21 +71,20 @@
 /* Type declarations                                                         */
 /*---------------------------------------------------------------------------*/
 
+/**
+   @brief Structure to hold statistics.
+*/
 typedef struct flowStatsStruct {
-    int pr;			/* level of verbosity */
-    long start_time;		/* cpu time when the covering started */
-    int phases;			/* number of phases */
-    int layers;			/* number of layers */
-    int fpit;			/* number of fixed point iterations */
+    int pr;			/**< level of verbosity */
+    long start_time;		/**< cpu time when the covering started */
+    int phases;			/**< number of phases */
+    int layers;			/**< number of layers */
+    int fpit;			/**< number of fixed point iterations */
 } flowStats;
 
 /*---------------------------------------------------------------------------*/
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
-
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrMflow.c,v 1.8 2012/02/05 01:53:01 fabio Exp fabio $";
-#endif
 
 static DdNode *xcube, *ycube, *zcube;
 
@@ -92,7 +92,7 @@ static DdNode *xcube, *ycube, *zcube;
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -108,18 +108,19 @@ static void trellisPush (DdManager *bdd, int m, DdNode **U, DdNode **x, DdNode *
 static void rhombusPush (DdManager *bdd, int m, DdNode **U, DdNode **x, DdNode **y, DdNode **z, int n, DdNode *pryz, DdNode *prxz, flowStats *stats);
 static void hourglassPush (DdManager *bdd, int m, DdNode **U, DdNode **x, DdNode **y, DdNode **z, int n, DdNode *pryz, DdNode *prxz, flowStats *stats);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Symbolic Dinit's algorithm.
 
-  Synopsis    []
-
-  Description [This function implements Dinits's algorithm for (0-1)
+  @details@parblock
+  This function implements Dinits's algorithm for (0-1)
   max flow, using BDDs and a symbolic technique to trace multiple
   edge-disjoint augmenting paths to complete a phase. The outer
   forever loop is over phases, and the inner forever loop is to
@@ -136,7 +137,7 @@ static void hourglassPush (DdManager *bdd, int m, DdNode **U, DdNode **x, DdNode
 		edge (u,v) in the given digraph.
     <li> z	Another set of variables.
     <li> E(x,y)	The edge relation.
-    <li> F(x,y) BDD representation of the current flow, initialized to 0
+    <li> F(x,y) %BDD representation of the current flow, initialized to 0
 		for each arc, and updated by +1, -1, or 0 at the
 		end of each phase.
     <li> Ms Mt	The maximum flow, that is, the cardinality of a minimum cut,
@@ -146,27 +147,26 @@ static void hourglassPush (DdManager *bdd, int m, DdNode **U, DdNode **x, DdNode
     <li> fos	fanout of the source node s.
     <li> fit	fanin of the sink node t.
     </ul>
-  ]
+  
+  @endparblock
 
-  SideEffects [The flow realtion F and the cutset relation cut are returned
-  as side effects.]
+  @sideeffect The flow realtion F and the cutset relation cut are returned
+  as side effects.
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 double
 Ntr_maximum01Flow(
-  DdManager * bdd /* manager */,
-  DdNode * sx /* source node */,
-  DdNode * ty /* sink node */,
-  DdNode * E /* edge relation */,
-  DdNode ** F /* flow relation */,
-  DdNode ** cut /* cutset relation */,
-  DdNode ** x /* array of row variables */,
-  DdNode ** y /* array of column variables */,
-  DdNode ** z /* arrays of auxiliary variables */,
-  int  n /* number of variables in each array */,
-  int  pr /* verbosity level */)
+  DdManager * bdd /**< manager */,
+  DdNode * sx /**< source node */,
+  DdNode * ty /**< sink node */,
+  DdNode * E /**< edge relation */,
+  DdNode ** F /**< flow relation */,
+  DdNode ** cut /**< cutset relation */,
+  DdNode ** x /**< array of row variables */,
+  DdNode ** y /**< array of column variables */,
+  DdNode ** z /**< arrays of auxiliary variables */,
+  int  n /**< number of variables in each array */,
+  int  pr /**< verbosity level */)
 {
     flowStats stats;
     DdNode *one, *zero,
@@ -412,41 +412,39 @@ endPhases:
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Selects set of edge-disjoint paths from layered network.
 
-  Synopsis    [Selects set of edge-disjoint paths from layered network.]
-
-  Description [Selects set of edge-disjoint paths from layered
-  network.  maximal_pull is called when the BFS constructing the
+  @details maximal_pull is called when the BFS constructing the
   layered graph reaches a sink. At this point the new sets of the
   BFS have been formed, and we know every vertex in these sets is
   reachable from the source vertex (or vertices) s. The new sets are
   used to compute the set of useful edges exiting each layer to the
   right. In each layer, propagate_maximal_flow is called to select a
   maximal subset of these useful edges. This subset is then used to
-  prune new and U.]
+  prune new and U.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [maximal_push]
+  @see maximal_push
 
-******************************************************************************/
+*/
 static void
 maximal_pull(
-  DdManager * bdd /* manager */,
-  int  l /* depth of layered network for current phase */,
-  DdNode * ty /* sink node */,
-  DdNode ** neW /* array of BFS layers */,
-  DdNode ** U /* array of useful edges */,
-  DdNode * E /* edge relation */,
-  DdNode ** F /* flow relation */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* arrays of variables for rows and columns */,
-  int  n /* number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< manager */,
+  int  l /**< depth of layered network for current phase */,
+  DdNode * ty /**< sink node */,
+  DdNode ** neW /**< array of BFS layers */,
+  DdNode ** U /**< array of useful edges */,
+  DdNode * E /**< edge relation */,
+  DdNode ** F /**< flow relation */,
+  DdNode ** x /**< array of variables for rows and columns */,
+  DdNode ** y /**< array of variables for rows and columns */,
+  DdNode ** z /**< array of variables for rows and columns */,
+  int  n /**< number of x variables */,
+  DdNode * pryz /**< priority function */,
+  DdNode * prxz /**< priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *p, *q, *r,
 	   *UF, *UB;
@@ -517,12 +515,11 @@ maximal_pull(
 } /* end of maximal_pull */
 
 
-/**Function********************************************************************
+/**
+  @brief Pulls flow though a layer.
 
-  Synopsis    [Pulls flow though a layer.]
-
-  Description [Pulls flow though a layer. propagate_maximal_flow only
-  affects U[m-1] and new[m-1].  At the end of this function, the edges
+  @details propagate_maximal_flow only
+  affects U[m-1 and new[m-1].  At the end of this function, the edges
   in U[m] are guaranteed to drain all the flow supplied by the edges
   in U[m-1]. This effect is obtained by pruning U[m-1]. After the
   pruned U[m-1] is computed, new[m-1] is updated to keep track of what
@@ -537,24 +534,24 @@ maximal_pull(
   end-point or if they have distinct middle points. What condition to
   enforce depends on the "shape" of the layers.]
 
-  SideEffects [Changes U[m-1] and new[m-1]]
+  @sideeffect Changes U[m-1 and new[m-1]]
 
-  SeeAlso     [trellis rhombus hourglass]
+  @see trellis rhombus hourglass
 
-******************************************************************************/
+*/
 static void
 propagate_maximal_flow(
-  DdManager * bdd,
-  int  m /* center of current bilayer */,
-  DdNode ** neW /* array of reachable or useful nodes */,
-  DdNode ** U /* array of usable or useful edges */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* arrays of variables for rows and columns */,
-  int  n /* number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  m /**< center of current bilayer */,
+  DdNode ** neW /**< array of reachable or useful nodes */,
+  DdNode ** U /**< array of usable or useful edges */,
+  DdNode ** x /**< array of variables for rows and columns */,
+  DdNode ** y /**< array of variables for rows and columns */,
+  DdNode ** z /**< array of variables for rows and columns */,
+  int  n /**< number of x variables */,
+  DdNode * pryz /**< priority function */,
+  DdNode * prxz /**< priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *rN;
     double   mtl, mtc, mtr;	/* minterms for left, center, right levels */
@@ -590,33 +587,31 @@ propagate_maximal_flow(
 } /* end of propagate_maximal_flow */
 
 
-/**Function********************************************************************
+/**
+  @brief Selects edges from a trellis-type bilayer.
 
-  Synopsis    [Selects edges from a trellis-type bilayer.]
+  @details Used to pull flow.  First a matching is found in the left
+  layer. Then the paths are extended (if possible) through the right
+  layer. This process is repeated until a maximal flow is found.
 
-  Description [Selects edges from a trellis-type bilayer. Used to pull flow.
-  First a matching is found in the left layer. Then the paths are extended
-  (if possible) through the right layer. This process is repeated until a
-  maximal flow is found.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see rhombus hourglass trellisPush
 
-  SeeAlso     [rhombus hourglass trellisPush]
-
-******************************************************************************/
+*/
 static void
 trellis(
-  DdManager * bdd,
-  int  m /* center level of current bilayer */,
-  DdNode ** neW /* array of node levels */,
-  DdNode ** U /* array of edge layers */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* arrays of variables for rows and columns */,
-  int  n /* number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  m /**< center level of current bilayer */,
+  DdNode ** neW /**< array of node levels */,
+  DdNode ** U /**< array of edge layers */,
+  DdNode ** x /**< array of variables for rows and columns */,
+  DdNode ** y /**< array of variables for rows and columns */,
+  DdNode ** z /**< array of variables for rows and columns */,
+  int  n /**< number of x variables */,
+  DdNode * pryz /**< priority function */,
+  DdNode * prxz /**< priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *one, *zero,
 	     *p, *q, *r,
@@ -731,33 +726,32 @@ trellis(
 } /* end of trellis */
 
 
-/**Function********************************************************************
+/**
+  @brief Selects edges from a rhombus-type bilayer.
 
-  Synopsis    [Selects edges from a rhombus-type bilayer.]
+  @details Used to pull flow.  Makes the left layer left-unique and
+  the right layer right-unique. Prunes and repeats until convergence
+  to a maximal flow. It makes sure that all intermediate points of the
+  two-arc paths are disjoint at each iteration.
 
-  Description [Selects edges from a rhombus-type bilayer. Used to pull flow.
-  Makes the left layer left-unique and the right layer right-unique. Prunes
-  and repeats until convergence to a maximal flow. It makes sure that all
-  intermediate points of the two-arc paths are disjoint at each iteration.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see trellis hourglass rhombusPush
 
-  SeeAlso     [trellis hourglass rhombusPush]
-
-******************************************************************************/
+*/
 static void
 rhombus(
-  DdManager * bdd,
-  int  m /* center of current bilayer */,
-  DdNode ** neW,
-  DdNode ** U /* arrays for flow propagation */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* arrays of variables for rows and columns */,
-  int  n /* number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  m /**< center of current bilayer */,
+  DdNode ** neW /**< array for flow propagation */,
+  DdNode ** U /**< array for flow propagation */,
+  DdNode ** x /**< array of variables for rows and columns */,
+  DdNode ** y /**< array of variables for rows and columns */,
+  DdNode ** z /**< array of variables for rows and columns */,
+  int  n /**< number of x variables */,
+  DdNode * pryz /**< priority function */,
+  DdNode * prxz /**< priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *one, *zero,
 	     *p, *q, *r,
@@ -865,32 +859,30 @@ rhombus(
 } /* end of rhombus */
 
 
-/**Function********************************************************************
+/**
+  @brief Selects edges from a hourglass-type bilayer.
 
-  Synopsis    [Selects edges from a hourglass-type bilayer.]
+  @details Used to pull flow.  Method described in paper. More
+  general, but more expensive than the others.
 
-  Description [Selects edges from a hourglass-type bilayer. Used to
-  pull flow.  Method described in paper. More general, but more
-  expensive than the others.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see trellis rhombus hourglassPush
 
-  SeeAlso     [trellis rhombus hourglassPush]
-
-******************************************************************************/
+*/
 static void
 hourglass(
-  DdManager * bdd,
-  int  m /* center level of current bilayer */,
-  DdNode ** neW,
-  DdNode ** U /* arrays for flow propagation */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* arrays of variables for rows and columns */,
-  int  n /* number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  m /**< center level of current bilayer */,
+  DdNode ** neW /**< array for flow propagation */,
+  DdNode ** U /**< array for flow propagation */,
+  DdNode ** x /**< array of variables for rows and columns */,
+  DdNode ** y /**< array of variables for rows and columns */,
+  DdNode ** z /**< array of variables for rows and columns */,
+  int  n /**< number of x variables */,
+  DdNode * pryz /**< priority function */,
+  DdNode * prxz /**< priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *one, *zero,
 	     *przy,
@@ -1029,31 +1021,28 @@ hourglass(
 } /* end of hourglass */
 
 
-/**Function********************************************************************
+/**
+  @brief Pushes flow through useful edges.
 
-  Synopsis    [Pushes flow through useful edges.]
+  @details Pushes flow from the source(s) to the sink(s) through
+  useful edges.
 
-  Description [Pushes flow from the source(s) to the sink(s) through
-  useful edges.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 maximal_push(
-  DdManager * bdd,
-  int  l /* Depth of layered network for current phase */,
-  DdNode ** U /* array of edge sets for flow propagation */,
-  DdNode ** F /* edge and flow relations */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* arrays of variables for rows and columns */,
-  int  n /* number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  l /**< Depth of layered network for current phase */,
+  DdNode ** U /**< array of edge sets for flow propagation */,
+  DdNode ** F /**< edge and flow relations */,
+  DdNode ** x /**< array of variables for rows and columns */,
+  DdNode ** y /**< array of variables for rows and columns */,
+  DdNode ** z /**< array of variables for rows and columns */,
+  int  n /**< number of x variables */,
+  DdNode * pryz /**< priority function */,
+  DdNode * prxz /**< priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *p, *q, *r,
 	   *UT,
@@ -1176,29 +1165,24 @@ maximal_push(
 } /* end of maximal_push */
 
 
-/**Function********************************************************************
+/**
+  @brief Pushes flow through a trellis.
 
-  Synopsis    []
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 trellisPush(
-  DdManager * bdd,
-  int  m /* Current layer */,
-  DdNode ** U /* Array of edge sets for flow propagation */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* Arrays of variables for rows and columns */,
-  int  n /* Number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* Priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  m /**< Current layer */,
+  DdNode ** U /**< Array of edge sets for flow propagation */,
+  DdNode ** x /**< Array of variables for rows and columns */,
+  DdNode ** y /**< Array of variables for rows and columns */,
+  DdNode ** z /**< Array of variables for rows and columns */,
+  int  n /**< Number of x variables */,
+  DdNode * pryz /**< Priority function */,
+  DdNode * prxz /**< Priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *one, *zero,
 	     *p, *r,
@@ -1295,29 +1279,24 @@ trellisPush(
 } /* end of trellisPush */
 
 
-/**Function********************************************************************
+/**
+  @brief Pushes flow through a rhombus.
 
-  Synopsis    []
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 rhombusPush(
-  DdManager * bdd,
-  int  m /* Current layer */,
-  DdNode ** U /* Array of edge sets for flow propagation */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* Arrays of variables for rows and columns */,
-  int  n /* Number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* Priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  m /**< Current layer */,
+  DdNode ** U /**< Array of edge sets for flow propagation */,
+  DdNode ** x /**< Array of variables for rows and columns */,
+  DdNode ** y /**< Array of variables for rows and columns */,
+  DdNode ** z /**< Array of variables for rows and columns */,
+  int  n /**< Number of x variables */,
+  DdNode * pryz /**< Priority function */,
+  DdNode * prxz /**< Priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *one, *zero,
 	     *p, *r,
@@ -1416,29 +1395,24 @@ rhombusPush(
 } /* end of rhombusPush */
 
 
-/**Function********************************************************************
+/**
+  @brief Pushes flow through an hourglass.
 
-  Synopsis    []
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 hourglassPush(
-  DdManager * bdd,
-  int  m /* Current layer */,
-  DdNode ** U /* Array of edge sets for flow propagation */,
-  DdNode ** x,
-  DdNode ** y,
-  DdNode ** z /* Arrays of variables for rows and columns */,
-  int  n /* Number of x variables */,
-  DdNode * pryz,
-  DdNode * prxz /* Priority functions */,
-  flowStats * stats)
+  DdManager * bdd /**< %DD manager */,
+  int  m /**< Current layer */,
+  DdNode ** U /**< Array of edge sets for flow propagation */,
+  DdNode ** x /**< Array of variables for rows and columns */,
+  DdNode ** y /**< Array of variables for rows and columns */,
+  DdNode ** z /**< Array of variables for rows and columns */,
+  int  n /**< Number of x variables */,
+  DdNode * pryz /**< Priority function */,
+  DdNode * prxz /**< Priority function */,
+  flowStats * stats /**< statistics */)
 {
     DdNode *one, *zero,
 	     *przy,

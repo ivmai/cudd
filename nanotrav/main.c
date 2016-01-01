@@ -1,18 +1,14 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [main.c]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief Main program for the nanotrav program.
 
-  Synopsis    [Main program for the nanotrav program.]
+  @author Fabio Somenzi
 
-  Description []
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,19 +38,19 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
-#include "ntr.h"
 #include "cuddInt.h"
+#include "ntr.h"
 
 /*---------------------------------------------------------------------------*/
 /* Constant declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#define NTR_VERSION\
-    "Nanotrav Version #0.12, Release date 2003/12/31"
+#define NTR_VERSION "Nanotrav Version #0.13, Release date 2015/7/15"
 
 #define BUFLENGTH 8192
 
@@ -70,10 +66,6 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: main.c,v 1.41 2012/02/05 01:53:01 fabio Exp fabio $";
-#endif
-
 static  char    buffer[BUFLENGTH];
 #ifdef DD_DEBUG
 extern  st_table *checkMinterms (BnetNetwork *net, DdManager *dd, st_table *previous);
@@ -83,7 +75,7 @@ extern  st_table *checkMinterms (BnetNetwork *net, DdManager *dd, st_table *prev
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -99,25 +91,23 @@ static void freeOption (NtrOptions *option);
 static DdManager * startCudd (NtrOptions *option, int nvars);
 static int ntrReadTree (DdManager *dd, char *treefile, int nvars);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
-/**Function********************************************************************
+/**
+  @brief Main program for ntr.
 
-  Synopsis    [Main program for ntr.]
+  @details Performs initialization. Reads command line options and
+  network(s). Builds BDDs with reordering, and optionally does
+  reachability analysis. Prints stats.
 
-  Description [Main program for ntr. Performs initialization. Reads command
-  line options and network(s). Builds BDDs with reordering, and optionally
-  does reachability analysis. Prints stats.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 main(
   int  argc,
@@ -140,6 +130,9 @@ main(
     int		reencoded;	/* linear transformations attempted */
 
     /* Initialize. */
+#if defined(_WIN32) && defined(_TWO_DIGIT_EXPONENT)
+    (void) _set_output_format(_TWO_DIGIT_EXPONENT);
+#endif
     option = mainInit();
     ntrReadOptions(argc,argv,option);
     pr = option->verb;
@@ -237,17 +230,17 @@ main(
 	/* Print the re-encoded inputs. */
 	if (pr >= 1 && reencoded == 1) {
 	    for (i = 0; i < net1->npis; i++) {
-		if (!st_lookup(net1->hash,net1->inputs[i],&node)) {
+		if (!st_lookup(net1->hash,net1->inputs[i],(void **)&node)) {
 		    exit(2);
 		}
-		(void) fprintf(stdout,"%s:",node->name);
+		(void) fprintf(stdout,"%s ",node->name);
 		Cudd_PrintDebug(dd,node->dd,Cudd_ReadSize(dd),pr);
 	    }
 	    for (i = 0; i < net1->nlatches; i++) {
-		if (!st_lookup(net1->hash,net1->latches[i][1],&node)) {
+		if (!st_lookup(net1->hash,net1->latches[i][1],(void **)&node)) {
 		    exit(2);
 		}
-		(void) fprintf(stdout,"%s:",node->name);
+		(void) fprintf(stdout,"%s ",node->name);
 		Cudd_PrintDebug(dd,node->dd,Cudd_ReadSize(dd),pr);
 	    }
 	    if (pr >= 3) {
@@ -283,6 +276,7 @@ main(
 	NtrPartTR *T;
 	T = Ntr_buildTR(dd,net1,option,option->image);
 	result = Ntr_Envelope(dd,T,NULL,option);
+        if (result == 0) exit(2);
 	Ntr_freeTR(dd,T);
     }
 
@@ -387,7 +381,7 @@ main(
     if (option->signatures) {
 	(void) printf("Positive cofactor measures\n");
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node)) {
 		exit(2);
 	    }
 	    signatures = Cudd_CofMinterm(dd, node->dd);
@@ -412,7 +406,7 @@ main(
 	option->scc == FALSE) {
 	(void) printf("Dumping BDDs to %s\n", option->dumpfile);
 	if (option->node != NULL) {
-	    if (!st_lookup(net1->hash,option->node,&node)) {
+	    if (!st_lookup(net1->hash,option->node,(void **)&node)) {
 		exit(2);
 	    }
 	    result = Bnet_bddArrayDump(dd,net1,option->dumpfile,&(node->dd),
@@ -447,6 +441,7 @@ main(
 	node->type != BNET_INPUT_NODE &&
 	node->type != BNET_PRESENT_STATE_NODE) {
 	    Cudd_IterDerefBdd(dd,node->dd);
+            node->dd = NULL;
 	}
 	node = node->next;
     }
@@ -455,12 +450,16 @@ main(
     /* Do the same cleanup for the second network if it was created. */
     if (option->verify == TRUE || option->second == TRUE ||
 	option->clip > 0.0 || option->dontcares == TRUE) {
+        /* Since option->second is TRUE and reading the second network
+         * didn't result in a failure, we know net2 is not NULL. */
+        assert(net2 != NULL);
 	node = net2->nodes;
 	while (node != NULL) {
 	    if (node->dd != NULL &&
 		node->type != BNET_INPUT_NODE &&
 		node->type != BNET_PRESENT_STATE_NODE) {
 		Cudd_IterDerefBdd(dd,node->dd);
+                node->dd = NULL;
 	    }
 	    node = node->next;
 	}
@@ -470,12 +469,16 @@ main(
     /* Check reference counts: At this point we should have dereferenced
     ** everything we had, except in the case of re-encoding.
     */
-    exitval = Cudd_CheckZeroRef(dd);
-    ok = exitval != 0;  /* ok == 0 means O.K. */
-    if (exitval != 0) {
-	(void) fflush(stdout);
-	(void) fprintf(stderr,
-	    "%d non-zero DD reference counts after dereferencing\n", exitval);
+    if (reencoded == CUDD_FALSE) {
+        exitval = Cudd_CheckZeroRef(dd);
+        ok = exitval != 0;  /* ok == 0 means O.K. */
+        if (exitval != 0) {
+            (void) fflush(stdout);
+            (void) fprintf(stderr,
+                           "%d non-zero DD reference counts after dereferencing\n", exitval);
+        }
+    } else {
+        ok = 0;
     }
 
 #ifdef DD_DEBUG
@@ -489,12 +492,7 @@ main(
     freeOption(option);
     if (pr >= 0) util_print_cpu_stats(stdout);
 
-#ifdef MNEMOSYNE
-    mnem_writestats();
-#endif
-
     exit(ok);
-    /* NOTREACHED */
 
 } /* end of main */
 
@@ -508,17 +506,14 @@ main(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Allocates the option structure and initializes it.
 
-  Synopsis    [Allocates the option structure and initializes it.]
+  @sideeffect none
 
-  Description []
+  @see ntrReadOptions
 
-  SideEffects [none]
-
-  SeeAlso     [ntrReadOptions]
-
-******************************************************************************/
+*/
 static NtrOptions *
 mainInit(
    )
@@ -568,7 +563,7 @@ mainInit(
     option->cacheSize      = 32768;
     option->maxMemory      = 0;	/* set automatically */
     option->maxMemHard     = 0; /* don't set */
-    option->maxLive        = ~0; /* very large number */
+    option->maxLive        = ~0U; /* very large number */
     option->slots          = CUDD_UNIQUE_SLOTS;
     option->ordering       = PI_PS_FROM_FILE;
     option->orderPiPs      = NULL;
@@ -596,27 +591,27 @@ mainInit(
     option->storefile      = NULL;
     option->load           = FALSE;
     option->loadfile       = NULL;
+    option->seed           = 1;
 
     return(option);
 
 } /* end of mainInit */
 
 
-/**Function********************************************************************
+/**
+  @brief Reads the command line options.
 
-  Synopsis    [Reads the command line options.]
+  @details Scans the command line one argument at a time and performs
+  a switch on each arguement it hits.  Some arguemnts also read in the
+  following arg from the list (i.e., -f also gets the filename which
+  should folow.)  Gives a usage message and exits if any unrecognized
+  args are found.
 
-  Description [Reads the command line options. Scans the command line
-  one argument at a time and performs a switch on each arguement it
-  hits.  Some arguemnts also read in the following arg from the list
-  (i.e., -f also gets the filename which should folow.)
-  Gives a usage message and exits if any unrecognized args are found.]
+  @sideeffect May initialize the random number generator.
 
-  SideEffects [May initialize the random number generator.]
+  @see mainInit ntrReadOptionsFile
 
-  SeeAlso     [mainInit ntrReadOptionsFile]
-
-******************************************************************************/
+*/
 static void
 ntrReadOptions(
   int  argc,
@@ -973,7 +968,7 @@ ntrReadOptions(
 	    option->numberXovers = (int) atoi(argv[i]);
 	} else if (STRING_EQUAL(argv[i],"-seed")) {
 	    i++;
-	    Cudd_Srandom((long)atoi(argv[i]));
+            option->seed = (int32_t) atoi(argv[i]);
 	} else if (STRING_EQUAL(argv[i],"-dumpfile")) {
 	    i++;
 	    option->bdddump = TRUE;
@@ -1038,24 +1033,20 @@ usage:	/* convenient goto */
 } /* end of ntrReadOptions */
 
 
-/**Function********************************************************************
+/**
+  @brief Reads the program options from a file.
 
-  Synopsis    [Reads the program options from a file.]
+  @details Opens file. Reads the command line from the otpions file
+  using the read_line func. Scans the line looking for spaces, each
+  space is a searator and demarks a new option.  When a space is
+  found, it is changed to a \0 to terminate that string; then the next
+  value of slot points to the next non-space character.  There is a
+  limit of 1024 options.  Should produce an error (presently doesn't)
+  on overrun of options, but this is very unlikely to happen.
 
-  Description [Reads the program options from a file. Opens file. Reads
-  the command line from the otpions file using the read_line func. Scans
-  the line looking for spaces, each space is a searator and demarks a
-  new option.  When a space is found, it is changed to a \0 to terminate
-  that string; then the next value of slot points to the next non-space
-  character.  There is a limit of 1024 options.
-  Should produce an error (presently doesn't) on overrun of options, but
-  this is very unlikely to happen.]
+  @sideeffect none
 
-  SideEffects [none]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 ntrReadOptionsFile(
   char * name,
@@ -1100,17 +1091,12 @@ ntrReadOptionsFile(
 } /* end of ntrReadOptionsFile */
 
 
-/**Function********************************************************************
+/**
+  @brief Reads a line from the option file.
 
-  Synopsis    [Reads a line from the option file.]
+  @sideeffect none
 
-  Description []
-
-  SideEffects [none]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static char*
 readLine(
   FILE * fp)
@@ -1153,18 +1139,15 @@ readLine(
 } /* end of readLine */
 
 
-/**Function********************************************************************
+/**
+  @brief Opens a file.
 
-  Synopsis    [Opens a file.]
+  @details Opens a file, or fails with an error message and exits.
+  Allows '-' as a synonym for standard input.
 
-  Description [Opens a file, or fails with an error message and exits.
-  Allows '-' as a synonym for standard input.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static FILE *
 open_file(
   char * filename,
@@ -1183,22 +1166,18 @@ open_file(
 } /* end of open_file */
 
 
-/**Function********************************************************************
+/**
+  @brief Explicitly applies reordering to the DDs.
 
-  Synopsis    [Applies reordering to the DDs.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Explicitly applies reordering to the DDs. Returns 1 if
-  successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 static int
 reorder(
   BnetNetwork * net,
-  DdManager * dd /* DD Manager */,
+  DdManager * dd,
   NtrOptions * option)
 {
 #ifdef DD_DEBUG
@@ -1241,6 +1220,10 @@ reorder(
 	    return(0);
 	}
 	mintermTable = checkMinterms(net,dd,mintermTable);
+        if (mintermTable != NULL) {
+            (void) fprintf(stderr,"Error in checkMinterms\n");
+            return(0);
+        }
 #endif
 
 	/* Print symmetry stats if pertinent */
@@ -1263,17 +1246,12 @@ reorder(
 } /* end of reorder */
 
 
-/**Function********************************************************************
+/**
+  @brief Frees the option structure and its appendages.
 
-  Synopsis    [Frees the option structure and its appendages.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 static void
 freeOption(
   NtrOptions * option)
@@ -1292,19 +1270,15 @@ freeOption(
 } /* end of freeOption */
 
 
-/**Function********************************************************************
+/**
+  @brief Starts the CUDD manager with the desired options.
 
-  Synopsis    [Starts the CUDD manager with the desired options.]
+  @details Starts with 0 variables, because Ntr_buildDDs will create
+  new variables rather than using whatever already exists.
 
-  Description [Starts the CUDD manager with the desired options.
-  We start with 0 variables, because Ntr_buildDDs will create new
-  variables rather than using whatever already exists.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 static DdManager *
 startCudd(
   NtrOptions * option,
@@ -1316,6 +1290,7 @@ startCudd(
     dd = Cudd_Init(0, 0, option->slots, option->cacheSize, option->maxMemory);
     if (dd == NULL) return(NULL);
 
+    Cudd_Srandom(dd, option->seed);
     if (option->maxMemHard != 0) {
 	Cudd_SetMaxMemory(dd,option->maxMemHard);
     }
@@ -1352,18 +1327,14 @@ startCudd(
 } /* end of startCudd */
 
 
-/**Function********************************************************************
+/**
+  @brief Reads the variable group tree from a file.
 
-  Synopsis    [Reads the variable group tree from a file.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Reads the variable group tree from a file.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 static int
 ntrReadTree(
   DdManager * dd,

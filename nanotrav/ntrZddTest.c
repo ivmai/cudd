@@ -1,18 +1,14 @@
-/**CFile***********************************************************************
- 
-  FileName    [ntrZddTest.c]
+/**
+  @file
 
-  PackageName [ntr]
+  @ingroup nanotrav
 
-  Synopsis    [ZDD test functions.]
+  @brief %ZDD test functions.
 
-  Description []
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
+  @author Fabio Somenzi
    
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,9 +38,10 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "ntr.h"
 #include "cuddInt.h"
@@ -65,15 +62,12 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrZddTest.c,v 1.15 2012/02/05 01:53:01 fabio Exp fabio $";
-#endif
 
 /*---------------------------------------------------------------------------*/
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -81,24 +75,22 @@ static char rcsid[] UTIL_UNUSED = "$Id: ntrZddTest.c,v 1.15 2012/02/05 01:53:01 
 
 static int reorderZdd (BnetNetwork *net, DdManager *dd, NtrOptions *option);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Tests ZDDs.
 
-  Synopsis    [Tests ZDDs.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Tests ZDDs. Returns 1 if successful; 0 otherwise.]
+  @sideeffect Creates %ZDD variables in the manager.
 
-  SideEffects [Creates ZDD variables in the manager.]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_testZDD(
   DdManager * dd,
@@ -124,7 +116,7 @@ Ntr_testZDD(
     if (result == 0) return(0);
     if (option->node == NULL) {
 	for (nz = 0; nz < net->noutputs; nz++) {
-	    if (!st_lookup(net->hash,net->outputs[nz],&node)) {
+	    if (!st_lookup(net->hash,net->outputs[nz],(void **)&node)) {
 		return(0);
 	    }
 	    zdd[nz] = Cudd_zddPortFromBdd(dd, node->dd);
@@ -138,7 +130,7 @@ Ntr_testZDD(
 	    }
 	}
     } else {
-	if (!st_lookup(net->hash,option->node,&node)) {
+	if (!st_lookup(net->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	zdd[0] = Cudd_zddPortFromBdd(dd, node->dd);
@@ -175,11 +167,11 @@ Ntr_testZDD(
 	if (checkBdd) {
 	    Cudd_Ref(checkBdd);
 	    if (option->node == NULL) {
-		if (!st_lookup(net->hash,net->outputs[i],&node)) {
+		if (!st_lookup(net->hash,net->outputs[i],(void **)&node)) {
 		    return(0);
 		}
 	    } else {
-		if (!st_lookup(net->hash,option->node,&node)) {
+		if (!st_lookup(net->hash,option->node,(void **)&node)) {
 		    return(0);
 		}
 	    }
@@ -250,7 +242,10 @@ Ntr_testZDD(
 
     /* Perform ZDD reordering. */
     result = reorderZdd(net,dd,option);
-    if (result == 0) return(0);
+    if (result == 0) {
+	(void) fprintf(stderr,"Error during ZDD reordering\n");
+        return(0);
+    }
 
     /* Print final ZDD order. */
     nvars = Cudd_ReadZddSize(dd);
@@ -261,7 +256,7 @@ Ntr_testZDD(
     }
     if (option->reordering != CUDD_REORDER_NONE) {
 	for (i = 0; i < net->npis; i++) {
-	    if (!st_lookup(net->hash,net->inputs[i],&node)) {
+	    if (!st_lookup(net->hash,net->inputs[i],(void **)&node)) {
 		FREE(names);
 		return(0);
 	    }
@@ -269,7 +264,7 @@ Ntr_testZDD(
 	    names[level] = node->name;
 	}
 	for (i = 0; i < net->nlatches; i++) {
-	    if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+	    if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 		FREE(names);
 		return(0);
 	    }
@@ -297,17 +292,12 @@ Ntr_testZDD(
 } /* end of Ntr_testZDD */
 
 
-/**Function********************************************************************
+/**
+  @brief Builds %ZDD covers.
 
-  Synopsis    [Builds ZDD covers.]
+  @sideeffect Creates %ZDD variables in the manager.
 
-  Description []
-
-  SideEffects [Creates ZDD variables in the manager.]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_testISOP(
   DdManager * dd,
@@ -332,7 +322,7 @@ Ntr_testISOP(
     if (option->node == NULL) {
 	nz = net->noutputs;
 	for (i = 0; i < nz; i++) {
-	    if (!st_lookup(net->hash,net->outputs[i],&node)) {
+	    if (!st_lookup(net->hash,net->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    bdd = Cudd_zddIsop(dd, node->dd, node->dd, &zdd[i]);
@@ -367,7 +357,7 @@ Ntr_testISOP(
 	}
     } else {
 	nz = 1;
-	if (!st_lookup(net->hash,option->node,&node)) {
+	if (!st_lookup(net->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	bdd = Cudd_zddIsop(dd, node->dd, node->dd, &zdd[0]);
@@ -428,23 +418,21 @@ Ntr_testISOP(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Applies reordering to the ZDDs.
 
-  Synopsis    [Applies reordering to the ZDDs.]
+  @details Explicitly applies reordering to the ZDDs.
 
-  Description [Explicitly applies reordering to the ZDDs. Returns 1 if
-  successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 static int
 reorderZdd(
-  BnetNetwork * net,
-  DdManager * dd /* DD Manager */,
-  NtrOptions * option)
+  BnetNetwork * net /**< boolean network */,
+  DdManager * dd /**< DD Manager */,
+  NtrOptions * option /**< options */)
 {
     int result;			/* return value from functions */
 

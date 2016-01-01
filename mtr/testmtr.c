@@ -1,18 +1,14 @@
-/**CFile***********************************************************************
- 
-   FileName    [testmtr.c]
+/**
+  @file
 
-   PackageName [mtr]
+  @ingroup mtr
 
-   Synopsis    [Test program for the mtr package.]
+  @brief Test program for the mtr package.
 
-   Description []
-
-   SeeAlso     []
-
-   Author      [Fabio Somenzi]
+  @author Fabio Somenzi
    
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,19 +38,20 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "util.h"
-#include "mtr.h"
+#include "mtrInt.h"
 
 /*---------------------------------------------------------------------------*/
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
 #ifndef lint
-static char rcsid[] MTR_UNUSED = "$Id: testmtr.c,v 1.7 2015/01/05 20:12:13 fabio Exp $";
+static char rcsid[] MTR_UNUSED = "$Id: testmtr.c,v 1.8 2015/07/01 20:43:45 fabio Exp $";
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -64,7 +61,8 @@ static char rcsid[] MTR_UNUSED = "$Id: testmtr.c,v 1.7 2015/01/05 20:12:13 fabio
 #define TESTMTR_VERSION\
     "TestMtr Version #0.6, Release date 2/6/12"
 
-/**AutomaticStart*************************************************************/
+/** \cond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -74,25 +72,22 @@ static void usage (char *prog);
 static FILE * open_file (const char *filename, const char *mode);
 static void printHeader(int argc, char **argv);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
-/**Function********************************************************************
+/**
+  @brief Main program for testmtr.
 
-  Synopsis    [Main program for testmtr.]
+  @details Performs initialization.  Reads command line options and
+  network(s).  Builds some simple trees and prints them out.
 
-  Description [Main program for testmtr.  Performs initialization.
-  Reads command line options and network(s).  Builds some simple trees
-  and prints them out.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 main(
   int  argc,
@@ -101,33 +96,27 @@ main(
     MtrNode *root,
 	    *node;
     int	    i,
-	    c,
 	    pr = 0;
     FILE    *fp;
     const char *file = NULL;
-    
-    while ((c = getopt(argc, argv, "Mhp:")) != EOF) {
-	switch(c) {
-	case 'M':
-	    break;
-	case 'p':
-	    pr = atoi(optarg);
-	    break;
-	case 'h':
-	default:
-            printHeader(argc, argv);
-	    usage(argv[0]);
-	    break;
-	}
-    }
 
-    if (argc - optind == 0) {
-	file = "-";
-    } else if (argc - optind == 1) {
-	file = argv[optind];
-    } else {
+    for (i = 1; i < argc; i++) {
+      if (strcmp("-M", argv[i]) == 0) {
+        continue;
+      } else if (strcmp("-p", argv[i]) == 0) {
+        pr = atoi(argv[++i]);
+      } else if (strcmp("-h", argv[i]) == 0) {
         printHeader(argc, argv);
-	usage(argv[0]);
+        usage(argv[0]);
+      } else if (i == argc - 1) {
+        file = argv[i];
+      } else {
+        printHeader(argc, argv);
+        usage(argv[0]);
+      }
+    }
+    if (file == NULL) {
+      file = "-";
     }
     if (pr > 0)
         printHeader(argc, argv);
@@ -157,16 +146,16 @@ main(
         Mtr_PrintTree(root); (void) printf("#  ");
         Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
     }
-    node = Mtr_MakeGroup(root,0,6,MTR_DEFAULT);
-    node = Mtr_MakeGroup(root,6,6,MTR_DEFAULT);
+    (void) Mtr_MakeGroup(root,0,6,MTR_DEFAULT);
+    (void) Mtr_MakeGroup(root,6,6,MTR_DEFAULT);
     if (pr > 0) {
         Mtr_PrintTree(root); (void) printf("#  ");
         Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
     }
     for (i = 0; i < 6; i+=2) {
-	node = Mtr_MakeGroup(root,(unsigned) i,(unsigned) 2,MTR_DEFAULT);
+      (void) Mtr_MakeGroup(root,(unsigned) i,(unsigned) 2,MTR_DEFAULT);
     }
-    node = Mtr_MakeGroup(root,0,12,MTR_FIXED);
+    (void) Mtr_MakeGroup(root,0,12,MTR_FIXED);
     if (pr > 0) {
         Mtr_PrintTree(root); (void) printf("#  ");
         Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
@@ -175,7 +164,7 @@ main(
         Mtr_PrintGroups(root->child,pr == 0); (void) printf("\n");
     }
     node = Mtr_FindGroup(root,0,6);
-    node = Mtr_DissolveGroup(node);
+    (void) Mtr_DissolveGroup(node);
     if (pr > 0) {
         Mtr_PrintTree(root); (void) printf("#  ");
         Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
@@ -198,8 +187,8 @@ main(
         Mtr_PrintTree(root); (void) printf("#  ");
         Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
     }
-    node = Mtr_MakeGroup(root,0,2,MTR_FIXED);
-    node = Mtr_MakeGroup(root,2,2,MTR_FIXED);
+    (void) Mtr_MakeGroup(root,0,2,MTR_FIXED);
+    (void) Mtr_MakeGroup(root,2,2,MTR_FIXED);
     if (pr > 0) {
         Mtr_PrintTree(root); (void) printf("#  ");
         Mtr_PrintGroups(root,pr == 0); (void) printf("\n");
@@ -228,17 +217,12 @@ main(
 } /* end of main */
 
 
-/**Function********************************************************************
+/**
+  @brief Prints usage message and exits.
 
-  Synopsis    [Prints usage message and exits.]
+  @sideeffect none
 
-  Description []
-
-  SideEffects [none]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 usage(
   char * prog)
@@ -252,18 +236,15 @@ usage(
 } /* end of usage */
 
 
-/**Function********************************************************************
+/**
+  @brief Opens a file.
 
-  Synopsis    [Opens a file.]
+  @details Opens a file, or fails with an error message and exits.
+  Allows '-' as a synonym for standard input.
 
-  Description [Opens a file, or fails with an error message and exits.
-  Allows '-' as a synonym for standard input.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static FILE *
 open_file(
   const char * filename,
@@ -282,17 +263,12 @@ open_file(
 } /* end of open_file */
 
 
-/**Function********************************************************************
+/**
+  @brief Prints the header of the program output.
 
-  Synopsis    [Prints the header of the program output.]
+  @sideeffect None
 
-  Description [Prints the header of the program output.]
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 printHeader(
   int argc,

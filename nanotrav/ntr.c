@@ -1,18 +1,14 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [ntr.c]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief A very simple reachability analysis program.
 
-  Synopsis    [A very simple reachability analysis program.]
+  @author Fabio Somenzi
 
-  Description []
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,10 +38,12 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
+#include "cuddInt.h"
 #include "ntr.h"
 
 /*---------------------------------------------------------------------------*/
@@ -66,22 +64,18 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntr.c,v 1.29 2015/01/03 19:41:42 fabio Exp fabio $";
-#endif
-
-static const char *onames[] = { "T", "R" };	/* names of functions to be dumped */
-static double *signatures;		/* signatures for all variables */
-static BnetNetwork *staticNet;	/* pointer to network used by qsort
-				** comparison function */
-static DdNode **staticPart;	/* pointer to parts used by qsort
-				** comparison function */
+static char const *onames[] = {"T", "R"}; /**< names of functions to be dumped */
+static double *signatures;	/**< signatures for all variables */
+static BnetNetwork *staticNet;	/**< pointer to network used by qsort
+				 ** comparison function */
+static DdNode **staticPart;	/**< pointer to parts used by qsort
+				 ** comparison function */
 
 /*---------------------------------------------------------------------------*/
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -103,37 +97,37 @@ static int ntrPartCompare (int * ptrX, int * ptrY);
 static char ** ntrAllocMatrix (int nrows, int ncols);
 static void ntrFreeMatrix (char **matrix);
 static void ntrPermuteParts (DdNode **a, DdNode **b, int *comesFrom, int *goesTo, int size);
+static void ntrIncreaseRef(void * e, void * arg);
+static void ntrDecreaseRef(void * e, void * arg);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Builds DDs for a network outputs and next state functions.
 
-  Synopsis    [Builds DDs for a network outputs and next state
-  functions.]
+  @details The method is really brain-dead, but it is very simple.
+  Some inputs to the network may be shared with another network whose
+  DDs have already been built.  In this case we want to share the DDs
+  as well.
 
-  Description [Builds DDs for a network outputs and next state
-  functions. The method is really brain-dead, but it is very simple.
-  Returns 1 in case of success; 0 otherwise. Some inputs to the network
-  may be shared with another network whose DDs have already been built.
-  In this case we want to share the DDs as well.]
+  @return 1 in case of success; 0 otherwise.
 
-  SideEffects [the dd fields of the network nodes are modified. Uses the
-  count fields of the nodes.]
+  @sideeffect the dd fields of the network nodes are modified. Uses the
+  count fields of the nodes.
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_buildDDs(
-  BnetNetwork * net /* network for which DDs are to be built */,
-  DdManager * dd /* DD manager */,
-  NtrOptions * option /* option structure */,
-  BnetNetwork * net2 /* companion network with which inputs may be shared */)
+  BnetNetwork * net /**< network for which DDs are to be built */,
+  DdManager * dd /**< %DD manager */,
+  NtrOptions * option /**< option structure */,
+  BnetNetwork * net2 /**< companion network with which inputs may be shared */)
 {
     int pr = option->verb;
     int result;
@@ -145,10 +139,10 @@ Ntr_buildDDs(
     */
     if (net2 != NULL) {
 	for (i = 0; i < net->npis; i++) {
-	    if (!st_lookup(net->hash,net->inputs[i],&node)) {
+	    if (!st_lookup(net->hash,net->inputs[i],(void **)&node)) {
 		return(0);
 	    }
-	    if (!st_lookup(net2->hash,net->inputs[i],&node2)) {
+	    if (!st_lookup(net2->hash,net->inputs[i],(void **)&node2)) {
 		/* This input is not shared. */
 		result = Bnet_BuildNodeBDD(dd,node,net->hash,
 					   option->locGlob,option->nodrop);
@@ -162,10 +156,10 @@ Ntr_buildDDs(
 	    }
 	}
 	for (i = 0; i < net->nlatches; i++) {
-	    if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+	    if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 		return(0);
 	    }
-	    if (!st_lookup(net2->hash,net->latches[i][1],&node2)) {
+	    if (!st_lookup(net2->hash,net->latches[i][1],(void **)&node2)) {
 		/* This present state variable is not shared. */
 		result = Bnet_BuildNodeBDD(dd,node,net->hash,
 					   option->locGlob,option->nodrop);
@@ -187,7 +181,7 @@ Ntr_buildDDs(
 	    ** and then present state variables.
 	    */
 	    for (i = 0; i < net->npis; i++) {
-		if (!st_lookup(net->hash,net->inputs[i],&node)) {
+		if (!st_lookup(net->hash,net->inputs[i],(void **)&node)) {
 		    return(0);
 		}
 		result = Bnet_BuildNodeBDD(dd,node,net->hash,
@@ -195,7 +189,7 @@ Ntr_buildDDs(
 		if (result == 0) return(0);
 	    }
 	    for (i = 0; i < net->nlatches; i++) {
-		if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+		if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 		    return(0);
 		}
 		result = Bnet_BuildNodeBDD(dd,node,net->hash,
@@ -241,7 +235,7 @@ Ntr_buildDDs(
 
 	if (option->node != NULL &&
 	    option->closestCube == FALSE && option->dontcares == FALSE) {
-	    if (!st_lookup(net->hash,option->node,&node)) {
+	    if (!st_lookup(net->hash,option->node,(void **)&node)) {
 		return(0);
 	    }
 	    result = Bnet_BuildNodeBDD(dd,node,net->hash,BNET_GLOBAL_DD,
@@ -250,7 +244,7 @@ Ntr_buildDDs(
 	} else {
 	    if (option->stateOnly == FALSE) {
 		for (i = 0; i < net->npos; i++) {
-		    if (!st_lookup(net->hash,net->outputs[i],&node)) {
+		    if (!st_lookup(net->hash,net->outputs[i],(void **)&node)) {
 			continue;
 		    }
 		    result = Bnet_BuildNodeBDD(dd,node,net->hash,
@@ -265,7 +259,7 @@ Ntr_buildDDs(
 		}
 	    }
 	    for (i = 0; i < net->nlatches; i++) {
-		if (!st_lookup(net->hash,net->latches[i][0],&node)) {
+		if (!st_lookup(net->hash,net->latches[i][0],(void **)&node)) {
 		    continue;
 		}
 		result = Bnet_BuildNodeBDD(dd,node,net->hash,BNET_GLOBAL_DD,
@@ -283,7 +277,7 @@ Ntr_buildDDs(
 	** the nodes that are not reachable from the outputs.
 	*/
 	for (i = 0; i < net->npis; i++) {
-	    if (!st_lookup(net->hash,net->inputs[i],&node)) {
+	    if (!st_lookup(net->hash,net->inputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    result = Bnet_BuildNodeBDD(dd,node,net->hash,BNET_GLOBAL_DD,
@@ -292,7 +286,7 @@ Ntr_buildDDs(
 	    if (node->count == -1) Cudd_RecursiveDeref(dd,node->dd);
 	}
 	for (i = 0; i < net->nlatches; i++) {
-	    if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+	    if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 		return(0);
 	    }
 	    result = Bnet_BuildNodeBDD(dd,node,net->hash,BNET_GLOBAL_DD,
@@ -319,28 +313,24 @@ Ntr_buildDDs(
 
     return(1);
 
-} /* end of buildDD */
+} /* end of Ntr_buildDDs */
 
 
-/**Function********************************************************************
+/**
+  @brief Builds the transition relation for a network.
 
-  Synopsis    [Builds the transition relation for a network.]
+  @return a pointer to the transition relation structure if
+  successful; NULL otherwise.
 
-  Description [Builds the transition relation for a network. Returns a
-  pointer to the transition relation structure if successful; NULL
-  otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 NtrPartTR *
 Ntr_buildTR(
-  DdManager * dd /* manager */,
-  BnetNetwork * net /* network */,
-  NtrOptions * option /* options */,
-  int  image /* image type: monolithic ... */)
+  DdManager * dd /**< manager */,
+  BnetNetwork * net /**< network */,
+  NtrOptions * option /**< options */,
+  int  image /**< image type: monolithic ... */)
 {
     NtrPartTR *TR;
     DdNode *T, *delta, *support, *scan, *tmp, *preiabs, *prepabs;
@@ -394,7 +384,7 @@ Ntr_buildTR(
     TR->xw = Cudd_ReadOne(dd);
     Cudd_Ref(TR->xw);
     for (i = 0; i < net->nlatches; i++) {
-	if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+	if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 	    goto endgame;
 	}
 	x[i] = node->dd;
@@ -419,7 +409,7 @@ Ntr_buildTR(
 		goto endgame;
 	}
 	/* Get next state function and create transition relation part. */
-	if (!st_lookup(net->hash,net->latches[i][0],&node)) {
+	if (!st_lookup(net->hash,net->latches[i][0],(void **)&node)) {
 	    goto endgame;
 	}
 	delta = node->dd;
@@ -447,7 +437,7 @@ Ntr_buildTR(
 
     /* Collect primary inputs. */
     for (i = 0; i < net->npis; i++) {
-	if (!st_lookup(net->hash,net->inputs[i],&node)) {
+	if (!st_lookup(net->hash,net->inputs[i],(void **)&node)) {
 	    goto endgame;
 	}
 	pi[i] = node->dd;
@@ -625,17 +615,12 @@ endgame:
 } /* end of Ntr_buildTR */
 
 
-/**Function********************************************************************
+/**
+  @brief Frees the transition relation for a network.
 
-  Synopsis    [Frees the transition relation for a network.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 void
 Ntr_freeTR(
   DdManager * dd,
@@ -661,9 +646,7 @@ Ntr_freeTR(
     Cudd_RecursiveDeref(dd,TR->preiabs);
     Cudd_RecursiveDeref(dd,TR->prepabs);
     Cudd_RecursiveDeref(dd,TR->xw);
-    for (i = 0; i < TR->factors->nslots; i++) {
-	Cudd_RecursiveDeref(dd, (DdNode *) TR->factors->slots[i].item);
-    }
+    Ntr_HeapForeach(TR->factors, ntrDecreaseRef, dd);
     Ntr_FreeHeap(TR->factors);
     FREE(TR);
 
@@ -672,18 +655,16 @@ Ntr_freeTR(
 } /* end of Ntr_freeTR */
 
 
-/**Function********************************************************************
+/**
+  @brief Makes a copy of a transition relation.
 
-  Synopsis    [Makes a copy of a transition relation.]
+  @return a pointer to the copy if successful; NULL otherwise.
 
-  Description [Makes a copy of a transition relation. Returns a pointer
-  to the copy if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_buildTR Ntr_freeTR
 
-  SeeAlso     [Ntr_buildTR Ntr_freeTR]
-
-******************************************************************************/
+*/
 NtrPartTR *
 Ntr_cloneTR(
   NtrPartTR *TR)
@@ -751,9 +732,7 @@ Ntr_cloneTR(
 	FREE(T);
 	return(NULL);
     }
-    for (i = 0; i < T->factors->nslots; i++) {
-	Cudd_Ref((DdNode *) T->factors->slots[i].item);
-    }
+    Ntr_HeapForeach(T->factors, ntrIncreaseRef, NULL);
     for (i = 0; i < nparts; i++) {
 	T->part[i] = TR->part[i];
 	Cudd_Ref(T->part[i]);
@@ -782,23 +761,23 @@ Ntr_cloneTR(
 } /* end of Ntr_cloneTR */
 
 
-/**Function********************************************************************
+/**
+  @brief Poor man's traversal procedure.
 
-  Synopsis    [Poor man's traversal procedure.]
+  @details Based on the monolithic transition relation.
 
-  Description [Poor man's traversal procedure. based on the monolithic
-  transition relation.  Returns 1 in case of success; 0 otherwise.]
+  @return 1 in case of success; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [Ntr_ClosureTrav]
+  @see Ntr_ClosureTrav
 
-******************************************************************************/
+*/
 int
 Ntr_Trav(
-  DdManager * dd /* DD manager */,
-  BnetNetwork * net /* network */,
-  NtrOptions * option /* options */)
+  DdManager * dd /**< %DD manager */,
+  BnetNetwork * net /**< network */,
+  NtrOptions * option /**< options */)
 {
     NtrPartTR *TR;		/* Transition relation */
     DdNode *init;		/* initial state(s) */
@@ -810,7 +789,7 @@ Ntr_Trav(
     int depth;
     int retval;
     int pr = option->verb;
-    int initReord = Cudd_ReadReorderings(dd);
+    unsigned int initReord = Cudd_ReadReorderings(dd);
 
     if (option->traverse == FALSE || net->nlatches == 0) return(1);
     (void) printf("Building transition relation. Time = %s\n",
@@ -822,6 +801,7 @@ Ntr_Trav(
     TR = Ntr_buildTR(dd,net,option,option->image);
     if (TR == NULL) return(0);
     retval = Cudd_SetVarMap(dd,TR->x,TR->y,TR->nlatches);
+    if (retval == 0) return(0);
     (void) printf("Transition relation: %d parts %d latches %d nodes\n",
 		  TR->nparts, TR->nlatches,
 		  Cudd_SharingSize(TR->part, TR->nparts));
@@ -937,24 +917,24 @@ Ntr_Trav(
 } /* end of Ntr_Trav */
 
 
-/**Function********************************************************************
+/**
+  @brief Computes the SCCs of the STG.
 
-  Synopsis    [Computes the SCCs of the STG.]
+  @details Computes the strongly connected components of the state
+  transition graph.  Only the first 10 SCCs are computed.
 
-  Description [Computes the strongly connected components of the state
-  transition graph.  Only the first 10 SCCs are computed. Returns 1 in
-  case of success; 0 otherwise.]
+  @return 1 in case of success; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [Ntr_Trav]
+  @see Ntr_Trav
 
-******************************************************************************/
+*/
 int
 Ntr_SCC(
-  DdManager * dd /* DD manager */,
-  BnetNetwork * net /* network */,
-  NtrOptions * option /* options */)
+  DdManager * dd /**< %DD manager */,
+  BnetNetwork * net /**< network */,
+  NtrOptions * option /**< options */)
 {
     NtrPartTR *TR;		/* Transition relation */
     DdNode *init;		/* initial state(s) */
@@ -964,7 +944,7 @@ Ntr_SCC(
     DdNode *neW;
     DdNode *one, *zero;
     DdNode *states, *scc;
-    DdNode *tmp;
+    DdNode *tmp = NULL;
     DdNode *SCCs[10];
     int depth;
     int nscc = 0;
@@ -982,6 +962,7 @@ Ntr_SCC(
     TR = Ntr_buildTR(dd,net,option,option->image);
     if (TR == NULL) return(0);
     retval = Cudd_SetVarMap(dd,TR->x,TR->y,TR->nlatches);
+    if (retval == 0) return(0);
     (void) printf("Transition relation: %d parts %d latches %d nodes\n",
 		  TR->nparts, TR->nlatches,
 		  Cudd_SharingSize(TR->part, TR->nparts));
@@ -1182,23 +1163,24 @@ Ntr_SCC(
 } /* end of Ntr_SCC */
 
 
-/**Function********************************************************************
+/**
+  @brief Transitive closure traversal procedure.
 
-  Synopsis    [Transitive closure traversal procedure.]
+  @details Traversal procedure based on the transitive closure of the
+  transition relation.
 
-  Description [Traversal procedure. based on the transitive closure of the
-  transition relation.  Returns 1 in case of success; 0 otherwise.]
+  @return 1 in case of success; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [Ntr_Trav]
+  @see Ntr_Trav
 
-******************************************************************************/
+*/
 int
 Ntr_ClosureTrav(
-  DdManager * dd /* DD manager */,
-  BnetNetwork * net /* network */,
-  NtrOptions * option /* options */)
+  DdManager * dd /**< %DD manager */,
+  BnetNetwork * net /**< network */,
+  NtrOptions * option /**< options */)
 {
     DdNode *init;
     DdNode *T;
@@ -1270,19 +1252,16 @@ Ntr_ClosureTrav(
 } /* end of Ntr_ClosureTrav */
 
 
-/**Function********************************************************************
+/**
+  @brief Builds the transitive closure of a transition relation.
 
-  Synopsis    [Builds the transitive closure of a transition relation.]
+  @details Uses a simple squaring algorithm.
 
-  Description [Builds the transitive closure of a transition relation.
-  Returns a BDD if successful; NULL otherwise. Uses a simple squaring
-  algorithm.]
+  @return a %BDD if successful; NULL otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 DdNode *
 Ntr_TransitiveClosure(
   DdManager * dd,
@@ -1375,18 +1354,14 @@ Ntr_TransitiveClosure(
 } /* end of Ntr_TransitiveClosure */
 
 
-/**Function********************************************************************
+/**
+  @brief Builds the %BDD of the initial state(s).
 
-  Synopsis    [Builds the BDD of the initial state(s).]
+  @return a %BDD if successful; NULL otherwise.
 
-  Description [Builds the BDD of the initial state(s).  Returns a BDD
-  if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 DdNode *
 Ntr_initState(
   DdManager * dd,
@@ -1407,7 +1382,7 @@ Ntr_initState(
 	if (net->nlatches == 0) return(res);
 
 	for (i = 0; i < net->nlatches; i++) {
-	    if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+	    if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 		goto endgame;
 	    }
 	    x = node->dd;
@@ -1441,19 +1416,15 @@ endgame:
 } /* end of Ntr_initState */
 
 
-/**Function********************************************************************
+/**
+  @brief Reads a state cube from a file or creates a random one.
 
-  Synopsis    [Reads a state cube from a file or creates a random one.]
+  @return a pointer to the %BDD of the sink nodes if successful; NULL
+  otherwise.
 
-  Description [Reads a state cube from a file or create a random one.
-  Returns a pointer to the BDD of the sink nodes if successful; NULL
-  otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 DdNode *
 Ntr_getStateCube(
   DdManager * dd,
@@ -1485,7 +1456,7 @@ Ntr_getStateCube(
     if (filename == NULL) {
 	/* Pick one random minterm. */
 	for (i = 0; i < net->nlatches; i++) {
-	    state[i] = (char) ((Cudd_Random() & 0x2000) ? '1' : '0');
+	    state[i] = (char) ((Cudd_Random(dd) & 0x2000) ? '1' : '0');
 	}
     } else {
 	if ((fp = fopen(filename,"r")) == NULL) {
@@ -1516,7 +1487,7 @@ Ntr_getStateCube(
 
     Cudd_Ref(cube);
     for (i = 0; i < net->nlatches; i++) {
-	if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+	if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 	    Cudd_RecursiveDeref(dd,cube);
 	    FREE(state);
 	    return(NULL);
@@ -1550,25 +1521,22 @@ Ntr_getStateCube(
 } /* end of Ntr_getStateCube */
 
 
-/**Function********************************************************************
+/**
+  @brief Poor man's outer envelope computation.
 
-  Synopsis    [Poor man's outer envelope computation.]
+  @details Based on the monolithic transition relation.
 
-  Description [ Poor man's outer envelope computation based on the
-  monolithic transition relation. Returns 1 in case of success; 0
-  otherwise.]
+  @return 1 in case of success; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_Envelope(
-  DdManager * dd /* DD manager */,
-  NtrPartTR * TR /* transition relation */,
-  FILE * dfp /* pointer to file for DD dump */,
-  NtrOptions * option /* program options */)
+  DdManager * dd /**< %DD manager */,
+  NtrPartTR * TR /**< transition relation */,
+  FILE * dfp /**< pointer to file for %DD dump */,
+  NtrOptions * option /**< program options */)
 {
     DdNode **x;	/* array of x variables */
     DdNode **y;	/* array of y variables */
@@ -1587,6 +1555,7 @@ Ntr_Envelope(
 
     one = Cudd_ReadOne(dd);
     retval = Cudd_SetVarMap(dd,x,y,ns);
+    if (retval == 0) return(0);
 
     /* Initialize From. */
     envelope = one;
@@ -1610,8 +1579,9 @@ Ntr_Envelope(
 	/* Prepare for new iteration. */
 	Cudd_RecursiveDeref(dd,oldEnvelope);
 	(void) fprintf(stdout,"Envelope[%d]%s",depth+1,(pr>0)? "" : "\n");
-	Cudd_PrintDebug(dd,envelope,ns,pr);
-
+        if (pr > 0 ) {
+            Cudd_PrintSummary(dd, envelope, ns, 1 /* exponential format */);
+        }
     }
     /* Clean up. */
     Cudd_RecursiveDeref(dd,oldEnvelope);
@@ -1657,18 +1627,14 @@ Ntr_Envelope(
 } /* end of Ntr_Envelope */
 
 
-/**Function********************************************************************
+/**
+  @brief Maximum 0-1 flow between source and sink states.
 
-  Synopsis    [Maximum 0-1 flow between source and sink states.]
+  @return 1 in case of success; 0 otherwise.
 
-  Description [Maximum 0-1 flow between source and sink
-  states. Returns 1 in case of success; 0 otherwise.]
+  @sideeffect Creates two new sets of variables.
 
-  SideEffects [Creates two new sets of variables.]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_maxflow(
   DdManager * dd,
@@ -1759,18 +1725,14 @@ endgame:
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Builds a positive cube of all the variables in x.
 
-  Synopsis    [Builds a positive cube of all the variables in x.]
+  @return a %BDD for the cube if successful; NULL otherwise.
 
-  Description [Builds a positive cube of all the variables in x. Returns
-  a BDD for the cube if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static DdNode *
 makecube(
   DdManager * dd,
@@ -1799,26 +1761,23 @@ makecube(
 } /* end of makecube */
 
 
-/**Function********************************************************************
+/**
+  @brief Initializes the count fields used to drop DDs.
 
-  Synopsis    [Initializes the count fields used to drop DDs.]
+  @details Before actually building the BDDs, we perform a DFS from
+  the outputs to initialize the count fields of the nodes.  The
+  initial value of the count field will normally coincide with the
+  fanout of the node.  However, if there are nodes with no path to any
+  primary output or next state variable, then the initial value of
+  count for some nodes will be less than the fanout. For primary
+  outputs and next state functions we add 1, so that we will never try
+  to free their DDs. The count fields of the nodes that are not
+  reachable from the outputs are set to -1.
 
-  Description [Initializes the count fields used to drop DDs.
-  Before actually building the BDDs, we perform a DFS from the outputs
-  to initialize the count fields of the nodes.  The initial value of the
-  count field will normally coincide with the fanout of the node.
-  However, if there are nodes with no path to any primary output or next
-  state variable, then the initial value of count for some nodes will be
-  less than the fanout. For primary outputs and next state functions we
-  add 1, so that we will never try to free their DDs. The count fields
-  of the nodes that are not reachable from the outputs are set to -1.]
+  @sideeffect Changes the count fields of the network nodes. Uses the
+  visited fields.
 
-  SideEffects [Changes the count fields of the network nodes. Uses the
-  visited fields.]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 ntrInitializeCount(
   BnetNetwork * net,
@@ -1829,7 +1788,7 @@ ntrInitializeCount(
 
     if (option->node != NULL &&
 	option->closestCube == FALSE && option->dontcares == FALSE) {
-	if (!st_lookup(net->hash,option->node,&node)) {
+	if (!st_lookup(net->hash,option->node,(void **)&node)) {
 	    (void) fprintf(stdout, "Warning: node %s not found!\n",
 			   option->node);
 	} else {
@@ -1839,7 +1798,7 @@ ntrInitializeCount(
     } else {
 	if (option->stateOnly == FALSE) {
 	    for (i = 0; i < net->npos; i++) {
-		if (!st_lookup(net->hash,net->outputs[i],&node)) {
+		if (!st_lookup(net->hash,net->outputs[i],(void **)&node)) {
 		    (void) fprintf(stdout,
 				   "Warning: output %s is not driven!\n",
 				   net->outputs[i]);
@@ -1850,7 +1809,7 @@ ntrInitializeCount(
 	    }
 	}
 	for (i = 0; i < net->nlatches; i++) {
-	    if (!st_lookup(net->hash,net->latches[i][0],&node)) {
+	    if (!st_lookup(net->hash,net->latches[i][0],(void **)&node)) {
 		(void) fprintf(stdout,
 			       "Warning: latch input %s is not driven!\n",
 			       net->outputs[i]);
@@ -1875,18 +1834,15 @@ ntrInitializeCount(
 } /* end of ntrInitializeCount */
 
 
-/**Function********************************************************************
+/**
+  @brief Does a DFS from a node setting the count field.
 
-  Synopsis    [Does a DFS from a node setting the count field.]
+  @sideeffect Changes the count and visited fields of the nodes it
+  visits.
 
-  Description []
+  @see ntrLevelDFS
 
-  SideEffects [Changes the count and visited fields of the nodes it
-  visits.]
-
-  SeeAlso     [ntrLevelDFS]
-
-******************************************************************************/
+*/
 static void
 ntrCountDFS(
   BnetNetwork * net,
@@ -1904,7 +1860,7 @@ ntrCountDFS(
     node->visited = 1;
 
     for (i = 0; i < node->ninp; i++) {
-	if (!st_lookup(net->hash, node->inputs[i], &auxnd)) {
+	if (!st_lookup(net->hash, node->inputs[i], (void **)&auxnd)) {
 	    exit(2);
 	}
 	ntrCountDFS(net,auxnd);
@@ -1913,20 +1869,19 @@ ntrCountDFS(
 } /* end of ntrCountDFS */
 
 
-/**Function********************************************************************
+/**
+  @brief Computes the image of a set given a transition relation.
 
-  Synopsis    [Computes the image of a set given a transition relation.]
+  @details The image is returned in terms of the present state
+  variables; its reference count is already increased.
 
-  Description [Computes the image of a set given a transition relation.
-  Returns a pointer to the result if successful; NULL otherwise. The image is
-  returned in terms of the present state variables; its reference count is
-  already increased.]
+  @return a pointer to the result if successful; NULL otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [Ntr_Trav]
+  @see Ntr_Trav
 
-******************************************************************************/
+*/
 static DdNode *
 ntrImage(
   DdManager * dd,
@@ -2047,20 +2002,19 @@ ntrImage(
 } /* end of ntrImage */
 
 
-/**Function********************************************************************
+/**
+  @brief Computes the preimage of a set given a transition relation.
 
-  Synopsis    [Computes the preimage of a set given a transition relation.]
+  @details The preimage is returned in terms of the next state
+  variables; its reference count is already increased.
 
-  Description [Computes the preimage of a set given a transition relation.
-  Returns a pointer to the result if successful; NULL otherwise. The preimage
-  is returned in terms of the next state variables; its reference count is
-  already increased.]
+  @return a pointer to the result if successful; NULL otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [ntrImage Ntr_SCC]
+  @see ntrImage Ntr_SCC
 
-******************************************************************************/
+*/
 static DdNode *
 ntrPreimage(
   DdManager * dd,
@@ -2101,19 +2055,18 @@ ntrPreimage(
 } /* end of ntrPreimage */
 
 
-/**Function********************************************************************
+/**
+  @brief Chooses the initial states for a BFS step.
 
-  Synopsis    [Chooses the initial states for a BFS step.]
+  @details The reference count of the result is already incremented.
 
-  Description [Chooses the initial states for a BFS step. Returns a
-  pointer to the chose set if successful; NULL otherwise. The
-  reference count of the result is already incremented.]
+  @return a pointer to the chose set if successful; NULL otherwise.
 
-  SideEffects [none]
+  @sideeffect none
 
-  SeeAlso     [Ntr_Trav]
+  @see Ntr_Trav
 
-******************************************************************************/
+*/
 static DdNode *
 ntrChooseFrom(
   DdManager * dd,
@@ -2181,24 +2134,24 @@ ntrChooseFrom(
 } /* end of ntrChooseFrom */
 
 
-/**Function********************************************************************
+/**
+  @brief Updates the reached states after a traversal step.
 
-  Synopsis    [Updates the reached states after a traversal step.]
+  @details The reference count of the result is already incremented.
 
-  Description [Updates the reached states after a traversal
-  step. Returns a pointer to the new reached set if successful; NULL
-  otherwise. The reference count of the result is already incremented.]
+  @return a pointer to the new reached set if successful; NULL
+  otherwise.
 
-  SideEffects [The old reached set is dereferenced.]
+  @sideeffect The old reached set is dereferenced.
 
-  SeeAlso     [Ntr_Trav]
+  @see Ntr_Trav
 
-******************************************************************************/
+*/
 static DdNode *
 ntrUpdateReached(
-  DdManager * dd /* manager */,
-  DdNode * oldreached /* old reached state set */,
-  DdNode * to /* result of last image computation */)
+  DdManager * dd /**< manager */,
+  DdNode * oldreached /**< old reached state set */,
+  DdNode * to /**< result of last image computation */)
 {
     DdNode *reached;
 
@@ -2214,22 +2167,20 @@ ntrUpdateReached(
 } /* end of ntrUpdateReached */
 
 
-/**Function********************************************************************
+/**
+  @brief Analyzes the reached states after traversal to find
+  dependent latches.
 
-  Synopsis    [Analyzes the reached states after traversal to find
-  dependent latches.]
+  @details The algorithm is greedy and determines a local optimum, not
+  a global one.
 
-  Description [Analyzes the reached states after traversal to find
-  dependent latches.  Returns the number of latches that can be
-  eliminated because they are stuck at a constant value or are
-  dependent on others if successful; -1 otherwise. The algorithm is
-  greedy and determines a local optimum, not a global one.]
+  @return the number of latches that can be eliminated because they
+  are stuck at a constant value or are dependent on others if
+  successful; -1 otherwise.
 
-  SideEffects []
+  @see Ntr_Trav
 
-  SeeAlso     [Ntr_Trav]
-
-******************************************************************************/
+*/
 static int
 ntrLatchDependencies(
   DdManager *dd,
@@ -2277,7 +2228,7 @@ ntrLatchDependencies(
     (void) printf("Raw signatures (minStates = %g)\n", minStates);
     for (i = 0; i < net->nlatches; i++) {
 	int j = candidates[i];
-	if (!st_lookup(net->hash,net->latches[j][1],(char **) &node)) {
+	if (!st_lookup(net->hash,net->latches[j][1],(void **)&node)) {
 	    return(-1);
 	}
 	(void) printf("%s -> %g\n", node->name, signatures[node->dd->index]);
@@ -2288,13 +2239,13 @@ ntrLatchDependencies(
 	signatures[i] = (z >= 0.0) ? z : -z;	/* make positive */
     }
     staticNet = net;
-    qsort((void *)candidates,net->nlatches,sizeof(int),
-	  (DD_QSFP)ntrSignatureCompare2);
+    util_qsort(candidates,net->nlatches,sizeof(int),
+               (DD_QSFP)ntrSignatureCompare2);
 #if 0
     (void) printf("Cooked signatures\n");
     for (i = 0; i < net->nlatches; i++) {
 	int j = candidates[i];
-	if (!st_lookup(net->hash,net->latches[j][1],(char **) &node)) {
+	if (!st_lookup(net->hash,net->latches[j][1],(void **)&node)) {
 	    return(-1);
 	}
 	(void) printf("%s -> %g\n", node->name, signatures[node->dd->index]);
@@ -2305,7 +2256,7 @@ ntrLatchDependencies(
     /* Extract simple dependencies. */
     for (i = 0; i < net->nlatches; i++) {
 	int j = candidates[i];
-	if (!st_lookup(net->hash,net->latches[j][1],&node)) {
+	if (!st_lookup(net->hash,net->latches[j][1],(void **)&node)) {
 	    return(-1);
 	}
 	var = node->dd;
@@ -2345,7 +2296,7 @@ ntrLatchDependencies(
     for (i = 0; i < net->nlatches; i++) {
 	int j = candidates[i];
 	if (j == -1) continue;
-	if (!st_lookup(net->hash,net->latches[j][1],&node)) {
+	if (!st_lookup(net->hash,net->latches[j][1],(void **)&node)) {
 	    return(-1);
 	}
 	var = node->dd;
@@ -2366,7 +2317,7 @@ ntrLatchDependencies(
 	}
     }
     FREE(candidates);
-    if (howManySmall > 0) {
+    if (howManySmall > 0 && option->verb > 1) {
 	if (!Bnet_bddArrayDump(dd,net,(char *)"-",roots,onames,howManySmall,1))
 	    return(-1);
     }
@@ -2394,19 +2345,17 @@ ntrLatchDependencies(
 } /* end of ntrLatchDependencies */
 
 
-/**Function********************************************************************
+/**
+  @brief Eliminates dependent variables from a transition relation.
 
-  Synopsis    [Eliminates dependent variables from a transition relation.]
+  @return a simplified copy of the given transition relation if
+  successful; NULL otherwise.
 
-  Description [Eliminates dependent variables from a transition
-  relation.  Returns a simplified copy of the given transition
-  relation if successful; NULL otherwise.]
+  @sideeffect The modified set of states is returned as a side effect.
 
-  SideEffects [The modified set of states is returned as a side effect.]
+  @see ntrImage
 
-  SeeAlso     [ntrImage]
-
-******************************************************************************/
+*/
 static NtrPartTR *
 ntrEliminateDependencies(
   DdManager *dd,
@@ -2429,12 +2378,13 @@ ntrEliminateDependencies(
     /* Initialize the new transition relation by copying the old one. */
     T = Ntr_cloneTR(TR);
     if (T == NULL) return(NULL);
-    newstates = *states;
-    Cudd_Ref(newstates);
 
     /* Find and rank the candidate variables. */
+    newstates = *states;
+    Cudd_Ref(newstates);
     support = Cudd_Support(dd,newstates);
     if (support == NULL) {
+        Cudd_RecursiveDeref(dd,newstates);
 	Ntr_freeTR(dd,T);
 	return(NULL);
     }
@@ -2443,6 +2393,7 @@ ntrEliminateDependencies(
     candidates = ALLOC(int,nvars);
     if (candidates == NULL) {
 	Cudd_RecursiveDeref(dd,support);
+        Cudd_RecursiveDeref(dd,newstates);
 	Ntr_freeTR(dd,T);
 	return(NULL);
     }
@@ -2458,6 +2409,7 @@ ntrEliminateDependencies(
     signatures = Cudd_CofMinterm(dd,newstates);
     if (signatures == NULL) {
 	FREE(candidates);
+        Cudd_RecursiveDeref(dd,newstates);
 	Ntr_freeTR(dd,T);
 	return(NULL);
     }
@@ -2470,8 +2422,7 @@ ntrEliminateDependencies(
 	signatures[i] = (z < 0.0) ? -z : z;	/* make positive */
     }
     /* Sort candidates in decreasing order of signature. */
-    qsort((void *)candidates,nvars,sizeof(int),
-	  (DD_QSFP)ntrSignatureCompare);
+    util_qsort(candidates,nvars,sizeof(int), (DD_QSFP)ntrSignatureCompare);
     FREE(signatures);
 
     /* Now process the candidates in the given order. */
@@ -2520,25 +2471,27 @@ ntrEliminateDependencies(
     /* Quantify out of states variables that no longer appear in any part. */
     Cudd_RecursiveDeref(dd,*states);
     *states = Cudd_bddExistAbstract(dd,newstates,T->preiabs);
-    if (*states == NULL) return(NULL); Cudd_Ref(*states);
+    if (*states == NULL) {
+        Cudd_RecursiveDeref(dd,newstates);
+        return(NULL);
+    }
+    Cudd_Ref(*states);
     Cudd_RecursiveDeref(dd,newstates);
     return(T);
 
 } /* end of ntrEliminateDependencies */
 
 
-/**Function********************************************************************
+/**
+  @brief Updates the quantification schedule of a transition relation.
 
-  Synopsis    [Updates the quantification schedule of a transition relation.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Updates the quantification schedule of a transition relation.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see ntrEliminateDependencies
 
-  SeeAlso     [ntrEliminateDependencies]
-
-******************************************************************************/
+*/
 static int
 ntrUpdateQuantificationSchedule(
   DdManager *dd,
@@ -2579,7 +2532,7 @@ ntrUpdateQuantificationSchedule(
     /* Sort parts so that parts that differ only
     ** in the index of the next state variable are contiguous. */
     staticPart = T->part;
-    qsort((void *)position,nparts,sizeof(int), (DD_QSFP)ntrPartCompare);
+    util_qsort(position,nparts,sizeof(int), (DD_QSFP)ntrPartCompare);
     /* Extract repeated parts. */
     extracted = 0;
     for (i = 0; i < nparts - 1; i += j) {
@@ -2602,6 +2555,7 @@ ntrUpdateQuantificationSchedule(
 	    eq = tmp;
 	    Cudd_RecursiveDeref(dd,T->part[pij]);
 	    Cudd_RecursiveDeref(dd,T->icube[pij]);
+	    Cudd_RecursiveDeref(dd,T->pcube[pij]);
 	    Cudd_RecursiveDeref(dd,T->nscube[pij]);
 	    T->part[pij] = NULL;
 	    j++;
@@ -2621,6 +2575,7 @@ ntrUpdateQuantificationSchedule(
 	if (T->part[i] != NULL) {
 	    T->part[j] = T->part[i];
 	    T->icube[j] = T->icube[i];
+            T->pcube[j] = T->pcube[i];
 	    T->nscube[j] = T->nscube[i];
 	    j++;
 	}
@@ -2699,7 +2654,7 @@ ntrUpdateQuantificationSchedule(
 		if (schedule[k] == row[j]) {
 		    cost++;
 		} else {
-		    flags[k] &= matrix[row[j]][k] == 0;
+		    flags[k] &= (matrix[row[j]][k] == 0);
 		    cost -= flags[k];
 		}
 	    }
@@ -2717,7 +2672,7 @@ ntrUpdateQuantificationSchedule(
 	for (j = posn + 1; j < nparts; j++) {
 	    for (k = 0; k < nvars; k++) {
 		if (schedule[k] == row[j]) {
-		    flags[k] |= matrix[i][k] == 1;
+		    flags[k] |= (matrix[i][k] == 1);
 		    cost -= flags[k] == 0;
 		} else {
 		    cost += flags[k];
@@ -2818,16 +2773,14 @@ ntrUpdateQuantificationSchedule(
 } /* end of ntrUpdateQuantificationSchedule */
 
 
-/**Function********************************************************************
+/**
+  @brief Comparison function used by qsort.
 
-  Synopsis    [Comparison function used by qsort.]
+  @details Used to order the variables according to their signatures.
 
-  Description [Comparison function used by qsort to order the
-  variables according to their signatures.]
+  @sideeffect None
 
-  SideEffects [None]
-
-******************************************************************************/
+*/
 static int
 ntrSignatureCompare(
   int * ptrX,
@@ -2840,16 +2793,14 @@ ntrSignatureCompare(
 } /* end of ntrSignatureCompare */
 
 
-/**Function********************************************************************
+/**
+  @brief Comparison function used by qsort.
 
-  Synopsis    [Comparison function used by qsort.]
+  @details Used to order the variables according to their signatures.
 
-  Description [Comparison function used by qsort to order the
-  variables according to their signatures.]
+  @sideeffect None
 
-  SideEffects [None]
-
-******************************************************************************/
+*/
 static int
 ntrSignatureCompare2(
   int * ptrX,
@@ -2857,11 +2808,11 @@ ntrSignatureCompare2(
 {
     BnetNode *node;
     int x,y;
-    if (!st_lookup(staticNet->hash,staticNet->latches[*ptrX][1],&node)) {
+    if (!st_lookup(staticNet->hash,staticNet->latches[*ptrX][1],(void**)&node)) {
 	return(0);
     }
     x = node->dd->index;
-    if (!st_lookup(staticNet->hash,staticNet->latches[*ptrY][1],&node)) {
+    if (!st_lookup(staticNet->hash,staticNet->latches[*ptrY][1],(void**)&node)) {
 	return(0);
     }
     y = node->dd->index;
@@ -2872,16 +2823,14 @@ ntrSignatureCompare2(
 } /* end of ntrSignatureCompare2 */
 
 
-/**Function********************************************************************
+/**
+  @brief Comparison function used by qsort.
 
-  Synopsis    [Comparison function used by qsort.]
+  @details Used to order the parts according to their %BDD addresses.
 
-  Description [Comparison function used by qsort to order the
-  parts according to the BDD addresses.]
+  @sideeffect None
 
-  SideEffects [None]
-
-******************************************************************************/
+*/
 static int
 ntrPartCompare(
   int * ptrX,
@@ -2894,18 +2843,14 @@ ntrPartCompare(
 } /* end of ntrPartCompare */
 
 
-/**Function********************************************************************
+/**
+  @brief Allocates a matrix of char's.
 
-  Synopsis    [Allocates a matrix.]
+  @return a pointer to the matrix if successful; NULL otherwise.
 
-  Description [Allocates a matrix of char's. Returns a pointer to the matrix
-  if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static char **
 ntrAllocMatrix(
   int nrows,
@@ -2932,17 +2877,12 @@ ntrAllocMatrix(
 } /* end of ntrAllocMatrix */
 
 
-/**Function********************************************************************
+/**
+  @brief Frees a matrix of char's.
 
-  Synopsis    [Frees a matrix of char's.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 ntrFreeMatrix(
   char **matrix)
@@ -2954,18 +2894,13 @@ ntrFreeMatrix(
 } /* end of ntrFreeMatrix */
 
 
-/**Function********************************************************************
+/**
+  @brief Sorts parts according to given permutation.
 
-  Synopsis    [Sorts parts according to given permutation.]
+  @sideeffect The permutation arrays are turned into the identity
+  permutations.
 
-  Description []
-
-  SideEffects [The permutation arrays are turned into the identity
-  permutations.]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 ntrPermuteParts(
   DdNode **a,
@@ -2990,3 +2925,33 @@ ntrPermuteParts(
     return;
 
 } /* end of ntrPermuteParts */
+
+
+/**
+  @brief Calls Cudd_Ref on its first argument.
+*/
+static void
+ntrIncreaseRef(
+  void * e,
+  void * arg)
+{
+  DdNode * node = (DdNode *) e;
+  (void) arg; /* avoid warning */
+  Cudd_Ref(node);
+
+} /* end of ntrIncreaseRef */
+
+
+/**
+  @brief Calls Cudd_RecursiveDeref on its first argument.
+*/
+static void
+ntrDecreaseRef(
+  void * e,
+  void * arg)
+{
+  DdNode * node = (DdNode *) e;
+  DdManager * dd = (DdManager *) arg;
+  Cudd_RecursiveDeref(dd, node);
+
+} /* end of ntrIncreaseRef */

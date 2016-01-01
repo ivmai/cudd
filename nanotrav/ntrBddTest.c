@@ -1,18 +1,14 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [ntrBddTest.c]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief %BDD test functions for the nanotrav program.
 
-  Synopsis    [BDD test functions for the nanotrav program.]
+  @author Fabio Somenzi
 
-  Description []
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,9 +38,10 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "ntr.h"
 #include "cuddInt.h"
@@ -65,15 +62,12 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrBddTest.c,v 1.22 2012/02/05 01:53:01 fabio Exp fabio $";
-#endif
 
 /*---------------------------------------------------------------------------*/
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -93,31 +87,31 @@ static DdNode * ntrCompress1 (DdManager *dd, DdNode *f, int nvars, int threshold
 static DdNode * ntrCompress2 (DdManager *dd, DdNode *f, int nvars, int threshold);
 static BnetNode * ntrNodeIsBuffer (BnetNode *nd, st_table *hash);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Tests %BDD minimization functions.
 
-  Synopsis    [Tests BDD minimization functions.]
-
-  Description [Tests BDD minimization functions, including
+  @details Tests %BDD minimization functions, including
   leaf-identifying compaction, squeezing, and restrict. This function
   uses as constraint the first output of net2 and computes positive
   and negative cofactors of all the outputs of net1. For each
   cofactor, it checks whether compaction was safe (cofactor not larger
   than original function) and that the expansion based on each
   minimization function (used as a generalized cofactor) equals the
-  original function.  Returns 1 if successful; 0 otherwise.]
+  original function.
 
-  SideEffects [None]
+  @return 1 if successful; 0 otherwise.
 
-  SeeAlso     []
+  @sideeffect None
 
-******************************************************************************/
+*/
 int
 Ntr_TestMinimization(
   DdManager * dd,
@@ -139,7 +133,7 @@ Ntr_TestMinimization(
     /* Use largest output of second network as constraint. */
     csize = -1;
     for (i = 0; i < net2->noutputs; i++) {
-	if (!st_lookup(net2->hash,net2->outputs[i],&node)) {
+	if (!st_lookup(net2->hash,net2->outputs[i],(void **)&node)) {
 	    return(0);
 	}
 	nsize = Cudd_DagSize(node->dd);
@@ -155,7 +149,7 @@ Ntr_TestMinimization(
 
     if (option->node == NULL) {
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    f = node->dd;
@@ -165,7 +159,7 @@ Ntr_TestMinimization(
 	    if (result == 0) return(0);
 	}
     } else {
-	if (!st_lookup(net1->hash,option->node,&node)) {
+	if (!st_lookup(net1->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	f = node->dd;
@@ -179,18 +173,14 @@ Ntr_TestMinimization(
 } /* end of Ntr_TestMinimization */
 
 
-/**Function********************************************************************
+/**
+  @brief Tests %BDD density-related functions.
 
-  Synopsis    [Tests BDD density-related functions.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Tests BDD density-related functions.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_TestDensity(
   DdManager * dd,
@@ -207,7 +197,7 @@ Ntr_TestDensity(
     (void) printf("Testing BDD density-related algorithms\n");
     if (option->node == NULL) {
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    f = node->dd;
@@ -216,7 +206,7 @@ Ntr_TestDensity(
 	    if (result == 0) return(0);
 	}
     } else {
-	if (!st_lookup(net1->hash,option->node,&node)) {
+	if (!st_lookup(net1->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	f = node->dd;
@@ -230,18 +220,14 @@ Ntr_TestDensity(
 } /* end of Ntr_TestDensity */
 
 
-/**Function********************************************************************
+/**
+  @brief Tests %BDD decomposition functions.
 
-  Synopsis    [Tests BDD decomposition functions.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Tests BDD decomposition functions.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_TestDecomp(
   DdManager * dd,
@@ -258,7 +244,7 @@ Ntr_TestDecomp(
     (void) printf("Testing BDD decomposition algorithms\n");
     if (option->node == NULL) {
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    f = node->dd;
@@ -267,7 +253,7 @@ Ntr_TestDecomp(
 	    if (result == 0) return(0);
 	}
     } else {
-	if (!st_lookup(net1->hash,option->node,&node)) {
+	if (!st_lookup(net1->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	f = node->dd;
@@ -281,23 +267,20 @@ Ntr_TestDecomp(
 } /* end of ntrTestDecomp */
 
 
-/**Function********************************************************************
+/**
+  @brief Verify equivalence of combinational networks.
 
-  Synopsis    [Verify equivalence of combinational networks.]
+  @details The two networks are supposed to have the same names for
+  inputs and outputs. The only exception is that the second network
+  may miss output buffers that are present in the first network. This
+  function tries to match both the output and the input of the buffer.
 
-  Description [Verify equivalence of combinational networks.
-  Returns 1 if successful and if the networks are equivalent; -1 if
+  @return 1 if successful and if the networks are equivalent; -1 if
   successful, but the networks are not equivalent; 0 otherwise.
-  The two networks are supposed to have the same names for inputs and
-  outputs. The only exception is that the second network may miss
-  output buffers that are present in the first network. This function tries
-  to match both the output and the input of the buffer.]
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_VerifyEquivalence(
   DdManager * dd,
@@ -328,16 +311,16 @@ Ntr_VerifyEquivalence(
     pr = option->verb;
     for (i = 0; i < net1->noutputs; i++) {
 	oname = net1->outputs[i];
-	if (!st_lookup(net1->hash,oname,&node)) {
+	if (!st_lookup(net1->hash,oname,(void **)&node)) {
 	    return(0);
 	}
 	odd1 = node->dd;
 	(void) printf("%s", oname);
 	Cudd_PrintDebug(dd, node->dd, Cudd_ReadSize(dd), pr);
-	if (!st_lookup(net2->hash,oname,&node)) {
+	if (!st_lookup(net2->hash,oname,(void **)&node)) {
 	    BnetNode *inpnd;
 	    if ((inpnd = ntrNodeIsBuffer(node,net1->hash)) == NULL ||
-		!st_lookup(net2->hash,inpnd->name,&node)) {
+		!st_lookup(net2->hash,inpnd->name,(void **)&node)) {
 		(void) printf("Output %s missing from network %s\n",
 			      oname, net2->name);
 		return(-1);
@@ -357,18 +340,14 @@ Ntr_VerifyEquivalence(
 } /* end of Ntr_VerifyEquivalence */
 
 
-/**Function********************************************************************
+/**
+  @brief Tests %BDD cofactor estimate functions.
 
-  Synopsis    [Tests BDD cofactor estimate functions.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Tests BDD cofactor estimate functions.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_TestCofactorEstimate(
   DdManager * dd,
@@ -385,7 +364,7 @@ Ntr_TestCofactorEstimate(
     (void) printf("Testing BDD cofactor estimation algorithms\n");
     if (option->node == NULL) {
 	for (i = 0; i < net->noutputs; i++) {
-	    if (!st_lookup(net->hash,net->outputs[i],&node)) {
+	    if (!st_lookup(net->hash,net->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    f = node->dd;
@@ -394,7 +373,7 @@ Ntr_TestCofactorEstimate(
 	    if (result == 0) return(0);
 	}
     } else {
-	if (!st_lookup(net->hash,option->node,&node)) {
+	if (!st_lookup(net->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	f = node->dd;
@@ -408,18 +387,14 @@ Ntr_TestCofactorEstimate(
 } /* end of Ntr_TestCofactorEstimate */
 
 
-/**Function********************************************************************
+/**
+  @brief Tests %BDD clipping functions.
 
-  Synopsis    [Tests BDD clipping functions.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Tests BDD clipping functions.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_TestClipping(
   DdManager * dd,
@@ -441,7 +416,7 @@ Ntr_TestClipping(
     /* Use largest output of second network as second operand. */
     gsize = -1;
     for (i = 0; i < net2->noutputs; i++) {
-	if (!st_lookup(net2->hash,net2->outputs[i],&node)) {
+	if (!st_lookup(net2->hash,net2->outputs[i],(void **)&node)) {
 	    return(0);
 	}
 	nsize = Cudd_DagSize(node->dd);
@@ -457,7 +432,7 @@ Ntr_TestClipping(
 
     if (option->node == NULL) {
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    f = node->dd;
@@ -466,7 +441,7 @@ Ntr_TestClipping(
 	    if (result == 0) return(0);
 	}
     } else {
-	if (!st_lookup(net1->hash,option->node,&node)) {
+	if (!st_lookup(net1->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	f = node->dd;
@@ -480,21 +455,19 @@ Ntr_TestClipping(
 } /* end of Ntr_TestClipping */
 
 
-/**Function********************************************************************
+/**
+  @brief Tests %BDD equivalence and containment with don't cares.
 
-  Synopsis    [Tests BDD equivalence and containment with don't cares.]
-
-  Description [Tests functions for BDD equivalence and containment
+  @details Tests functions for %BDD equivalence and containment
   with don't cares, including Cudd_EquivDC and Cudd_bddLeqUnless. This
   function uses as care set the first output of net2 and checkes
   equivalence and containment for of all the output pairs of net1.
-  Returns 1 if successful; 0 otherwise.]
 
-  SideEffects [None]
+  @return 1 if successful; 0 otherwise.
 
-  SeeAlso     []
+  @sideeffect None
 
-******************************************************************************/
+*/
 int
 Ntr_TestEquivAndContain(
   DdManager *dd,
@@ -516,7 +489,7 @@ Ntr_TestEquivAndContain(
     /* Use largest output of second network as constraint. */
     dsize = -1;
     for (i = 0; i < net2->noutputs; i++) {
-	if (!st_lookup(net2->hash,net2->outputs[i],&node1)) {
+	if (!st_lookup(net2->hash,net2->outputs[i],(void **)&node1)) {
 	    return(0);
 	}
 	nsize = Cudd_DagSize(node1->dd);
@@ -532,13 +505,13 @@ Ntr_TestEquivAndContain(
 
     if (option->node == NULL) {
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node1)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node1)) {
 		return(0);
 	    }
 	    f = node1->dd;
 	    if (f == NULL) return(0);
 	    for (j = 0; j < net1->noutputs; j++) {
-		if (!st_lookup(net1->hash,net1->outputs[j],&node2)) {
+		if (!st_lookup(net1->hash,net1->outputs[j],(void **)&node2)) {
 		    return(0);
 		}
 		g = node2->dd;
@@ -549,13 +522,13 @@ Ntr_TestEquivAndContain(
 	    }
 	}
     } else {
-	if (!st_lookup(net1->hash,option->node,&node1)) {
+	if (!st_lookup(net1->hash,option->node,(void **)&node1)) {
 	    return(0);
 	}
 	f = node1->dd;
 	if (f == NULL) return(0);
 	for (j = 0; j < net1->noutputs; j++) {
-	    if (!st_lookup(net1->hash,net1->outputs[j],&node2)) {
+	    if (!st_lookup(net1->hash,net1->outputs[j],(void **)&node2)) {
 		return(0);
 	    }
 	    g = node2->dd;
@@ -571,18 +544,14 @@ Ntr_TestEquivAndContain(
 } /* end of Ntr_TestEquivAndContain */
 
 
-/**Function********************************************************************
+/**
+  @brief Tests the Cudd_bddClosestCube function.
 
-  Synopsis    [Tests the Cudd_bddClosestCube function.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Tests the Cudd_bddClosestCube function.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_TestClosestCube(
   DdManager * dd,
@@ -608,7 +577,7 @@ Ntr_TestClosestCube(
     calls = Cudd_ReadRecursiveCalls(dd);
     if (option->node == NULL) {
 	for (i = 0; i < net->noutputs; i++) {
-	    if (!st_lookup(net->hash,net->outputs[i],&node1)) {
+	    if (!st_lookup(net->hash,net->outputs[i],(void **)&node1)) {
 		FREE(vars);
 		return(0);
 	    }
@@ -618,7 +587,7 @@ Ntr_TestClosestCube(
 		return(0);
 	    }
 	    for (j = 0; j < net->noutputs; j++) {
-		if (!st_lookup(net->hash,net->outputs[j],&node2)) {
+		if (!st_lookup(net->hash,net->outputs[j],(void **)&node2)) {
 		    FREE(vars);
 		    return(0);
 		}
@@ -636,7 +605,7 @@ Ntr_TestClosestCube(
 	    }
 	}
     } else {
-	if (!st_lookup(net->hash,option->node,&node1)) {
+	if (!st_lookup(net->hash,option->node,(void **)&node1)) {
 	    FREE(vars);
 	    return(0);
 	}
@@ -646,7 +615,7 @@ Ntr_TestClosestCube(
 	    return(0);
 	}
 	for (j = 0; j < net->noutputs; j++) {
-	    if (!st_lookup(net->hash,net->outputs[j],&node2)) {
+	    if (!st_lookup(net->hash,net->outputs[j],(void **)&node2)) {
 		FREE(vars);
 		return(0);
 	    }
@@ -671,18 +640,14 @@ Ntr_TestClosestCube(
 } /* end of Ntr_TestClosestCube */
 
 
-/**Function********************************************************************
+/**
+  @brief Tests extraction of two-literal clauses.
 
-  Synopsis    [Tests extraction of two-literal clauses.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Tests extraction of two-literal clauses.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_TestTwoLiteralClauses(
   DdManager * dd,
@@ -706,14 +671,14 @@ Ntr_TestTwoLiteralClauses(
 
     /* Find the input names. */
     for (i = 0; i < net1->ninputs; i++) {
-	if (!st_lookup(net1->hash,net1->inputs[i],&node)) {
+	if (!st_lookup(net1->hash,net1->inputs[i],(void **)&node)) {
 	    FREE(inames);
 	    return(0);
 	}
 	inames[node->var] = net1->inputs[i];
     }
     for (i = 0; i < net1->nlatches; i++) {
-	if (!st_lookup(net1->hash,net1->latches[i][1],&node)) {
+	if (!st_lookup(net1->hash,net1->latches[i][1],(void **)&node)) {
 	    FREE(inames);
 	    return(0);
 	}
@@ -723,7 +688,7 @@ Ntr_TestTwoLiteralClauses(
     (void) printf("Testing extraction of two literal clauses\n");
     if (option->node == NULL) {
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    f = node->dd;
@@ -739,7 +704,7 @@ Ntr_TestTwoLiteralClauses(
 	    }
 	}
     } else {
-	if (!st_lookup(net1->hash,option->node,&node)) {
+	if (!st_lookup(net1->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	f = node->dd;
@@ -761,18 +726,14 @@ Ntr_TestTwoLiteralClauses(
 } /* end of Ntr_TestTwoLiteralClauses */
 
 
-/**Function********************************************************************
+/**
+  @brief Test char-to-vect conversion.
 
-  Synopsis    [Test char-to-vect conversion.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Test char-to-vect conversion.  Returns 1 if successful;
-  0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Ntr_TestCharToVect(
   DdManager * dd,
@@ -795,7 +756,7 @@ Ntr_TestCharToVect(
     } else if (option->node == NULL) {
 	result = 1;
 	for (i = 0; i < net1->noutputs; i++) {
-	    if (!st_lookup(net1->hash,net1->outputs[i],&node)) {
+	    if (!st_lookup(net1->hash,net1->outputs[i],(void **)&node)) {
 		return(0);
 	    }
 	    f = node->dd;
@@ -805,7 +766,7 @@ Ntr_TestCharToVect(
 	    if (result == 0) return(0);
 	}
     } else {
-	if (!st_lookup(net1->hash,option->node,&node)) {
+	if (!st_lookup(net1->hash,option->node,(void **)&node)) {
 	    return(0);
 	}
 	f = node->dd;
@@ -826,18 +787,16 @@ Ntr_TestCharToVect(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one %BDD for Ntr_TestMinimization.
 
-  Synopsis    [Processes one BDD for Ntr_TestMinimization.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Processes one BDD for Ntr_TestMinimization.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_TestMinimization
 
-  SeeAlso     [Ntr_TestMinimization]
-
-******************************************************************************/
+*/
 static int
 ntrTestMinimizationAux(
   DdManager * dd,
@@ -1180,18 +1139,16 @@ ntrTestMinimizationAux(
 } /* end of ntrTestMinimizationAux */
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one %BDD for Ntr_TestDensity.
 
-  Synopsis    [Processes one BDD for Ntr_TestDensity.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Processes one BDD for Ntr_TestDensity.  Returns 1 if
-  successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_TestDensity ntrCompress1
 
-  SeeAlso     [Ntr_TestDensity ntrCompress1]
-
-******************************************************************************/
+*/
 static int
 ntrTestDensityAux(
   DdManager * dd,
@@ -1391,18 +1348,16 @@ ntrTestDensityAux(
 } /* end of ntrTestDensityAux */
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one %BDD for Ntr_TestDecomp.
 
-  Synopsis    [Processes one BDD for Ntr_TestDecomp.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Processes one BDD for Ntr_TestDecomp.  Returns 1 if
-  successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_TestDecomp
 
-  SeeAlso     [Ntr_TestDecomp]
-
-******************************************************************************/
+*/
 static int
 ntrTestDecompAux(
   DdManager * dd,
@@ -1583,18 +1538,14 @@ ntrTestDecompAux(
 } /* end of ntrTestDecompAux */
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one %BDD for Ntr_TestCofactorEstimate.
 
-  Synopsis    [Processes one BDD for Ntr_TestCofactorEstimate.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Processes one BDD for Ntr_TestCofactorEstimate.  Returns 1 if
-  successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int
 ntrTestCofEstAux(
   DdManager * dd,
@@ -1673,18 +1624,18 @@ ntrTestCofEstAux(
 } /* end of ntrTestCofEstAux */
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one %BDD for Ntr_TestClipping.
 
-  Synopsis    [Processes one BDD for Ntr_TestClipping.]
+  @details It checks whether clipping was correct.
 
-  Description [Processes one BDD for Ntr_TestClipping.  It checks whether
-  clipping was correct.  Returns 1 if successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [Ntr_TestClipping]
+  @see Ntr_TestClipping
 
-******************************************************************************/
+*/
 static int
 ntrTestClippingAux(
   DdManager * dd,
@@ -1844,18 +1795,16 @@ ntrTestClippingAux(
 
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one triplet of BDDs for Ntr_TestEquivAndContain.
 
-  Synopsis    [Processes one triplet of BDDs for Ntr_TestEquivAndContain.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Processes one triplet of BDDs for Ntr_TestEquivAndContain.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_TestEquivAndContain
 
-  SeeAlso     [Ntr_TestEquivAndContain]
-
-******************************************************************************/
+*/
 static int
 ntrTestEquivAndContainAux(
   DdManager *dd,
@@ -2000,18 +1949,16 @@ ntrTestEquivAndContainAux(
 } /* end of ntrTestEquivAndContainAux */
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one pair of BDDs for Ntr_TestClosestCube.
 
-  Synopsis    [Processes one pair of BDDs for Ntr_TestClosestCube.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Processes one pair of BDDs for Ntr_TestClosestCube.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_TestClosestCube
 
-  SeeAlso     [Ntr_TestClosestCube]
-
-******************************************************************************/
+*/
 static int
 ntrTestClosestCubeAux(
   DdManager *dd,
@@ -2129,18 +2076,16 @@ ntrTestClosestCubeAux(
 } /* end of ntrTestClosestCubeAux */
 
 
-/**Function********************************************************************
+/**
+  @brief Processes one BDDs for Ntr_TestCharToVect.
 
-  Synopsis    [Processes one BDDs for Ntr_TestCharToVect.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Processes one BDD for Ntr_TestCharToVect.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Ntr_TestCharToVect
 
-  SeeAlso     [Ntr_TestCharToVect]
-
-******************************************************************************/
+*/
 static int
 ntrTestCharToVect(
   DdManager * dd,
@@ -2187,18 +2132,16 @@ ntrTestCharToVect(
 
 
 #if 0
-/**Function********************************************************************
+/**
+  @brief Try hard to squeeze a %BDD.
 
-  Synopsis    [Try hard to squeeze a BDD.]
+  @return a pointer to the squeezed %BDD if successful; NULL otherwise.
 
-  Description [Try hard to squeeze a BDD.
-  Returns a pointer to the squeezed BDD if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see ntrTestDensityAux Cudd_SubsetCompress
 
-  SeeAlso     [ntrTestDensityAux Cudd_SubsetCompress]
-
-******************************************************************************/
+*/
 static DdNode *
 ntrCompress1(
   DdManager * dd,
@@ -2234,18 +2177,16 @@ ntrCompress1(
 #endif
 
 
-/**Function********************************************************************
+/**
+  @brief Try hard to squeeze a %BDD.
 
-  Synopsis    [Try hard to squeeze a BDD.]
+  @return a pointer to the squeezed %BDD if successful; NULL otherwise.
 
-  Description [Try hard to squeeze a BDD.
-  Returns a pointer to the squeezed BDD if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see ntrTestDensityAux Cudd_SubsetCompress
 
-  SeeAlso     [ntrTestDensityAux Cudd_SubsetCompress]
-
-******************************************************************************/
+*/
 static DdNode *
 ntrCompress2(
   DdManager * dd,
@@ -2288,18 +2229,15 @@ ntrCompress2(
 } /* end of ntrCompress2 */
 
 
-/**Function********************************************************************
+/**
+  @brief Checks whether node is a buffer.
 
-  Synopsis    [Checks whether node is a buffer.]
+  @return a pointer to the input node if nd is a buffer; NULL
+  otherwise.
 
-  Description [Checks whether node is a buffer. Returns a pointer to the
-  input node if nd is a buffer; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static BnetNode *
 ntrNodeIsBuffer(
   BnetNode *nd,
@@ -2308,7 +2246,7 @@ ntrNodeIsBuffer(
     BnetNode *inpnd;
 
     if (nd->ninp != 1) return(0);
-    if (!st_lookup(hash, nd->inputs[0], &inpnd)) return(0);
+    if (!st_lookup(hash, nd->inputs[0], (void **) &inpnd)) return(0);
 
     return(nd->dd == inpnd->dd ? inpnd : NULL);
 

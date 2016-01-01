@@ -1,18 +1,18 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [ntrShort.c]
+  @ingroup nanotrav
 
-  PackageName [ntr]
+  @brief Symbolic shortest paths algorithms.
 
-  Synopsis    [Symbolic shortest paths algorithms.]
-
-  Description [This file contains the functions that implement the
+  @details This file contains the functions that implement the
   symbolic version of several shortest path algorithms described in the
-  JFM paper on ADDs.]
+  JFM paper on ADDs.
 
-  Author      [Fabio Somenzi, Iris Bahar]
+  @author Fabio Somenzi, Iris Bahar
 
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,9 +42,10 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "ntr.h"
 #include "cuddInt.h"
@@ -65,15 +66,12 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: ntrShort.c,v 1.5 2012/02/05 01:53:01 fabio Exp fabio $";
-#endif
 
 /*---------------------------------------------------------------------------*/
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -83,17 +81,17 @@ static DdNode * ntrBellman (DdManager *dd, DdNode *D, DdNode *source, DdNode **x
 static DdNode * ntrWarshall (DdManager *dd, DdNode *D, DdNode **x, DdNode **y, int vars, int pr);
 static DdNode * ntrSquare (DdManager *dd, DdNode *D, DdNode **x, DdNode **y, DdNode **z, int vars, int pr, int st);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
-/**Function********************************************************************
+/**
+  @brief Computes shortest paths in a state graph.
 
-  Synopsis    [Computes shortest paths in a state graph.]
-
-  Description [Computes shortest paths in the state transition graph of
+  @details Computes shortest paths in the state transition graph of
   a network.  Three methods are availabe:
   <ul>
   <li> Bellman-Ford algorithm for single-source shortest paths; the
@@ -102,14 +100,12 @@ static DdNode * ntrSquare (DdManager *dd, DdNode *D, DdNode **x, DdNode **y, DdN
   <li> Floyd-Warshall algorithm for all-pair shortest paths.
   <li> Repeated squaring algorithm for all-pair shortest paths.
   </ul>
-  The function returns 1 in case of success; 0 otherwise.
-  ]
 
-  SideEffects [ADD variables are created in the manager.]
+  @return 1 in case of success; 0 otherwise.
 
-  SeeAlso     []
+  @sideeffect %ADD variables are created in the manager.
 
-******************************************************************************/
+*/
 int
 Ntr_ShortestPaths(
   DdManager * dd,
@@ -243,29 +239,27 @@ Ntr_ShortestPaths(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Bellman-Ford algorithm for single-source shortest paths.
 
-  Synopsis    [Bellman-Ford algorithm for single-source shortest paths.]
+  @return the vector of the distances of all states from the initial
+  states.
 
-  Description [Bellman-Ford algorithm for single-source shortest
-  paths.  Returns the vector of the distances of all states from the
-  initial states.  In case of multiple initial states the distance for
+  @details In case of multiple initial states the distance for
   each state is from the nearest initial state.  Negative-weight
   cycles are detected, though only in the naive way.  (Lack of
   convergence after nodes-1 iterations.)  In such a case, a constant
-  ADD with value minus infinity is returned.  Bellman-Ford is based on
+  %ADD with value minus infinity is returned.  Bellman-Ford is based on
   matrix-vector multiplication.  The matrix is the distance matrix
   D(x,y), such that D(a,b) is the length of the arc connecting state a
   to state b.  The vector V(x) stores the distances of all states from
   the initial states.  The actual vector used in the matrix-vector
   multiplication is diff(x), that holds those distances that have
-  changed during the last update.]
+  changed during the last update.
 
-  SideEffects []
+  @see ntrWarshall ntrSquare
 
-  SeeAlso     [ntrWarshall ntrSquare]
-
-******************************************************************************/
+*/
 static DdNode *
 ntrBellman(
   DdManager *dd,
@@ -362,17 +356,9 @@ ntrBellman(
 } /* end of ntrBellman */
 
 
-/**Function********************************************************************
-
-  Synopsis    [Floyd-Warshall algorithm for all-pair shortest paths.]
-
-  Description []
-
-  SideEffects []
-
-  SeeAlso     []
-
-******************************************************************************/
+/**
+  @brief Floyd-Warshall algorithm for all-pair shortest paths.
+*/
 static DdNode *
 ntrWarshall(
   DdManager *dd,
@@ -455,27 +441,19 @@ ntrWarshall(
 } /* end of ntrWarshall */
 
 
-/**Function********************************************************************
-
-  Synopsis    [Repeated squaring algorithm for all-pairs shortest paths.]
-
-  Description []
-
-  SideEffects []
-
-  SeeAlso     []
-
-******************************************************************************/
+/**
+  @brief Repeated squaring algorithm for all-pairs shortest paths.
+*/
 static DdNode *
 ntrSquare(
-  DdManager *dd /* manager */,
-  DdNode *D /* D(z,y): distance matrix */,
-  DdNode **x /* array of x variables */,
-  DdNode **y /* array of y variables */,
-  DdNode **z /* array of z variables */,
-  int vars /* number of variables in each of the three arrays */,
-  int pr /* verbosity level */,
-  int st /* use the selective trace algorithm */)
+  DdManager *dd /**< manager */,
+  DdNode *D /**< D(z,y): distance matrix */,
+  DdNode **x /**< array of x variables */,
+  DdNode **y /**< array of y variables */,
+  DdNode **z /**< array of z variables */,
+  int vars /**< number of variables in each of the three arrays */,
+  int pr /**< verbosity level */,
+  int st /**< use the selective trace algorithm */)
 {
     DdNode *zero;
     DdNode *I;              /* identity matirix */

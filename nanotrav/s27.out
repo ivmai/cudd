@@ -1,9 +1,12 @@
-# Nanotrav Version #0.12, Release date 2003/12/31
-# ./nanotrav -p 1 -trav s27.blif
-# CUDD Version 2.5.1
+# Nanotrav Version #0.13, Release date 2015/7/15
+# nanotrav/nanotrav -p 1 -ordering hw -reordering annealing -trav ./nanotrav/s27.blif
+# CUDD Version 3.0.0
 Order before final reordering
 G0 G1 G2 G3 G5 G6 G7 
 Number of inputs = 7
+BDD reordering with annealing: from 16 to ... 10 nodes in 0 sec
+New order
+G0 G5 G6 G3 G2 G7 G1 
 Building transition relation. Time = 0.00 sec
 @@@
 Transition relation: 1 parts 3 latches 9 nodes
@@ -12,20 +15,20 @@ S0: 4 nodes 1 leaves 1 minterms
 From[1]: 5 nodes 1 leaves 4 minterms
 Reached[1]: 5 nodes 1 leaves 5 minterms
 5
-5e+0
+5
 From[2]: 4 nodes 1 leaves 1 minterms
 Reached[2]: 3 nodes 1 leaves 6 minterms
 6
-6e+0
+6
 depth = 2
 R: 3 nodes 1 leaves 6 minterms
 **** CUDD modifiable parameters ****
-Hard limit for cache size: 21845333
+Hard limit for cache size: 2796202
 Cache hit threshold for resizing: 30%
 Garbage collection enabled: yes
-Limit for fast unique table growth: 13107200
-Maximum number of variables sifted per reordering: 1000
-Maximum number of variable swaps per reordering: 2000000
+Limit for fast unique table growth: 1677721
+Maximum number of variables sifted per reordering: 1000000
+Maximum number of variable swaps per reordering: 1000000000
 Maximum growth while sifting a variable: 1.2
 Dynamic reordering of BDDs enabled: no
 Default BDD reordering method: 4
@@ -40,60 +43,50 @@ Symmetry violation threshold: 10
 Arc violation threshold: 10
 GA population size: 0
 Number of crossovers for GA: 0
-Next reordering threshold: 4004
+Next reordering threshold: 36
 **** CUDD non-modifiable parameters ****
-Memory in use: 17862904
+Memory in use: 3182808
 Peak number of nodes: 1022
-Peak number of live nodes: 95
+Peak number of live nodes: 51
 Number of BDD variables: 10
 Number of ZDD variables: 0
 Number of cache entries: 32768
-Number of cache look-ups: 173
-Number of cache hits: 26
-Number of cache insertions: 151
-Number of cache collisions: 1
-Number of cache deletions: 0
-Cache used slots = 0.46% (expected 0.46%)
+Number of cache look-ups: 151
+Number of cache hits: 30
+Number of cache insertions: 115
+Number of cache collisions: 0
+Number of cache deletions: 24
+Cache used slots = 0.35% (expected 0.28%)
 Soft limit for cache size: 11264
 Number of buckets in unique table: 2816
-Used buckets in unique table: 5.11% (expected 5.15%)
-Unique lookups: 194
-Unique links: 0 (0 per lookup)
-Number of BDD and ADD nodes: 150
+Used buckets in unique table: 3.30% (expected 3.29%)
+Number of BDD and ADD nodes: 95
 Number of ZDD nodes: 0
-Number of dead BDD and ADD nodes: 75
+Number of dead BDD and ADD nodes: 66
 Number of dead ZDD nodes: 0
-Total number of nodes allocated: 150
-Total number of nodes reclaimed: 12
-Number of recursive calls: 507
-Garbage collections so far: 0
+Total number of nodes allocated: 110
+Total number of nodes reclaimed: 21
+Garbage collections so far: 1
 Time for garbage collection: 0.00 sec
-Reorderings so far: 0
+Reorderings so far: 1
 Time for reordering: 0.00 sec
-Node swaps in reordering: 0
-Final size: 16
+Final size: 10
 total time = 0.00 sec
 Runtime Statistics
 ------------------
-Machine name: jobim.colorado.edu
+Machine name: crozzon
 User time      0.0 seconds
 System time    0.0 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            =  9218K
+Maximum resident size            =  6100K
 
-Virtual text size                =  4621K
-Virtual data size                = 24114K
-    data size initialized        =  2135K
-    data size uninitialized      =   137K
-    data size sbrk               = 21842K
-Virtual memory limit             = 2048000K (18014398509481984K)
-
+Virtual memory limit             = unlimited (unlimited)
 Major page faults = 0
-Minor page faults = 1123
+Minor page faults = 896
 Swaps = 0
 Input blocks = 8
-Output blocks = 2088
+Output blocks = 8
 Context switch (voluntary) = 1
 Context switch (involuntary) = 1

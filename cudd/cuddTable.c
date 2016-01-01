@@ -1,53 +1,14 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [cuddTable.c]
+  @ingroup cudd
 
-  PackageName [cudd]
+  @brief Unique table management functions.
 
-  Synopsis    [Unique table management functions.]
+  @author Fabio Somenzi
 
-  Description [External procedures included in this module:
-		<ul>
-		<li> Cudd_Prime()
-                <li> Cudd_Reserve()
-		</ul>
-	Internal procedures included in this module:
-		<ul>
-		<li> cuddAllocNode()
-		<li> cuddInitTable()
-		<li> cuddFreeTable()
-		<li> cuddGarbageCollect()
-		<li> cuddZddGetNode()
-		<li> cuddZddGetNodeIVO()
-		<li> cuddUniqueInter()
-		<li> cuddUniqueInterIVO()
-		<li> cuddUniqueInterZdd()
-		<li> cuddUniqueConst()
-		<li> cuddRehash()
-		<li> cuddShrinkSubtable()
-		<li> cuddInsertSubtables()
-		<li> cuddDestroySubtables()
-		<li> cuddResizeTableZdd()
-		<li> cuddSlowTableGrowth()
-		</ul>
-	Static procedures included in this module:
-		<ul>
-		<li> ddRehashZdd()
-		<li> ddResizeTable()
-		<li> cuddFindParent()
-		<li> cuddOrderedInsert()
-		<li> cuddOrderedThread()
-		<li> cuddRotateLeft()
-		<li> cuddRotateRight()
-		<li> cuddDoRebalance()
-		<li> cuddCheckCollisionOrdering()
-		</ul>]
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -77,11 +38,13 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include "util.h"
+#include "mtrInt.h"
 #include "cuddInt.h"
 
 /*---------------------------------------------------------------------------*/
@@ -103,7 +66,9 @@
 /* Stucture declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-/* This is a hack for when CUDD_VALUE_TYPE is double */
+/**
+ * @brief This is a hack for when CUDD_VALUE_TYPE is double
+ */
 typedef union hack {
     CUDD_VALUE_TYPE value;
     unsigned int bits[2];
@@ -117,14 +82,10 @@ typedef union hack {
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] DD_UNUSED = "$Id: cuddTable.c,v 1.129 2014/02/11 02:39:16 fabio Exp $";
-#endif
 
 /*---------------------------------------------------------------------------*/
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
-
 
 #ifndef DD_UNSORTED_FREE_LIST
 #ifdef DD_RED_BLACK_FREE_LIST
@@ -141,7 +102,7 @@ static char rcsid[] DD_UNUSED = "$Id: cuddTable.c,v 1.129 2014/02/11 02:39:16 fa
 #endif
 
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -150,7 +111,7 @@ static char rcsid[] DD_UNUSED = "$Id: cuddTable.c,v 1.129 2014/02/11 02:39:16 fa
 static void ddRehashZdd (DdManager *unique, int i);
 static int ddResizeTable (DdManager *unique, int index, int amount);
 static int cuddFindParent (DdManager *table, DdNode *node);
-DD_INLINE static void ddFixLimits (DdManager *unique);
+static void ddFixLimits (DdManager *unique);
 #ifdef DD_RED_BLACK_FREE_LIST
 static void cuddOrderedInsert (DdNodePtr *root, DdNodePtr node);
 static DdNode * cuddOrderedThread (DdNode *root, DdNode *list);
@@ -164,7 +125,7 @@ static int cuddCheckCollisionOrdering (DdManager *unique, int i, int j);
 #endif
 static void ddReportRefMess (DdManager *unique, int i, const char *caller);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
 
 
 /*---------------------------------------------------------------------------*/
@@ -172,20 +133,17 @@ static void ddReportRefMess (DdManager *unique, int i, const char *caller);
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Returns the next prime &ge; p.
 
-  Synopsis    [Returns the next prime &gt;= p.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-******************************************************************************/
+*/
 unsigned int
 Cudd_Prime(
   unsigned int  p)
 {
-    int i,pn;
+    unsigned int i, pn;
 
     p--;
     do {
@@ -209,23 +167,24 @@ Cudd_Prime(
 } /* end of Cudd_Prime */
 
 
-/**Function********************************************************************
+/**
+  @brief Expand manager without creating variables.
 
-  Synopsis    [Expand manager without creating variables.]
-
-  Description [Expand a manager by a specified number of subtables without
+  @details Expand a manager by a specified number of subtables without
   actually creating new variables.  This function can be used to reduce the
   frequency of resizing when an estimate of the number of variables is
   available.  One would call this function instead of passing the number
   of variables to Cudd_Init if variables should not be created right away
   of if the estimate on their number became available only after the manager
-  has been created.  Returns 1 if successful; 0 otherwise.]
+  has been created.
 
-  SideEffects [None]
+  @return 1 if successful; 0 otherwise.
 
-  SeeAlso     [Cudd_Init]
+  @sideeffect None
 
-******************************************************************************/
+  @see Cudd_Init
+
+*/
 int
 Cudd_Reserve(
   DdManager *manager,
@@ -248,20 +207,20 @@ Cudd_Reserve(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Fast storage allocation for DdNodes in the table.
 
-  Synopsis    [Fast storage allocation for DdNodes in the table.]
+  @details The first 4 bytes of a chunk contain a pointer to the next
+  block; the rest contains DD_MEM_CHUNK spaces for DdNodes.
 
-  Description [Fast storage allocation for DdNodes in the table. The
-  first 4 bytes of a chunk contain a pointer to the next block; the
-  rest contains DD_MEM_CHUNK spaces for DdNodes.  Returns a pointer to
-  a new node if successful; NULL is memory is full.]
+  @return a pointer to a new node if successful; NULL is memory is
+  full.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [cuddDynamicAllocNode]
+  @see cuddDynamicAllocNode
 
-******************************************************************************/
+*/
 DdNode *
 cuddAllocNode(
   DdManager * unique)
@@ -274,20 +233,20 @@ cuddAllocNode(
 
     if (unique->nextFree == NULL) {	/* free list is empty */
 	/* Check for exceeded limits. */
-	if ((unique->keys - unique->dead) + (unique->keysZ - unique->deadZ) >
-	    unique->maxLive) {
-	    unique->errorCode = CUDD_TOO_MANY_NODES;
-	    return(NULL);
-	}
-        if (util_cpu_time() - unique->startTime > unique->timeLimit) {
-            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
-            return(NULL);
-        }
         if (unique->terminationCallback != NULL &&
             unique->terminationCallback(unique->tcbArg)) {
             unique->errorCode = CUDD_TERMINATION;
             return(NULL);
         }
+        if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+            return(NULL);
+        }
+	if ((unique->keys - unique->dead) + (unique->keysZ - unique->deadZ) >
+	    unique->maxLive) {
+	    unique->errorCode = CUDD_TOO_MANY_NODES;
+	    return(NULL);
+	}
 	if (unique->stash == NULL || unique->memused > unique->maxmemhard) {
 	    (void) cuddGarbageCollect(unique,1);
 	    mem = NULL;
@@ -299,7 +258,7 @@ cuddAllocNode(
 	    }
 	    /* Try to allocate a new block. */
 	    saveHandler = MMoutOfMemory;
-	    MMoutOfMemory = Cudd_OutOfMem;
+	    MMoutOfMemory = unique->outOfMemCallback;
 	    mem = (DdNodePtr *) ALLOC(DdNode,DD_MEM_CHUNK + 1);
 	    MMoutOfMemory = saveHandler;
 	    if (mem == NULL) {
@@ -369,24 +328,22 @@ cuddAllocNode(
 } /* end of cuddAllocNode */
 
 
-/**Function********************************************************************
+/**
+  @brief Creates and initializes the unique table.
 
-  Synopsis    [Creates and initializes the unique table.]
+  @return a pointer to the table if successful; NULL otherwise.
 
-  Description [Creates and initializes the unique table. Returns a pointer
-  to the table if successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Cudd_Init cuddFreeTable
 
-  SeeAlso     [Cudd_Init cuddFreeTable]
-
-******************************************************************************/
+*/
 DdManager *
 cuddInitTable(
-  unsigned int numVars  /* Initial number of BDD variables (and subtables) */,
-  unsigned int numVarsZ /* Initial number of ZDD variables (and subtables) */,
-  unsigned int numSlots /* Initial size of the BDD subtables */,
-  unsigned int looseUpTo /* Limit for fast table growth */)
+  unsigned int numVars  /**< Initial number of %BDD variables (and subtables) */,
+  unsigned int numVarsZ /**< Initial number of %ZDD variables (and subtables) */,
+  unsigned int numSlots /**< Initial size of the %BDD subtables */,
+  unsigned int looseUpTo /**< Limit for fast table growth */)
 {
     DdManager	*unique = ALLOC(DdManager,1);
     int		i, j;
@@ -490,7 +447,7 @@ cuddInitTable(
     unique->stack[0] = NULL; /* to suppress harmless UMR */
 
 #ifndef DD_NO_DEATH_ROW
-    unique->deathRowDepth = 1 << cuddComputeFloorLog2(unique->looseUpTo >> 2);
+    unique->deathRowDepth = 1U << cuddComputeFloorLog2(unique->looseUpTo >> 2);
     unique->deathRow = ALLOC(DdNodePtr,unique->deathRowDepth);
     if (unique->deathRow == NULL) {
 	FREE(unique->subtables);
@@ -515,6 +472,7 @@ cuddInitTable(
 	unique->subtables[i].shift = shift;
 	unique->subtables[i].keys = 0;
 	unique->subtables[i].dead = 0;
+        unique->subtables[i].next = i;
 	unique->subtables[i].maxKeys = slots * DD_MAX_SUBTABLE_DENSITY;
 	unique->subtables[i].bindVar = 0;
 	unique->subtables[i].varType = CUDD_VAR_PRIMARY_INPUT;
@@ -548,6 +506,7 @@ cuddInitTable(
 	unique->subtableZ[i].shift = shift;
 	unique->subtableZ[i].keys = 0;
 	unique->subtableZ[i].dead = 0;
+        unique->subtableZ[i].next = i;
 	unique->subtableZ[i].maxKeys = slots * DD_MAX_SUBTABLE_DENSITY;
 	nodelist = unique->subtableZ[i].nodelist = ALLOC(DdNodePtr,slots);
 	if (nodelist == NULL) {
@@ -577,6 +536,12 @@ cuddInitTable(
     unique->constants.shift = shift;
     unique->constants.keys = 0;
     unique->constants.dead = 0;
+    unique->constants.next = 0;
+    unique->constants.bindVar = 0;
+    unique->constants.varType = CUDD_VAR_PRIMARY_INPUT;
+    unique->constants.pairIndex = 0;
+    unique->constants.varHandled = 0;
+    unique->constants.varToBeGrouped = CUDD_LAZY_NONE;
     unique->constants.maxKeys = slots * DD_MAX_SUBTABLE_DENSITY;
     nodelist = unique->constants.nodelist = ALLOC(DdNodePtr,slots);
     if (nodelist == NULL) {
@@ -638,6 +603,7 @@ cuddInitTable(
     unique->numberXovers = 0;
     unique->randomizeOrder = 0;
     unique->linear = NULL;
+    unique->originalSize = 0;
     unique->linearSize = 0;
 
     /* Initialize ZDD universe. */
@@ -656,17 +622,20 @@ cuddInitTable(
     unique->timeLimit = ~0UL;
     unique->terminationCallback = NULL;
     unique->tcbArg = NULL;
+    unique->outOfMemCallback = Cudd_OutOfMem;
+    unique->timeoutHandler = NULL;
 
     /* Initialize statistical counters. */
-    unique->maxmemhard = ~ 0UL;
+    unique->maxmemhard = ~ (size_t) 0;
     unique->garbageCollections = 0;
     unique->GCTime = 0;
     unique->reordTime = 0;
+    unique->peakLiveNodes = 0;
+    unique->cuddRand = 0;
 #ifdef DD_STATS
     unique->nodesDropped = 0;
     unique->nodesFreed = 0;
 #endif
-    unique->peakLiveNodes = 0;
 #ifdef DD_UNIQUE_PROFILE
     unique->uniqueLookUps = 0;
     unique->uniqueLinks = 0;
@@ -678,23 +647,23 @@ cuddInitTable(
     unique->nextSample = 250000;
 #endif
 #endif
+#ifdef DD_DEBUG
+    unique->enableExtraDebug = 0;
+#endif
 
     return(unique);
 
 } /* end of cuddInitTable */
 
 
-/**Function********************************************************************
+/**
+  @brief Frees the resources associated to a unique table.
 
-  Synopsis    [Frees the resources associated to a unique table.]
+  @sideeffect None
 
-  Description []
+  @see cuddInitTable
 
-  SideEffects [None]
-
-  SeeAlso     [cuddInitTable]
-
-******************************************************************************/
+*/
 void
 cuddFreeTable(
   DdManager * unique)
@@ -703,6 +672,7 @@ cuddFreeTable(
     DdNodePtr *memlist = unique->memoryList;
     int i;
 
+    if (unique->stash != NULL) FREE(unique->stash);
     if (unique->univ != NULL) cuddZddFreeUniv(unique);
     while (memlist != NULL) {
 	next = (DdNodePtr *) memlist[0];	/* link to next block */
@@ -750,25 +720,22 @@ cuddFreeTable(
 } /* end of cuddFreeTable */
 
 
-/**Function********************************************************************
+/**
+  @brief Performs garbage collection on the %BDD and %ZDD unique tables.
 
-  Synopsis    [Performs garbage collection on the unique tables.]
-
-  Description [Performs garbage collection on the BDD and ZDD unique tables.
-  If clearCache is 0, the cache is not cleared. This should only be
-  specified if the cache has been cleared right before calling
+  @details If clearCache is 0, the cache is not cleared. This should
+  only be specified if the cache has been cleared right before calling
   cuddGarbageCollect. (As in the case of dynamic reordering.)
-  Returns the total number of deleted nodes.]
 
-  SideEffects [None]
+  @return the total number of deleted nodes.
 
-  SeeAlso     []
+  @sideeffect None
 
-******************************************************************************/
+*/
 int
 cuddGarbageCollect(
   DdManager * unique,
-  int  clearCache)
+  int clearCache)
 {
     DdHook	*hook;
     DdCache	*cache = unique->cache;
@@ -789,6 +756,11 @@ cuddGarbageCollect(
     int k;
 #endif
 #endif
+
+    if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+        unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+        return(0);
+    }
 
 #ifndef DD_NO_DEATH_ROW
     cuddClearDeathRow(unique);
@@ -1040,19 +1012,19 @@ cuddGarbageCollect(
 } /* end of cuddGarbageCollect */
 
 
-/**Function********************************************************************
+/**
+  @brief Wrapper for cuddUniqueInterZdd.
 
-  Synopsis [Wrapper for cuddUniqueInterZdd.]
+  @details It applies the %ZDD reduction rule.
 
-  Description [Wrapper for cuddUniqueInterZdd, which applies the ZDD
-  reduction rule. Returns a pointer to the result node under normal
-  conditions; NULL if reordering occurred or memory was exhausted.]
+  @return a pointer to the result node under normal conditions; NULL
+  if reordering occurred or memory was exhausted.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [cuddUniqueInterZdd]
+  @see cuddUniqueInterZdd
 
-******************************************************************************/
+*/
 DdNode *
 cuddZddGetNode(
   DdManager * zdd,
@@ -1070,22 +1042,23 @@ cuddZddGetNode(
 } /* end of cuddZddGetNode */
 
 
-/**Function********************************************************************
+/**
+  @brief Wrapper for cuddUniqueInterZdd that is independent of variable
+  ordering.
 
-  Synopsis [Wrapper for cuddUniqueInterZdd that is independent of variable
-  ordering.]
-
-  Description [Wrapper for cuddUniqueInterZdd that is independent of
+  @details Wrapper for cuddUniqueInterZdd that is independent of
   variable ordering (IVO). This function does not require parameter
   index to precede the indices of the top nodes of g and h in the
-  variable order.  Returns a pointer to the result node under normal
-  conditions; NULL if reordering occurred or memory was exhausted.]
+  variable order.
 
-  SideEffects [None]
+  @return a pointer to the result node under normal conditions; NULL
+  if reordering occurred or memory was exhausted.
 
-  SeeAlso     [cuddZddGetNode cuddZddIsop]
+  @sideeffect None
 
-******************************************************************************/
+  @see cuddZddGetNode cuddZddIsop
+
+*/
 DdNode *
 cuddZddGetNodeIVO(
   DdManager * dd,
@@ -1123,23 +1096,24 @@ cuddZddGetNodeIVO(
 } /* end of cuddZddGetNodeIVO */
 
 
-/**Function********************************************************************
+/**
+  @brief Checks the unique table for the existence of an internal node.
 
-  Synopsis    [Checks the unique table for the existence of an internal node.]
-
-  Description [Checks the unique table for the existence of an internal
-  node. If it does not exist, it creates a new one.  Does not
+  @details If it does not exist, it creates a new one.  Does not
   modify the reference count of whatever is returned.  A newly created
   internal node comes back with a reference count 0.  For a newly
   created node, increments the reference counts of what T and E point
-  to.  Returns a pointer to the new node if successful; NULL if memory
-  is exhausted or if reordering took place.]
+  to.
 
-  SideEffects [None]
+  @return a pointer to the new node if successful; NULL if memory is
+  exhausted, if a termination request was detected, if a timeout expired,
+  or if reordering took place.
 
-  SeeAlso     [cuddUniqueInterZdd]
+  @sideeffect None
 
-******************************************************************************/
+  @see cuddUniqueInterZdd
+
+*/
 DdNode *
 cuddUniqueInter(
   DdManager * unique,
@@ -1160,14 +1134,14 @@ cuddUniqueInter(
     unique->uniqueLookUps++;
 #endif
 
-    if ((0x1ffffUL & (unsigned long) unique->cacheMisses) == 0) {
-        if (util_cpu_time() - unique->startTime > unique->timeLimit) {
-            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
-            return(NULL);
-        }
+    if (((int64_t) 0x1ffff & (int64_t) unique->cacheMisses) == 0) {
         if (unique->terminationCallback != NULL &&
             unique->terminationCallback(unique->tcbArg)) {
             unique->errorCode = CUDD_TERMINATION;
+            return(NULL);
+        }
+        if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
             return(NULL);
         }
     }
@@ -1225,15 +1199,20 @@ cuddUniqueInter(
         unique->maxReorderings--;
 	if (retval == 0) {
             unique->reordered = 2;
-        } else if ((cpuTime = util_cpu_time()) - unique->startTime > unique->timeLimit) {
-            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
-            unique->reordered = 0;
         } else if (unique->terminationCallback != NULL &&
             unique->terminationCallback(unique->tcbArg)) {
             unique->errorCode = CUDD_TERMINATION;
             unique->reordered = 0;
+        } else if ((cpuTime = util_cpu_time()) - unique->startTime >
+                   unique->timeLimit) {
+            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+            unique->reordered = 0;
         } else if (unique->timeLimit - (cpuTime - unique->startTime)
                    < unique->reordTime) {
+            /* No risk of overflow because here unique->timeLimit is known
+             * to be greater than or equal to (cpuTime - unique->startTime).
+             * If the remaining time is less than the time spent on
+             * reordering so far, we disable reordering.  */
             unique->autoDyn = 0;
         }
 #ifdef DD_DEBUG
@@ -1250,13 +1229,13 @@ cuddUniqueInter(
 	    ((unique->dead > unique->minDead) ||
 	    ((unique->dead > unique->minDead / 2) &&
 	    (subtable->dead > subtable->keys * 0.95)))) { /* too many dead */
-            if (util_cpu_time() - unique->startTime > unique->timeLimit) {
-                unique->errorCode = CUDD_TIMEOUT_EXPIRED;
-                return(NULL);
-            }
             if (unique->terminationCallback != NULL &&
                 unique->terminationCallback(unique->tcbArg)) {
                 unique->errorCode = CUDD_TERMINATION;
+                return(NULL);
+            }
+            if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+                unique->errorCode = CUDD_TIMEOUT_EXPIRED;
                 return(NULL);
             }
 	    (void) cuddGarbageCollect(unique,1);
@@ -1334,22 +1313,23 @@ cuddUniqueInter(
 } /* end of cuddUniqueInter */
 
 
-/**Function********************************************************************
+/**
+  @brief Wrapper for cuddUniqueInter that is independent of variable
+  ordering.
 
-  Synopsis [Wrapper for cuddUniqueInter that is independent of variable
-  ordering.]
-
-  Description [Wrapper for cuddUniqueInter that is independent of
+  @details Wrapper for cuddUniqueInter that is independent of
   variable ordering (IVO). This function does not require parameter
   index to precede the indices of the top nodes of T and E in the
-  variable order.  Returns a pointer to the result node under normal
-  conditions; NULL if reordering occurred or memory was exhausted.]
+  variable order.
 
-  SideEffects [None]
+  @return a pointer to the result node under normal conditions; NULL
+  if reordering occurred or memory was exhausted.
 
-  SeeAlso     [cuddUniqueInter Cudd_MakeBddFromZddCover]
+  @sideeffect None
 
-******************************************************************************/
+  @see cuddUniqueInter Cudd_MakeBddFromZddCover
+
+*/
 DdNode *
 cuddUniqueInterIVO(
   DdManager * unique,
@@ -1371,24 +1351,25 @@ cuddUniqueInterIVO(
 } /* end of cuddUniqueInterIVO */
 
 
-/**Function********************************************************************
+/**
+  @brief Checks the unique table for the existence of an internal
+  %ZDD node.
 
-  Synopsis    [Checks the unique table for the existence of an internal
-  ZDD node.]
-
-  Description [Checks the unique table for the existence of an internal
-  ZDD node. If it does not exist, it creates a new one.  Does not
+  @details If it does not exist, it creates a new one.  Does not
   modify the reference count of whatever is returned.  A newly created
   internal node comes back with a reference count 0.  For a newly
   created node, increments the reference counts of what T and E point
-  to.  Returns a pointer to the new node if successful; NULL if memory
-  is exhausted or if reordering took place.]
+  to.
 
-  SideEffects [None]
+  @return a pointer to the new node if successful; NULL if memory is
+  exhausted, if a termination request was detected, if a timeout expired,
+  or if reordering took place.
 
-  SeeAlso     [cuddUniqueInter]
+  @sideeffect None
 
-******************************************************************************/
+  @see cuddUniqueInter
+
+*/
 DdNode *
 cuddUniqueInterZdd(
   DdManager * unique,
@@ -1407,6 +1388,17 @@ cuddUniqueInterZdd(
     unique->uniqueLookUps++;
 #endif
 
+    if (((int64_t) 0x1ffff & (int64_t) unique->cacheMisses) == 0) {
+        if (unique->terminationCallback != NULL &&
+            unique->terminationCallback(unique->tcbArg)) {
+            unique->errorCode = CUDD_TERMINATION;
+            return(NULL);
+        }
+        if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+            return(NULL);
+        }
+    }
     if (index >= unique->sizeZ) {
 	if (!cuddResizeTableZdd(unique,index)) return(NULL);
     }
@@ -1422,6 +1414,15 @@ cuddUniqueInterZdd(
     if (subtable->keys > subtable->maxKeys) {
 	if (unique->gcEnabled && ((unique->deadZ > unique->minDead) ||
 	(10 * subtable->dead > 9 * subtable->keys))) {	/* too many dead */
+            if (unique->terminationCallback != NULL &&
+                unique->terminationCallback(unique->tcbArg)) {
+                unique->errorCode = CUDD_TERMINATION;
+                return(NULL);
+            }
+            if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+                unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+                return(NULL);
+            }
 	    (void) cuddGarbageCollect(unique,1);
 	} else {
 	    ddRehashZdd(unique,(int)level);
@@ -1447,7 +1448,7 @@ cuddUniqueInterZdd(
 
     /* countDead is 0 if deads should be counted and ~0 if they should not. */
     if (unique->autoDynZ &&
-    unique->keysZ - (unique->deadZ & unique->countDead) >= unique->nextDyn) {
+        unique->keysZ - (unique->deadZ & unique->countDead) >= unique->nextDyn) {
 #ifdef DD_DEBUG
 	retval = Cudd_DebugCheck(unique);
 	if (retval != 0) return(NULL);
@@ -1455,7 +1456,16 @@ cuddUniqueInterZdd(
 	if (retval != 0) return(NULL);
 #endif
 	retval = Cudd_zddReduceHeap(unique,unique->autoMethodZ,10); /* 10 = whatever */
-	if (retval == 0) unique->reordered = 2;
+	if (retval == 0) {
+            unique->reordered = 2;
+        } else if (unique->terminationCallback != NULL &&
+            unique->terminationCallback(unique->tcbArg)) {
+            unique->errorCode = CUDD_TERMINATION;
+            unique->reordered = 0;
+        } else if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+            unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+            unique->reordered = 0;
+        }
 #ifdef DD_DEBUG
 	retval = Cudd_DebugCheck(unique);
 	if (retval != 0) unique->reordered = 2;
@@ -1483,19 +1493,18 @@ cuddUniqueInterZdd(
 } /* end of cuddUniqueInterZdd */
 
 
-/**Function********************************************************************
+/**
+  @brief Checks the unique table for the existence of a constant node.
 
-  Synopsis    [Checks the unique table for the existence of a constant node.]
-
-  Description [Checks the unique table for the existence of a constant node.
-  If it does not exist, it creates a new one.  Does not
+  @details If it does not exist, it creates a new one.  Does not
   modify the reference count of whatever is returned.  A newly created
-  internal node comes back with a reference count 0.  Returns a
-  pointer to the new node.]
+  internal node comes back with a reference count 0.
 
-  SideEffects [None]
+  @return a pointer to the new node.
 
-******************************************************************************/
+  @sideeffect None
+
+*/
 DdNode *
 cuddUniqueConst(
   DdManager * unique,
@@ -1513,6 +1522,15 @@ cuddUniqueConst(
     if (unique->constants.keys > unique->constants.maxKeys) {
 	if (unique->gcEnabled && ((unique->dead > unique->minDead) ||
 	(10 * unique->constants.dead > 9 * unique->constants.keys))) {	/* too many dead */
+            if (unique->terminationCallback != NULL &&
+                unique->terminationCallback(unique->tcbArg)) {
+                unique->errorCode = CUDD_TERMINATION;
+                return(NULL);
+            }
+            if (util_cpu_time() - unique->startTime > unique->timeLimit) {
+                unique->errorCode = CUDD_TIMEOUT_EXPIRED;
+                return(NULL);
+            }
 	    (void) cuddGarbageCollect(unique,1);
 	} else {
 	    cuddRehash(unique,CUDD_CONST_INDEX);
@@ -1564,18 +1582,15 @@ cuddUniqueConst(
 } /* end of cuddUniqueConst */
 
 
-/**Function********************************************************************
+/**
+  @brief Rehashes a unique subtable.
 
-  Synopsis    [Rehashes a unique subtable.]
+  @details Doubles the size of a unique subtable and rehashes its
+  contents.
 
-  Description [Doubles the size of a unique subtable and rehashes its
-  contents.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 void
 cuddRehash(
   DdManager * unique,
@@ -1621,7 +1636,7 @@ cuddRehash(
 	shift = oldshift - 1;
 
 	saveHandler = MMoutOfMemory;
-	MMoutOfMemory = Cudd_OutOfMem;
+	MMoutOfMemory = unique->outOfMemCallback;
 	nodelist = ALLOC(DdNodePtr, slots);
 	MMoutOfMemory = saveHandler;
 	if (nodelist == NULL) {
@@ -1688,7 +1703,7 @@ cuddRehash(
 	slots = oldslots << 1;
 	shift = oldshift - 1;
 	saveHandler = MMoutOfMemory;
-	MMoutOfMemory = Cudd_OutOfMem;
+	MMoutOfMemory = unique->outOfMemCallback;
 	nodelist = ALLOC(DdNodePtr, slots);
 	MMoutOfMemory = saveHandler;
 	if (nodelist == NULL) {
@@ -1737,17 +1752,14 @@ cuddRehash(
 } /* end of cuddRehash */
 
 
-/**Function********************************************************************
+/**
+  @brief Shrinks a subtable.
 
-  Synopsis    [Shrinks a subtable.]
+  @sideeffect None
 
-  Description [Shrinks a subtable.]
+  @see cuddRehash
 
-  SideEffects [None]
-
-  SeeAlso     [cuddRehash]
-
-******************************************************************************/
+*/
 void
 cuddShrinkSubtable(
   DdManager *unique,
@@ -1766,7 +1778,7 @@ cuddShrinkSubtable(
     oldslots = unique->subtables[i].slots;
     slots = oldslots >> 1;
     saveHandler = MMoutOfMemory;
-    MMoutOfMemory = Cudd_OutOfMem;
+    MMoutOfMemory = unique->outOfMemCallback;
     nodelist = ALLOC(DdNodePtr, slots);
     MMoutOfMemory = saveHandler;
     if (nodelist == NULL) {
@@ -1828,19 +1840,19 @@ cuddShrinkSubtable(
 } /* end of cuddShrinkSubtable */
 
 
-/**Function********************************************************************
+/**
+  @brief Inserts n new subtables in a unique table at level.
 
-  Synopsis [Inserts n new subtables in a unique table at level.]
+  @details The number n should be positive, and level should be an
+  existing level.
 
-  Description [Inserts n new subtables in a unique table at level.
-  The number n should be positive, and level should be an existing level.
-  Returns 1 if successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [cuddDestroySubtables]
+  @see cuddDestroySubtables
 
-******************************************************************************/
+*/
 int
 cuddInsertSubtables(
   DdManager * unique,
@@ -1854,7 +1866,7 @@ cuddInsertSubtables(
     int oldsize,newsize;
     int i,j,index,reorderSave;
     unsigned int numSlots = unique->initSlots;
-    int *newperm, *newinvperm, *newmap;
+    int *newperm, *newinvperm, *newmap = NULL;
     DdNode *one, *zero;
 
 #ifdef DD_DEBUG
@@ -1871,6 +1883,7 @@ cuddInsertSubtables(
 	    unique->subtables[i+n].keys     = unique->subtables[i].keys;
 	    unique->subtables[i+n].maxKeys  = unique->subtables[i].maxKeys;
 	    unique->subtables[i+n].dead     = unique->subtables[i].dead;
+            unique->subtables[i+n].next     = i+n;
 	    unique->subtables[i+n].nodelist = unique->subtables[i].nodelist;
 	    unique->subtables[i+n].bindVar  = unique->subtables[i].bindVar;
 	    unique->subtables[i+n].varType  = unique->subtables[i].varType;
@@ -1891,6 +1904,7 @@ cuddInsertSubtables(
 	    unique->subtables[level+i].keys = 0;
 	    unique->subtables[level+i].maxKeys = numSlots * DD_MAX_SUBTABLE_DENSITY;
 	    unique->subtables[level+i].dead = 0;
+            unique->subtables[level+i].next = level+i;
 	    unique->subtables[level+i].bindVar = 0;
 	    unique->subtables[level+i].varType = CUDD_VAR_PRIMARY_INPUT;
 	    unique->subtables[level+i].pairIndex = 0;
@@ -1973,6 +1987,7 @@ cuddInsertSubtables(
 	    newsubtables[i].keys = unique->subtables[i].keys;
 	    newsubtables[i].maxKeys = unique->subtables[i].maxKeys;
 	    newsubtables[i].dead = unique->subtables[i].dead;
+            newsubtables[i].next = i;
 	    newsubtables[i].nodelist = unique->subtables[i].nodelist;
 	    newsubtables[i].bindVar = unique->subtables[i].bindVar;
 	    newsubtables[i].varType = unique->subtables[i].varType;
@@ -1996,6 +2011,7 @@ cuddInsertSubtables(
 	    newsubtables[i].keys = 0;
 	    newsubtables[i].maxKeys = numSlots * DD_MAX_SUBTABLE_DENSITY;
 	    newsubtables[i].dead = 0;
+            newsubtables[i].next = i;
 	    newsubtables[i].bindVar = 0;
 	    newsubtables[i].varType = CUDD_VAR_PRIMARY_INPUT;
 	    newsubtables[i].pairIndex = 0;
@@ -2021,6 +2037,7 @@ cuddInsertSubtables(
 	    newsubtables[i+n].keys     = unique->subtables[i].keys;
 	    newsubtables[i+n].maxKeys  = unique->subtables[i].maxKeys;
 	    newsubtables[i+n].dead     = unique->subtables[i].dead;
+            newsubtables[i+n].next     = i+n;
 	    newsubtables[i+n].nodelist = unique->subtables[i].nodelist;
 	    newsubtables[i+n].bindVar  = unique->subtables[i].bindVar;
 	    newsubtables[i+n].varType  = unique->subtables[i].varType;
@@ -2101,6 +2118,7 @@ cuddInsertSubtables(
 		unique->subtables[j].maxKeys  =
 		    unique->subtables[j+n].maxKeys;
 		unique->subtables[j].dead     = unique->subtables[j+n].dead;
+                unique->subtables[j].next     = j;
 		FREE(unique->subtables[j].nodelist);
 		unique->subtables[j].nodelist =
 		    unique->subtables[j+n].nodelist;
@@ -2139,21 +2157,21 @@ cuddInsertSubtables(
 } /* end of cuddInsertSubtables */
 
 
-/**Function********************************************************************
+/**
+  @brief Destroys the n most recently created subtables in a unique table.
 
-  Synopsis [Destroys the n most recently created subtables in a unique table.]
-
-  Description [Destroys the n most recently created subtables in a unique
-  table.  n should be positive. The subtables should not contain any live
+  @details n should be positive. The subtables should not contain any live
   nodes, except the (isolated) projection function. The projection
-  functions are freed.  Returns 1 if successful; 0 otherwise.]
+  functions are freed.
 
-  SideEffects [The variable map used for fast variable substitution is
-  destroyed if it exists. In this case the cache is also cleared.]
+  @return 1 if successful; 0 otherwise.
 
-  SeeAlso     [cuddInsertSubtables Cudd_SetVarMap]
+  @sideeffect The variable map used for fast variable substitution is
+  destroyed if it exists. In this case the cache is also cleared.
 
-******************************************************************************/
+  @see cuddInsertSubtables Cudd_SetVarMap
+
+*/
 int
 cuddDestroySubtables(
   DdManager * unique,
@@ -2243,6 +2261,7 @@ cuddDestroySubtables(
 	subtables[newlevel].keys = subtables[level].keys;
 	subtables[newlevel].maxKeys = subtables[level].maxKeys;
 	subtables[newlevel].dead = subtables[level].dead;
+        subtables[newlevel].next = newlevel;
 	subtables[newlevel].nodelist = subtables[level].nodelist;
 	index = unique->invperm[level];
 	unique->perm[index] = newlevel;
@@ -2270,22 +2289,22 @@ cuddDestroySubtables(
 } /* end of cuddDestroySubtables */
 
 
-/**Function********************************************************************
+/**
+  @brief Increases the number of %ZDD subtables in a unique table so
+  that it meets or exceeds index.
 
-  Synopsis [Increases the number of ZDD subtables in a unique table so
-  that it meets or exceeds index.]
+  @details When new %ZDD variables are created, it is possible to
+  preserve the functions unchanged, or it is possible to preserve the
+  covers unchanged, but not both. cuddResizeTableZdd preserves the
+  covers.
 
-  Description [Increases the number of ZDD subtables in a unique table so
-  that it meets or exceeds index.  When new ZDD variables are created, it
-  is possible to preserve the functions unchanged, or it is possible to
-  preserve the covers unchanged, but not both. cuddResizeTableZdd preserves
-  the covers.  Returns 1 if successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [ddResizeTable]
+  @see ddResizeTable
 
-******************************************************************************/
+*/
 int
 cuddResizeTableZdd(
   DdManager * unique,
@@ -2308,6 +2327,7 @@ cuddResizeTableZdd(
 	    unique->subtableZ[i].keys = 0;
 	    unique->subtableZ[i].maxKeys = numSlots * DD_MAX_SUBTABLE_DENSITY;
 	    unique->subtableZ[i].dead = 0;
+            unique->subtableZ[i].next = i;
 	    unique->permZ[i] = i;
 	    unique->invpermZ[i] = i;
 	    newnodelist = unique->subtableZ[i].nodelist =
@@ -2366,6 +2386,7 @@ cuddResizeTableZdd(
 	    newsubtables[i].keys = unique->subtableZ[i].keys;
 	    newsubtables[i].maxKeys = unique->subtableZ[i].maxKeys;
 	    newsubtables[i].dead = unique->subtableZ[i].dead;
+            newsubtables[i].next = i;
 	    newsubtables[i].nodelist = unique->subtableZ[i].nodelist;
 	    newperm[i] = unique->permZ[i];
 	    newinvperm[i] = unique->invpermZ[i];
@@ -2377,6 +2398,7 @@ cuddResizeTableZdd(
 	    newsubtables[i].keys = 0;
 	    newsubtables[i].maxKeys = numSlots * DD_MAX_SUBTABLE_DENSITY;
 	    newsubtables[i].dead = 0;
+            newsubtables[i].next = i;
 	    newperm[i] = i;
 	    newinvperm[i] = i;
 	    newnodelist = newsubtables[i].nodelist = ALLOC(DdNodePtr, numSlots);
@@ -2419,17 +2441,12 @@ cuddResizeTableZdd(
 } /* end of cuddResizeTableZdd */
 
 
-/**Function********************************************************************
+/**
+  @brief Adjusts parameters of a table to slow down its growth.
 
-  Synopsis    [Adjusts parameters of a table to slow down its growth.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 void
 cuddSlowTableGrowth(
   DdManager *unique)
@@ -2444,9 +2461,11 @@ cuddSlowTableGrowth(
     unique->gcFrac = DD_GC_FRAC_MIN;
     unique->minDead = (unsigned) (DD_GC_FRAC_MIN * (double) unique->slots);
     cuddShrinkDeathRow(unique);
-    (void) fprintf(unique->err,"Slowing down table growth: ");
+#ifdef DD_VERBOSE
+    (void) fprintf(unique->err,"CUDD: slowing down table growth: ");
     (void) fprintf(unique->err,"GC fraction = %.2f\t", unique->gcFrac);
     (void) fprintf(unique->err,"minDead = %u\n", unique->minDead);
+#endif
 
 } /* end of cuddSlowTableGrowth */
 
@@ -2456,17 +2475,14 @@ cuddSlowTableGrowth(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Rehashes a %ZDD unique subtable.
 
-  Synopsis    [Rehashes a ZDD unique subtable.]
+  @sideeffect None
 
-  Description []
+  @see cuddRehash
 
-  SideEffects [None]
-
-  SeeAlso     [cuddRehash]
-
-******************************************************************************/
+*/
 static void
 ddRehashZdd(
   DdManager * unique,
@@ -2508,7 +2524,7 @@ ddRehashZdd(
     } while (slots * DD_MAX_SUBTABLE_DENSITY < unique->subtableZ[i].keys);
 
     saveHandler = MMoutOfMemory;
-    MMoutOfMemory = Cudd_OutOfMem;
+    MMoutOfMemory = unique->outOfMemCallback;
     nodelist = ALLOC(DdNodePtr, slots);
     MMoutOfMemory = saveHandler;
     if (nodelist == NULL) {
@@ -2555,22 +2571,21 @@ ddRehashZdd(
 } /* end of ddRehashZdd */
 
 
-/**Function********************************************************************
+/**
+  @brief Increases the number of subtables in a unique table so
+  that it meets or exceeds index.
 
-  Synopsis [Increases the number of subtables in a unique table so
-  that it meets or exceeds index.]
+  @details The parameter amount determines how much spare space is
+  allocated to prevent too frequent resizing.  If index is negative,
+  the table is resized, but no new variables are created.
 
-  Description [Increases the number of subtables in a unique table so
-  that it meets or exceeds index.  The parameter amount determines how
-  much spare space is allocated to prevent too frequent resizing.  If
-  index is negative, the table is resized, but no new variables are
-  created.  Returns 1 if successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [Cudd_Reserve cuddResizeTableZdd]
+  @see Cudd_Reserve cuddResizeTableZdd
 
-******************************************************************************/
+*/
 static int
 ddResizeTable(
   DdManager * unique,
@@ -2584,7 +2599,7 @@ ddResizeTable(
     int oldsize,newsize;
     int i,j,reorderSave;
     int numSlots = unique->initSlots;
-    int *newperm, *newinvperm, *newmap;
+    int *newperm, *newinvperm, *newmap = NULL;
     DdNode *one, *zero;
 
     oldsize = unique->size;
@@ -2597,6 +2612,7 @@ ddResizeTable(
 	    unique->subtables[i].keys = 0;
 	    unique->subtables[i].maxKeys = numSlots * DD_MAX_SUBTABLE_DENSITY;
 	    unique->subtables[i].dead = 0;
+            unique->subtables[i].next = i;
 	    unique->subtables[i].bindVar = 0;
 	    unique->subtables[i].varType = CUDD_VAR_PRIMARY_INPUT;
 	    unique->subtables[i].pairIndex = 0;
@@ -2699,6 +2715,7 @@ ddResizeTable(
 	    newsubtables[i].keys = unique->subtables[i].keys;
 	    newsubtables[i].maxKeys = unique->subtables[i].maxKeys;
 	    newsubtables[i].dead = unique->subtables[i].dead;
+            newsubtables[i].next = i;
 	    newsubtables[i].nodelist = unique->subtables[i].nodelist;
 	    newsubtables[i].bindVar = unique->subtables[i].bindVar;
 	    newsubtables[i].varType = unique->subtables[i].varType;
@@ -2717,6 +2734,7 @@ ddResizeTable(
 	    newsubtables[i].keys = 0;
 	    newsubtables[i].maxKeys = numSlots * DD_MAX_SUBTABLE_DENSITY;
 	    newsubtables[i].dead = 0;
+            newsubtables[i].next = i;
 	    newsubtables[i].bindVar = 0;
 	    newsubtables[i].varType = CUDD_VAR_PRIMARY_INPUT;
 	    newsubtables[i].pairIndex = 0;
@@ -2765,7 +2783,7 @@ ddResizeTable(
 
         unique->size = index + 1;
         if (unique->tree != NULL) {
-            unique->tree->size = ddMax(unique->tree->size, unique->size);
+	    unique->tree->size = ddMax(unique->tree->size, (MtrHalfWord) unique->size);
         }
         unique->slots += (index + 1 - oldsize) * numSlots;
         ddFixLimits(unique);
@@ -2800,18 +2818,15 @@ ddResizeTable(
 } /* end of ddResizeTable */
 
 
-/**Function********************************************************************
+/**
+  @brief Searches the subtables above node for a parent.
 
-  Synopsis    [Searches the subtables above node for a parent.]
+  @details Returns 1 as soon as one parent is found. Returns 0 is the
+  search is fruitless.
 
-  Description [Searches the subtables above node for a parent. Returns 1
-  as soon as one parent is found. Returns 0 is the search is fruitless.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int
 cuddFindParent(
   DdManager * table,
@@ -2845,20 +2860,16 @@ cuddFindParent(
 } /* end of cuddFindParent */
 
 
-/**Function********************************************************************
+/**
+  @brief Adjusts the values of table limits.
 
-  Synopsis    [Adjusts the values of table limits.]
+  @details Adjusts the values of table fields controlling the sizes of
+  subtables and computed table. If the computed table is too small
+  according to the new values, it is resized.
 
-  Description [Adjusts the values of table fields controlling the.
-  sizes of subtables and computed table. If the computed table is too small
-  according to the new values, it is resized.]
+  @sideeffect Modifies manager fields. May resize computed table.
 
-  SideEffects [Modifies manager fields. May resize computed table.]
-
-  SeeAlso     []
-
-******************************************************************************/
-DD_INLINE
+*/
 static void
 ddFixLimits(
   DdManager *unique)
@@ -2876,18 +2887,17 @@ ddFixLimits(
 
 #ifndef DD_UNSORTED_FREE_LIST
 #ifdef DD_RED_BLACK_FREE_LIST
-/**Function********************************************************************
+/**
+  @brief Inserts a DdNode in a red/black search tree.
 
-  Synopsis    [Inserts a DdNode in a red/black search tree.]
+  @details Nodes from the same "page" (defined by DD_PAGE_MASK) are
+  linked in a LIFO list.
 
-  Description [Inserts a DdNode in a red/black search tree. Nodes from
-  the same "page" (defined by DD_PAGE_MASK) are linked in a LIFO list.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see cuddOrderedThread
 
-  SeeAlso     [cuddOrderedThread]
-
-******************************************************************************/
+*/
 static void
 cuddOrderedInsert(
   DdNodePtr * root,
@@ -2917,26 +2927,24 @@ cuddOrderedInsert(
 } /* end of cuddOrderedInsert */
 
 
-/**Function********************************************************************
+/**
+  @brief Threads all the nodes of a search tree into a linear list.
 
-  Synopsis    [Threads all the nodes of a search tree into a linear list.]
-
-  Description [Threads all the nodes of a search tree into a linear
-  list. For each node of the search tree, the "left" child, if non-null, has
-  a lower address than its parent, and the "right" child, if non-null, has a
-  higher address than its parent.
-  The list is sorted in order of increasing addresses. The search
-  tree is destroyed as a result of this operation. The last element of
-  the linear list is made to point to the address passed in list. Each
+  @details For each node of the search tree, the "left" child, if
+  non-null, has a lower address than its parent, and the "right"
+  child, if non-null, has a higher address than its parent.  The list
+  is sorted in order of increasing addresses. The search tree is
+  destroyed as a result of this operation. The last element of the
+  linear list is made to point to the address passed in list. Each
   node if the search tree is a linearly-linked list of nodes from the
-  same memory page (as defined in DD_PAGE_MASK). When a node is added to
-  the linear list, all the elements of the linked list are added.]
+  same memory page (as defined in DD_PAGE_MASK). When a node is added
+  to the linear list, all the elements of the linked list are added.
 
-  SideEffects [The search tree is destroyed as a result of this operation.]
+  @sideeffect The search tree is destroyed as a result of this operation.
 
-  SeeAlso     [cuddOrderedInsert]
+  @see cuddOrderedInsert
 
-******************************************************************************/
+*/
 static DdNode *
 cuddOrderedThread(
   DdNode * root,
@@ -2994,18 +3002,14 @@ cuddOrderedThread(
 } /* end of cuddOrderedThread */
 
 
-/**Function********************************************************************
+/**
+  @brief Performs the left rotation for red/black trees.
 
-  Synopsis    [Performs the left rotation for red/black trees.]
+  @sideeffect None
 
-  Description []
+  @see cuddRotateRight
 
-  SideEffects [None]
-
-  SeeAlso     [cuddRotateRight]
-
-******************************************************************************/
-DD_INLINE
+*/
 static void
 cuddRotateLeft(
   DdNodePtr * nodeP)
@@ -3020,18 +3024,14 @@ cuddRotateLeft(
 } /* end of cuddRotateLeft */
 
 
-/**Function********************************************************************
+/**
+  @brief Performs the right rotation for red/black trees.
 
-  Synopsis    [Performs the right rotation for red/black trees.]
+  @sideeffect None
 
-  Description []
+  @see cuddRotateLeft
 
-  SideEffects [None]
-
-  SeeAlso     [cuddRotateLeft]
-
-******************************************************************************/
-DD_INLINE
+*/
 static void
 cuddRotateRight(
   DdNodePtr * nodeP)
@@ -3046,17 +3046,12 @@ cuddRotateRight(
 } /* end of cuddRotateRight */
 
 
-/**Function********************************************************************
+/**
+  @brief Rebalances a red/black tree.
 
-  Synopsis    [Rebalances a red/black tree.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 cuddDoRebalance(
   DdNodePtr ** stack,
@@ -3121,19 +3116,15 @@ cuddDoRebalance(
 #endif
 
 
-/**Function********************************************************************
+/**
+  @brief Fixes a variable tree after the insertion of new subtables.
 
-  Synopsis    [Fixes a variable tree after the insertion of new subtables.]
+  @details After such an insertion, the low fields of the tree below
+  the insertion point are inconsistent.
 
-  Description [Fixes a variable tree after the insertion of new subtables.
-  After such an insertion, the low fields of the tree below the insertion
-  point are inconsistent.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static void
 ddPatchTree(
   DdManager *dd,
@@ -3155,30 +3146,23 @@ ddPatchTree(
 
 
 #ifdef DD_DEBUG
-/**Function********************************************************************
+/**
+  @brief Checks whether a collision list is ordered.
 
-  Synopsis    [Checks whether a collision list is ordered.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int
 cuddCheckCollisionOrdering(
   DdManager *unique,
   int i,
   int j)
 {
-    int slots;
     DdNode *node, *next;
     DdNodePtr *nodelist;
     DdNode *sentinel = &(unique->sentinel);
 
     nodelist = unique->subtables[i].nodelist;
-    slots = unique->subtables[i].slots;
     node = nodelist[j];
     if (node == sentinel) return(1);
     next = node->next;
@@ -3200,22 +3184,19 @@ cuddCheckCollisionOrdering(
 
 
 
-/**Function********************************************************************
+/**
+  @brief Reports problem in garbage collection.
 
-  Synopsis    [Reports problem in garbage collection.]
+  @sideeffect None
 
-  Description []
+  @see cuddGarbageCollect cuddGarbageCollectZdd
 
-  SideEffects [None]
-
-  SeeAlso     [cuddGarbageCollect cuddGarbageCollectZdd]
-
-******************************************************************************/
+*/
 static void
 ddReportRefMess(
-  DdManager *unique /* manager */,
-  int i /* table in which the problem occurred */,
-  const char *caller /* procedure that detected the problem */)
+  DdManager *unique /**< manager */,
+  int i /**< table in which the problem occurred */,
+  const char *caller /**< procedure that detected the problem */)
 {
     if (i == CUDD_CONST_INDEX) {
 	(void) fprintf(unique->err,

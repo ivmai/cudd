@@ -1,169 +1,109 @@
-$Id$
-
-This directory contains a set of packages that allow you to build a toy
-application based on the CUDD package.
-
 The CUDD package is a package written in C for the manipulation of
 decision diagrams.  It supports binary decision diagrams (BDDs),
 algebraic decision diagrams (ADDs), and Zero-Suppressed BDDs (ZDDs).
 
-The toy application provided in this kit is called nanotrav and is a
-simple-minded FSM traversal program. (See the README file and the man
+This directory contains a set of packages that allow you to build a test
+application based on the CUDD package.
+
+The test application provided in this kit is called nanotrav and is a
+simple-minded FSM traversal program.  (See the README file and the man
 page nanotrav.1 in the nanotrav directory for the details.)  It is
 included so that you can run a sanity check on your installation.
 
-INSTALLATION
+Also included in this distribution are the dddmp libray by Giampiero
+Cabodi and Stefano Quer and a C++ object-oriented wrapper for CUDD.
 
-Before you build the libraries and programs, you need to check the
-Makefile in the top directory.  Go through the definitions contained in the
-configuration section, and select the desired compiler and compilation
-flags.  Instructions are provided in the comments of the Makefile.
+BUILD AND INSTALLATION
 
-You can always specify the options on the command line.  For instance,
-on some machines you can build a "fast" version of the program by typing:
+In the simplest form, you can build the static libraries with:
 
-    make DDDEBUG= MTRDEBUG= ICFLAGS=-O2
+  ./configure
+  make
+  make check
 
-The Makefile supports several targets:
+The configure script provides a few options, which can be listed with
 
-    make:
-	Creates a "plain" version of the program.
+  ./configure --help
 
-    make testdddmp:
-	Builds a test program (testdddmp) for BDD loading from and
-	storing to disk. See file README.test in the dddmp directory for
-	how to run the program.
+Notable options include
 
-    make testobj:
-	Builds a test program for the C++ interface. Requires a C++
-	compiler. To run the program, run obj/testobj.
+  --enable-silent-rules
+  --enable-shared
+  --enable-dddmp
+  --enable-obj
+  --with-system-qsort
 
-    make testcudd:
-	Builds a test program for CUDD. To run the program, go to the
-	cudd directory and type "./testcudd -p 2 r7x8.1.mat". The result
-	can be compared to r7x7.1.out.
+The --enable-silent-rules option is a standard option that streamlines the
+messages produced by the build process.  The remaining options are specific
+to CUDD.
 
-    make testmtr:
-        Builds a test program for the mtr package.  To run the program,
-	go to the mtr directory and type "./testmtr -p 1 test.groups".
-    
-    make clean:
-	Cleans directories, but leaves libraries and programs.
+The three "enable" options control the build of shared libraries.  By
+default, only static libraries are built.  With --enable-shared, a
+shared library for libcudd is built.  (Before installation, it can be
+found in cudd/.libs.)
 
-    make distclean:
-	Cleans thoroughly, returning the directories to their pristine
-	state.
+The last two "enable" options control the inclusion of the dddmp
+library and C++ wrapper in the shared library, which by default only
+contains the core CUDD library.
 
-The following targets are more or less obsolete and may disappear or
-change in the future.
+The --with-system-qsort option requests use of the qsort from the
+standard library instead of the portable one shipped with CUDD.  This
+option is provided for backward compatibility and is not otherwise
+recommended.  Some of the tests of "make check" may fail with the
+system qsort because variable orders may be generated that are
+different from the reference ones.
 
-    make check_leaks: 
-	Creates a version of the program with the mnemosyne library
-	linked to it. It also builds the mnemalyse program, which
-	helps in finding memory leaks. This target does not work on the
-	IBM RS6000. The makefile also supports purify. To use purify,
-	set the PURE variable in the Makefile, and use the standard
-	target.
+As an example, a more elaborate build command sequence may be:
 
-    make optimize_dec:
-	Builds a version of the program using the u-code compiler
-	available on DEC machines (DECstations and Alphas). The newer
-	native compiler on the Alphas does not use u-code, though.
-	Therefore the standard target should be used with it.
+  ./configure CC=clang CXX=clang++ --enable-silent-rules \
+    --enable-shared --enable-obj
+  make -j4 check
+  make install
 
-    make lint:
-	Runs lint on all subdirectories except mnemosyne. Creates lint
-	libraries for all object libraries.
+which selects alternate compilers instead of gcc and g++, causes the
+C++ wrapper to be included in the shared library, enables parallel
+compilation (with -j4) and finally installs the shared library using
+the default prefix /usr/local.
 
-    make tags:
-	Builds ctags-style tag files for all subdirectories except
-	mnemosyne.
-
-    make all:
-	Makes all of the above, except check_leaks, which is
-	incompatible with a plain "make."
-
-All targets, except clean and distclean, will create the include
-directory if it does not already exist.
-
-The Makefile does not compile the SIS interface (cuddBddPort.c and
-cuddPwPt.c found in subdirectory sis).  To compile the interface, you
-also need array.h and var_set.h, which are not part of this
-distribution, but come with SIS.  Detailed instructions on how to
-integrate the CUDD package in SIS can be found in the documentation
-(cudd/doc).
+For those unfamiliar with libtool it may be worth noting that the
+libraries it builds go in .libs subdirectories.  One should also note
+that with shared libraries enabled, the test programs immediately
+visible to the user are shell scripts that make sure dynamic linking
+works before installation.  If you want to run valgrind on, say, a
+dynamically linked nanotrav, specify the option --trace-children=yes.
 
 PLATFORMS
 
 This kit has been successfully built on the following configurations:
 
-    PC (ia32 and ia64) running Ubuntu with gcc
-    PC (ia32 and ia64) running Ubuntu with g++
-    PC (ia32 and ia64) running Linux RedHat with gcc
-    PC (ia32 and ia64) running Linux RedHat with g++
-    PC (ia64) running Cygwin on Windows 7 and Vista with gcc
-    PC (ia64) running Cygwin on Windows 7 and Vista with g++
+    PC (x86 and x86_64) running Ubuntu with gcc and clang
+    PC (x86 and x86_64) running Ubuntu with g++
+    PC (x86 and x86_64) running Linux RedHat with gcc
+    PC (x86 and x86_64) running Linux RedHat with g++
+    PC (x86_64) running 32-bit Cygwin on Windows 7 and Vista with gcc
+    PC (x86_64) running 32-bit Cygwin on Windows 7 and Vista with g++
+    PC (x86_64) running 64-bit Cygwin on Windows 8.1 with gcc and g++
+    PC (x86_64) running MinGW-w64 on Windows 8.1 with gcc
 
-Platforms to which I have no longer access and therefore are no longer
-supported.
-
-    PC (ia32) running Linux RedHat with icc
-    PC (ia32) running Linux RedHat with icpc
-    PC (ia64) running Linux RedHat with ecc
-    PC (ia64) running Linux RedHat with ecpc
-    SUN running Solaris 2.8 with cc
-    SUN running Solaris 2.8 with CC
-    SUN running Solaris 2.8 with gcc
-    SUN running Solaris 2.8 with g++
-    DECstation running Ultrix with cc
-    DECstation running Ultrix with gcc
-    IBM RS6000 running AIX 3.2.4 with cc (**)
-    IBM RS6000 running AIX 3.2.4 with gcc
-    IBM RS6000 running AIX 3.2.4 with g++
-    SUN running SunOS with gcc
-    DEC Alpha running Digital Unix with cc
-    DEC Alpha running Digital Unix with cxx
-    DEC Alpha running Digital Unix with gcc
-    HP 9000/770 running HP-UX with c89
-    HP 9000/770 running HP-UX with CC
-    HP 9000/770 running HP-UX with gcc
-    HP 9000/770 running HP-UX with g++ (*)
-    SUN running Solaris 2.8 with /usr/ucb/cc
-    PC running Solaris 2.8 with /usr/bin/cc
-    PC running Solaris 2.8 with /usr/ucb/cc
-    PC running Solaris 2.8 with CC
-    PC running Solaris 2.8 with gcc
-    PC running Solaris 2.8 with g++
-
-NOTES
-    (*) C programs were compiled with g++, but linked with gcc.
-
-    (**) Some old versions of the AIX cc compiler have buggy optimizers:
-    Try compiling with -O2 instead of -O3 if the program crashes.
-
-Running lint and compiling with gcc -Wall still produces warnings.
-Running `purify' under Solaris 2.8 generates no messages.
+In all these cases, the C++ wrapper was compiled with the matching C++
+compiler (g++ for gcc and clang++ for clang).  To compile under MSYS2
+(MinGW-w64) one has to pass --build=x86_64-w64-mingw32 to ./configure.
 
 SANITY CHECK
 
-The directory `nanotrav' contains a very simple application based on the
-CUDD package. The `nanotrav' directory contains a man page that
-describes the options nanotrav supports. The files *.blif are sample
-input files for nanotrav.
-
-If you have built the mnemosyne library (make check_leaks), you can do
-    cd mnemosyne
-    make runmtest
-This does not work on machines running SunOS, but the version of
-nanotrav that uses mnemosyne may work.
+The directory `nanotrav' contains a simple application based on the
+CUDD package.  The `nanotrav' directory contains a man page that
+describes the options nanotrav supports.  The files *.blif are sample
+input files for nanotrav.  The *.out files are the reference output
+files.
 
 DOCUMENTATION
 
-Directory cudd-2.5.1/cudd/doc contains HTML documentation for the CUDD
-package. The recommended starting point is cuddIntro.html. Documentation
-in both postscript(tm) format and plain text format is also provided.
-Documentation for the auxiliary libraries (except for the util library)
-is in the doc subdirectories.
+If doxygen is installed, running "make" puts HTML documentation for
+the CUDD package in directory cudd-3.0.0/cudd/html. The recommended
+starting point is index.html.  The user's manual in PDF format is
+built in cudd-3.0.0/doc if pdflatex and makeindex are installed.
+Documentation for the dddmp library is in the dddmp/doc subdirectory.
 
 FEEDBACK:
 

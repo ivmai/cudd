@@ -1,18 +1,14 @@
-/**CHeaderFile*****************************************************************
+/**
+  @file 
 
-  FileName    [cstringstream.h]
+  @ingroup cstringstream
 
-  PackageName [cstringstream]
+  @brief Package for simple stringstreams in C.
 
-  Synopsis    [Package for simple stringstreams in C.]
+  @author Fabio Somenzi
 
-  Description [Package for simple stringstreams in C.]
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 2014, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 2014-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,64 +38,125 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-  Revision    [$Id$]
+  $Id: cstringstream.h,v 1.1 2015/07/01 20:36:47 fabio Exp fabio $
 
-******************************************************************************/
+*/
 #ifndef CSTRINGSTREAM_H_
 #define CSTRINGSTREAM_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*---------------------------------------------------------------------------*/
 /* Type declarations                                                         */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Type of a string stream.
+ */
 typedef struct _cstringstream * cstringstream;
+
+/**
+ * @brief Const-qualified version of cstringstream.
+ */
 typedef struct _cstringstream const * const_cstringstream;
 
 /*---------------------------------------------------------------------------*/
 /* Function prototypes                                                       */
 /*---------------------------------------------------------------------------*/
 
-/* Return a new cstringstream with an empty string.
- * Return NULL if creation fails. */
+/**
+ * @brief Returns a new cstringstream with an empty string.
+ * @return NULL if creation fails.
+ */
 cstringstream newStringStream(void);
-/* Free cstringstream ss. */
+/**
+ * @brief Frees cstringstream ss.
+ */
 void deleteStringStream(cstringstream ss);
-/* Clear the contents of cstringstream ss.
- * Return 0 if succesful and -1 if ss is an invalid pointer. */
+/**
+ * @brief Clears the contents of cstringstream ss.
+ * @return 0 if succesful and -1 if ss is an invalid pointer.
+ */
 int clearStringStream(cstringstream ss);
-/* Copies cstringstream src to a new cstringstream.  Return 0 if succesful
- * and -1 if src is an invalid pointer or memory allocation fails. */
+/**
+ * @brief Copies cstringstream src to a new cstringstream.
+ * @return 0 if succesful or -1 if src is an invalid pointer
+ * or memory allocation fails.
+ */
 cstringstream copyStringStream(const_cstringstream src);
-/* Change the size of cstringstream ss.
- * Return 0 if successful and -1 if resizing fails. */
+/**
+ * @brief Changes the size of cstringstream ss.
+ * @return 0 if successful or -1 if resizing fails.
+ */
 int resizeStringStream(cstringstream ss, size_t newSize);
-/* Write the size of cstringstream ss to the location pointed by num.
- * Return 0 if succesful and -1 if ss is an invalid pointer. */
+/**
+ * @brief Writes the size of cstringstream ss to the location pointed by num.
+ * @return 0 if succesful or -1 if ss is an invalid pointer.
+ */
 int sizeStringStream(const_cstringstream ss, size_t * num);
-/* Write the i-th element of cstringstream ss to the location
- * pointed by c.  Return 0 if successful and -1 otherwise. */
+/**
+ * @brief Writes the i-th element of cstringstream ss to the location
+ * pointed by c.
+ * @return 0 if successful or -1 otherwise.
+ */
 int getStringStream(const_cstringstream ss, size_t i, char * c);
-/* Add char c at the end of cstringstream ss.  Return 0 if
- * successful and -1 otherwise. */
+/**
+ * @brief Adds char c at the end of cstringstream ss.
+ * @return 0 if successful or -1 otherwise.
+ */
 int appendCharStringStream(cstringstream ss, char c);
-/* Add string s at the end of cstringstream ss.  Return 0 if
- * successful and -1 otherwise. */
+/**
+ * @brief Adds string s at the end of cstringstream ss.
+ * @return 0 if successful or -1 otherwise.
+ */
 int appendStringStringStream(cstringstream ss, char const * s);
-/* Add int/unsigned/long/unsigned long/double at the end of cstringstream ss.
- * Return 0 if successful and -1 otherwise. */
+/**
+ * @brief Adds int d at the end of cstringstream ss.
+ * @return 0 if successful or -1 otherwise.
+ */
 int appendIntStringStream(cstringstream ss, int d);
+/**
+ * @brief Adds unsigned u at the end of cstringstream ss.
+ * @return 0 if successful or -1 otherwise.
+ */
 int appendUnsignedStringStream(cstringstream ss, unsigned u);
+/**
+ * @brief Adds long ld at the end of cstringstream ss.
+ * @return 0 if successful or -1 otherwise.
+ */
 int appendLongStringStream(cstringstream ss, long ld);
+/**
+ * @brief Adds unsigned long lu at the end of cstringstream ss.
+ * @return 0 if successful or -1 otherwise.
+ */
 int appendUnsignedLongStringStream(cstringstream ss, unsigned long lu);
+/**
+ * @brief Adds double g at the end of cstringstream ss.
+ * @return 0 if successful or -1 otherwise.
+ */
 int appendDoubleStringStream(cstringstream ss, double g);
-/* Set the i-th element of cstringstream ss to c.  Return 0 if
- * successful and -1 otherwise.  The i-th element of ss
- * must already exist.  */
+/**
+ * @brief Sets the i-th element of cstringstream ss to c.
+ * @return 0 if successful or -1 otherwise.
+ *
+ * The i-th element of ss must already exist.
+ */
 int putStringStream(cstringstream ss, size_t index, char c);
-/* Return a NULL terminated string from the contents of
- * cstringstream ss.  In case of failure, return NULL.
- * The returned string must be freed by the caller. */
+/**
+ * @brief Returns a NULL-terminated string from the contents of
+ * cstringstream ss.
+ * @details In case of failure, it returns NULL.
+ * The returned string must be freed by the caller.
+ */
 char * stringFromStringStream(const_cstringstream ss);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

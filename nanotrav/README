@@ -18,7 +18,7 @@ characteristic function of the transition relation of the graph. It then
 builds a BDD for the initial state(s), and performs reachability
 analysis.  Reachability analysys is performed with either the method
 known as "monolithic transition relation method," whose main virtue is
-simplicity, or with a unsophisticated partitioned transition relation
+simplicity, or with an unsophisticated partitioned transition relation
 method.
 
 Once it has completed reachability analysis, nanotrav prints results and
@@ -30,18 +30,7 @@ the user of nanotrav to select among different reordering options.
 TEST CIRCUITS
 =============
 
-Five test circuits are contained in this directory: C17.blif,
-C880.blif, s27.blif, mult32a.blif, and rcn25.blif. The first two are
-combinational, while the last three are sequential.  The results or
-running
-
-    nanotrav -p 1 -cover C17.blif > C17.out
-    nanotrav -p 1 -ordering dfs -autodyn -automethod sifting -reordering sifting -drop C880.blif > C880.out
-    nanotrav -p 1 -trav s27.blif > s27.out
-    nanotrav -p 1 -autodyn -reordering sifting -trav mult32a.blif > mult32a.out
-    nanotrav -p 1 -envelope rcn25.blif > rcn25.out
-
-are also included.  They have been obtained on a 200 MHz P6-based
-machine with 128MB of memory. These tests can be run with the shell
-script tst.sh. Notice that rcn25 requires approximately 500 sec. All
-other tests run in a few seconds.
+Twelve test circuits are contained in this directory.  The results or running
+nanotrav on them with various options are also included.  These tests are run
+as part of "make check."  Notice that rcn25 requires approximately 30 s. All
+other tests take much less.

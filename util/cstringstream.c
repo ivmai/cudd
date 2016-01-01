@@ -1,16 +1,14 @@
-/**CFile***********************************************************************
+/**
+  @file 
 
-  FileName    [cstringstream.c]
+  @ingroup cstringstream
 
-  PackageName [cstringstream]
+  @brief Simple string streams in C.
 
-  Synopsis    [Simple string streams in C.]
+  @author Fabio Somenzi
 
-  Description [Simple string streams in C.]
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 2014, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 2014-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -40,19 +38,23 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "cstringstream.h"
 
+/**
+ * @brief Type of a simple extensible string buffer.
+ */
 struct _cstringstream {
-  size_t capacity; /* elements allocated */
-  size_t inUse;    /* elements currently in use */
-  char * data;     /* actual data */
+  size_t capacity; /**< elements allocated */
+  size_t inUse;    /**< elements currently in use */
+  char * data;     /**< actual data */
 };
 
 cstringstream newStringStream(void) {

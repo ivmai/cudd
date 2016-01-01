@@ -1,18 +1,14 @@
-/**CFile***********************************************************************
+/**
+  @file
 
-  FileName    [bnet.c]
+  @ingroup nanotrav
 
-  PackageName [bnet]
+  @brief Functions to read in a boolean network.
 
-  Synopsis    [Functions to read in a boolean network.]
+  @author Fabio Somenzi
 
-  Description []
-
-  SeeAlso     []
-
-  Author      [Fabio Somenzi]
-
-  Copyright   [Copyright (c) 1995-2012, Regents of the University of Colorado
+  @copyright@parblock
+  Copyright (c) 1995-2015, Regents of the University of Colorado
 
   All rights reserved.
 
@@ -42,10 +38,12 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.]
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
 
-******************************************************************************/
+*/
 
+#include "cuddInt.h"
 #include "bnet.h"
 
 /*---------------------------------------------------------------------------*/
@@ -66,10 +64,6 @@
 /* Variable declarations                                                     */
 /*---------------------------------------------------------------------------*/
 
-#ifndef lint
-static char rcsid[] UTIL_UNUSED = "$Id: bnet.c,v 1.27 2014/02/11 02:41:41 fabio Exp fabio $";
-#endif
-
 static	char	BuffLine[MAXLENGTH];
 static	char	*CurPos;
 static	int	newNameNumber = 0;
@@ -78,7 +72,7 @@ static	int	newNameNumber = 0;
 /* Macro declarations                                                        */
 /*---------------------------------------------------------------------------*/
 
-/**AutomaticStart*************************************************************/
+/** \cond */
 
 /*---------------------------------------------------------------------------*/
 /* Static function prototypes                                                */
@@ -102,19 +96,18 @@ static BnetNode ** bnetOrderRoots (BnetNetwork *net, int *nroots);
 static int bnetLevelCompare (BnetNode **x, BnetNode **y);
 static int bnetDfsOrder (DdManager *dd, BnetNetwork *net, BnetNode *node);
 
-/**AutomaticEnd***************************************************************/
+/** \endcond */
+
 
 /*---------------------------------------------------------------------------*/
 /* Definition of exported functions                                          */
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Reads boolean network from blif file.
 
-  Synopsis    [Reads boolean network from blif file.]
-
-  Description [Reads a boolean network from a blif file. A very restricted
-  subset of blif is supported. Specifically:
+  @details A very restricted subset of blif is supported. Specifically:
   <ul>
   <li> The only directives recognized are:
     <ul>
@@ -134,19 +127,19 @@ static int bnetDfsOrder (DdManager *dd, BnetNetwork *net, BnetNode *node);
   </ul>
   Caveat emptor: There may be other limitations as well. One should
   check the syntax of the blif file with some other tool before relying
-  on this parser. Bnet_ReadNetwork returns a pointer to the network if
-  successful; NULL otherwise.
-  ]
+  on this parser.
 
-  SideEffects [None]
+  @return a pointer to the network if successful; NULL otherwise.
+  
+  @sideeffect None
 
-  SeeAlso     [Bnet_PrintNetwork Bnet_FreeNetwork]
+  @see Bnet_PrintNetwork Bnet_FreeNetwork
 
-******************************************************************************/
+*/
 BnetNetwork *
 Bnet_ReadNetwork(
-  FILE * fp /* pointer to the blif file */,
-  int  pr /* verbosity level */)
+  FILE * fp /**< pointer to the blif file */,
+  int  pr /**< verbosity level */)
 {
     char *savestring;
     char **list;
@@ -166,7 +159,7 @@ Bnet_ReadNetwork(
     net = ALLOC(BnetNetwork,1);
     if (net == NULL) goto failure;
     memset((char *) net, 0, sizeof(BnetNetwork));
-    net->hash = st_init_table(strcmp,st_strhash);
+    net->hash = st_init_table((st_compare_t) strcmp, st_strhash);
     if (net->hash == NULL) goto failure;
 
     savestring = readString(fp);
@@ -185,7 +178,13 @@ Bnet_ReadNetwork(
 	    /* Read network name. */
 	    savestring = readString(fp);
 	    if (savestring == NULL) goto failure;
-	    net->name = savestring;
+	    if (savestring[0] == '.') {
+		net->name = ALLOC(char,  1);
+		if (net->name == NULL) goto failure;
+                net->name[0] = '\0';
+	    } else {
+		net->name = savestring;
+	    }
 	} else if (strcmp(savestring, ".inputs") == 0) {
 	    /* Read .inputs directive. */
 	    FREE(savestring);
@@ -440,7 +439,7 @@ Bnet_ReadNetwork(
 	    strcpy(savestring, latches[i][0]);
 	    net->outputs[net->noutputs + count] = savestring;
 	    count++;
-	    if (st_lookup(net->hash, savestring, &node)) {
+	    if (st_lookup(net->hash, savestring, (void **) &node)) {
 		if (node->type == BNET_INTERNAL_NODE) {
 		    node->type = BNET_OUTPUT_NODE;
 		}
@@ -466,7 +465,7 @@ Bnet_ReadNetwork(
     while (newnode != NULL) {
 	BnetNode *auxnd;
 	for (i = 0; i < newnode->ninp; i++) {
-	    if (!st_lookup(net->hash,newnode->inputs[i],&auxnd)) {
+	    if (!st_lookup(net->hash,newnode->inputs[i],(void **)&auxnd)) {
 		(void) fprintf(stdout,"%s not driven\n", newnode->inputs[i]);
 		goto failure;
 	    }
@@ -487,22 +486,20 @@ failure:
 } /* end of Bnet_ReadNetwork */
 
 
-/**Function********************************************************************
+/**
+  @brief Prints to stdout a boolean network created by Bnet_ReadNetwork.
 
-  Synopsis    [Prints a boolean network created by readNetwork.]
+  @details Uses the blif format; this way, one can verify the
+  equivalence of the input and the output with, say, sis.
 
-  Description [Prints to the standard output a boolean network created
-  by Bnet_ReadNetwork. Uses the blif format; this way, one can verify the
-  equivalence of the input and the output with, say, sis.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see Bnet_ReadNetwork
 
-  SeeAlso     [Bnet_ReadNetwork]
-
-******************************************************************************/
+*/
 void
 Bnet_PrintNetwork(
-  BnetNetwork * net /* boolean network */)
+  BnetNetwork * net /**< boolean network */)
 {
     BnetNode *nd;
     BnetTabline *tl;
@@ -545,17 +542,14 @@ Bnet_PrintNetwork(
 } /* end of Bnet_PrintNetwork */
 
 
-/**Function********************************************************************
+/**
+  @brief Frees a boolean network created by Bnet_ReadNetwork.
 
-  Synopsis    [Frees a boolean network created by Bnet_ReadNetwork.]
+  @sideeffect None
 
-  Description []
+  @see Bnet_ReadNetwork
 
-  SideEffects [None]
-
-  SeeAlso     [Bnet_ReadNetwork]
-
-******************************************************************************/
+*/
 void
 Bnet_FreeNetwork(
   BnetNetwork * net)
@@ -615,34 +609,32 @@ Bnet_FreeNetwork(
 } /* end of Bnet_FreeNetwork */
 
 
-/**Function********************************************************************
+/**
+  @brief Builds the %BDD for the function of a node.
 
-  Synopsis    [Builds the BDD for the function of a node.]
-
-  Description [Builds the BDD for the function of a node and stores a
+  @details Builds the %BDD for the function of a node and stores a
   pointer to it in the dd field of the node itself. The reference count
-  of the BDD is incremented. If params is BNET_LOCAL_DD, then the BDD is
+  of the %BDD is incremented. If params is BNET_LOCAL_DD, then the %BDD is
   built in terms of the local inputs to the node; otherwise, if params
-  is BNET_GLOBAL_DD, the BDD is built in terms of the network primary
-  inputs. To build the global BDD of a node, the BDDs for its local
+  is BNET_GLOBAL_DD, the %BDD is built in terms of the network primary
+  inputs. To build the global %BDD of a node, the BDDs for its local
   inputs must exist. If that is not the case, Bnet_BuildNodeBDD
-  recursively builds them. Likewise, to create the local BDD for a node,
+  recursively builds them. Likewise, to create the local %BDD for a node,
   the local inputs must have variables assigned to them. If that is not
   the case, Bnet_BuildNodeBDD recursively assigns variables to nodes.
-  Bnet_BuildNodeBDD returns 1 in case of success; 0 otherwise.]
 
-  SideEffects [Sets the dd field of the node.]
+  @return 1 in case of success; 0 otherwise.
 
-  SeeAlso     []
+  @sideeffect Sets the dd field of the node.
 
-******************************************************************************/
+*/
 int
 Bnet_BuildNodeBDD(
-  DdManager * dd /* DD manager */,
-  BnetNode * nd /* node of the boolean network */,
-  st_table * hash /* symbol table of the boolean network */,
-  int  params /* type of DD to be built */,
-  int  nodrop /* retain the intermediate node DDs until the end */)
+  DdManager * dd /**< %DD manager */,
+  BnetNode * nd /**< node of the boolean network */,
+  st_table * hash /**< symbol table of the boolean network */,
+  int  params /**< type of %DD to be built */,
+  int  nodrop /**< retain the intermediate node DDs until the end */)
 {
     DdNode *func;
     BnetNode *auxnd;
@@ -695,7 +687,7 @@ Bnet_BuildNodeBDD(
 	    /* Scan the table line. */
 	    for (i = 0; i < nd->ninp; i++) {
 		if (line->values[i] == '-') continue;
-		if (!st_lookup(hash,nd->inputs[i],&auxnd)) {
+		if (!st_lookup(hash,nd->inputs[i],(void **)&auxnd)) {
 		    goto failure;
 		}
 		if (params == BNET_LOCAL_DD) {
@@ -763,7 +755,7 @@ Bnet_BuildNodeBDD(
 	** When count reaches 0, the DD is freed.
 	*/
 	for (i = 0; i < nd->ninp; i++) {
-	    if (!st_lookup(hash,nd->inputs[i],&auxnd)) {
+	    if (!st_lookup(hash,nd->inputs[i],(void **)&auxnd)) {
 		goto failure;
 	    }
 	    auxnd->count--;
@@ -783,18 +775,14 @@ failure:
 } /* end of Bnet_BuildNodeBDD */
 
 
-/**Function********************************************************************
+/**
+  @brief Orders the %BDD variables by DFS.
 
-  Synopsis    [Orders the BDD variables by DFS.]
+  @return 1 in case of success; 0 otherwise.
 
-  Description [Orders the BDD variables by DFS.  Returns 1 in case of
-  success; 0 otherwise.]
+  @sideeffect Uses the visited flags of the nodes.
 
-  SideEffects [Uses the visited flags of the nodes.]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Bnet_DfsVariableOrder(
   DdManager * dd,
@@ -825,27 +813,25 @@ Bnet_DfsVariableOrder(
 } /* end of Bnet_DfsVariableOrder */
 
 
-/**Function********************************************************************
+/**
+  @brief Writes the network BDDs to a file in dot, blif, or daVinci
+  format.
 
-  Synopsis    [Writes the network BDDs to a file in dot, blif, or daVinci
-  format.]
+  @details If "-" is passed as file name, the BDDs are dumped to the
+  standard output.
 
-  Description [Writes the network BDDs to a file in dot, blif, or daVinci
-  format. If "-" is passed as file name, the BDDs are dumped to the
-  standard output. Returns 1 in case of success; 0 otherwise.]
+  @return 1 in case of success; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Bnet_bddDump(
-  DdManager * dd /* DD manager */,
-  BnetNetwork * network /* network whose BDDs should be dumped */,
-  char * dfile /* file name */,
-  int  dumpFmt /* 0 -> dot */,
-  int  reencoded /* whether variables have been reencoded */)
+  DdManager * dd /**< %DD manager */,
+  BnetNetwork * network /**< network whose BDDs should be dumped */,
+  char * dfile /**< file name */,
+  int  dumpFmt /**< 0 -> dot */,
+  int  reencoded /**< whether variables have been reencoded */)
 {
     int noutputs;
     FILE *dfp = NULL;
@@ -877,14 +863,14 @@ Bnet_bddDump(
     /* Find outputs and their names. */
     for (i = 0; i < network->nlatches; i++) {
 	onames[i] = network->latches[i][0];
-	if (!st_lookup(network->hash,network->latches[i][0],&node)) {
+	if (!st_lookup(network->hash,network->latches[i][0],(void **)&node)) {
 	    goto endgame;
 	}
 	outputs[i] = node->dd;
     }
     for (i = 0; i < network->npos; i++) {
 	onames[i + network->nlatches] = network->outputs[i];
-	if (!st_lookup(network->hash,network->outputs[i],&node)) {
+	if (!st_lookup(network->hash,network->outputs[i],(void **)&node)) {
 	    goto endgame;
 	}
 	outputs[i + network->nlatches] = node->dd;
@@ -892,13 +878,13 @@ Bnet_bddDump(
 
     /* Find the input names. */
     for (i = 0; i < network->ninputs; i++) {
-	if (!st_lookup(network->hash,network->inputs[i],&node)) {
+	if (!st_lookup(network->hash,network->inputs[i],(void **)&node)) {
 	    goto endgame;
 	}
 	inames[node->var] = network->inputs[i];
     }
     for (i = 0; i < network->nlatches; i++) {
-	if (!st_lookup(network->hash,network->latches[i][1],&node)) {
+	if (!st_lookup(network->hash,network->latches[i][1],(void **)&node)) {
 	    goto endgame;
 	}
 	inames[node->var] = network->latches[i][1];
@@ -961,31 +947,37 @@ endgame:
 } /* end of Bnet_bddDump */
 
 
-/**Function********************************************************************
+/**
+  @brief Writes an array of BDDs to a file in dot, blif, DDcal,
+  factored-form, daVinci, or blif-MV format.
 
-  Synopsis    [Writes an array of BDDs to a file in dot, blif, DDcal,
-  factored-form, daVinci, or blif-MV format.]
+  @details The BDDs and their names are passed as arguments.  The
+  inputs and their names are taken from the network. If "-" is passed
+  as file name, the BDDs are dumped to the standard output.  The encoding
+  of the format is:
+  <ul>
+  <li>0: dot
+  <li>1: blif
+  <li>2: da Vinci
+  <li>3: ddcal
+  <li>4: factored form
+  <li>5: blif-MV
+  </ul>
 
-  Description [Writes an array of BDDs to a file in dot, blif, DDcal,
-  factored-form, daVinci, or blif-MV format.  The BDDs and their names
-  are passed as arguments.  The inputs and their names are taken from
-  the network. If "-" is passed as file name, the BDDs are dumped to
-  the standard output. Returns 1 in case of success; 0 otherwise.]
+  @return 1 in case of success; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 int
 Bnet_bddArrayDump(
-  DdManager * dd /* DD manager */,
-  BnetNetwork * network /* network whose BDDs should be dumped */,
-  char * dfile /* file name */,
-  DdNode ** outputs /* BDDs to be dumped */,
-  char ** onames /* names of the BDDs to be dumped */,
-  int  noutputs /* number of BDDs to be dumped */,
-  int  dumpFmt /* 0 -> dot */)
+  DdManager * dd /**< %DD manager */,
+  BnetNetwork * network /**< network whose BDDs should be dumped */,
+  char * dfile /**< file name */,
+  DdNode ** outputs /**< BDDs to be dumped */,
+  char ** onames /**< names of the BDDs to be dumped */,
+  int  noutputs /**< number of BDDs to be dumped */,
+  int  dumpFmt /**< 0 -> dot */)
 {
     FILE *dfp = NULL;
     char **inames = NULL;
@@ -1010,13 +1002,13 @@ Bnet_bddArrayDump(
 
     /* Find the input names. */
     for (i = 0; i < network->ninputs; i++) {
-	if (!st_lookup(network->hash,network->inputs[i],&node)) {
+	if (!st_lookup(network->hash,network->inputs[i],(void **)&node)) {
 	    goto endgame;
 	}
 	inames[node->var] = network->inputs[i];
     }
     for (i = 0; i < network->nlatches; i++) {
-	if (!st_lookup(network->hash,network->latches[i][1],&node)) {
+	if (!st_lookup(network->hash,network->latches[i][1],(void **)&node)) {
 	    goto endgame;
 	}
 	inames[node->var] = network->latches[i][1];
@@ -1062,19 +1054,15 @@ endgame:
 } /* end of Bnet_bddArrayDump */
 
 
-/**Function********************************************************************
+/**
+  @brief Reads the variable order from a file.
 
-  Synopsis    [Reads the variable order from a file.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Reads the variable order from a file.
-  Returns 1 if successful; 0 otherwise.]
+  @sideeffect The BDDs for the primary inputs and present state variables
+  are built.
 
-  SideEffects [The BDDs for the primary inputs and present state variables
-  are built.]
-
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 int
 Bnet_ReadOrder(
   DdManager * dd,
@@ -1093,7 +1081,7 @@ Bnet_ReadOrder(
 	return(0);
     }
 
-    dict = st_init_table(strcmp,st_strhash);
+    dict = st_init_table((st_compare_t) strcmp,st_strhash);
     if (dict == NULL) {
 	return(0);
     }
@@ -1116,7 +1104,7 @@ Bnet_ReadOrder(
 	    return(0);
 	}
 	/* There should be a node named "name" in the network. */
-	if (!st_lookup(net->hash,name,&node)) {
+	if (!st_lookup(net->hash,name,(void **)&node)) {
 	    (void) fprintf(stderr,"Unknown name in order file (%s)\n", name);
 	    st_free_table(dict);
 	    return(0);
@@ -1173,19 +1161,16 @@ Bnet_ReadOrder(
 } /* end of Bnet_ReadOrder */
 
 
-/**Function********************************************************************
+/**
+  @brief Prints the order of the %DD variables of a network.
 
-  Synopsis    [Prints the order of the DD variables of a network.]
+  @details Only primary inputs and present states are printed.
 
-  Description [Prints the order of the DD variables of a network.
-  Only primary inputs and present states are printed.
-  Returns 1 if successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-*****************************************************************************/
+*/
 int
 Bnet_PrintOrder(
   BnetNetwork * net,
@@ -1205,7 +1190,7 @@ Bnet_PrintOrder(
 	names[i] = NULL;
     }
     for (i = 0; i < net->npis; i++) {
-	if (!st_lookup(net->hash,net->inputs[i],&node)) {
+	if (!st_lookup(net->hash,net->inputs[i],(void **)&node)) {
 	    FREE(names);
 	    return(0);
 	}
@@ -1217,7 +1202,7 @@ Bnet_PrintOrder(
 	names[level] = node->name;
     }
     for (i = 0; i < net->nlatches; i++) {
-	if (!st_lookup(net->hash,net->latches[i][1],&node)) {
+	if (!st_lookup(net->hash,net->latches[i][1],(void **)&node)) {
 	    FREE(names);
 	    return(0);
 	}
@@ -1263,23 +1248,23 @@ Bnet_PrintOrder(
 /*---------------------------------------------------------------------------*/
 
 
-/**Function********************************************************************
+/**
+  @brief Reads a string from a file.
 
-  Synopsis    [Reads a string from a file.]
+  @details The string can be MAXLENGTH-1 characters at
+  most. readString allocates memory to hold the string.
 
-  Description [Reads a string from a file. The string can be MAXLENGTH-1
-  characters at most. readString allocates memory to hold the string and
-  returns a pointer to the result if successful. It returns NULL
-  otherwise.]
+  @return a pointer to the result string if successful. It returns
+  NULL otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     [readList]
+  @see readList
 
-******************************************************************************/
+*/
 static char *
 readString(
-  FILE * fp /* pointer to the file from which the string is read */)
+  FILE * fp /**< pointer to the file from which the string is read */)
 {
     char *savestring;
     int length;
@@ -1302,31 +1287,31 @@ readString(
 } /* end of readString */
 
 
-/**Function********************************************************************
+/**
+  @brief Reads a list of strings from a line of a file.
 
-  Synopsis    [Reads a list of strings from a file.]
+  @details The strings are sequences of characters separated by spaces
+  or tabs.  The total length of the list, white space included, must
+  not exceed MAXLENGTH-1 characters.  readList allocates memory for
+  the strings and creates an array of pointers to the individual
+  lists. Only two pieces of memory are allocated by readList: One to
+  hold all the strings, and one to hold the pointers to
+  them. Therefore, when freeing the memory allocated by readList, only
+  the pointer to the list of pointers, and the pointer to the
+  beginning of the first string should be freed.
 
-  Description [Reads a list of strings from a line of a file.
-  The strings are sequences of characters separated by spaces or tabs.
-  The total length of the list, white space included, must not exceed
-  MAXLENGTH-1 characters.  readList allocates memory for the strings and
-  creates an array of pointers to the individual lists. Only two pieces
-  of memory are allocated by readList: One to hold all the strings,
-  and one to hold the pointers to them. Therefore, when freeing the
-  memory allocated by readList, only the pointer to the list of
-  pointers, and the pointer to the beginning of the first string should
-  be freed. readList returns the pointer to the list of pointers if
-  successful; NULL otherwise.]
+  @return the pointer to the list of pointers if successful; NULL
+  otherwise.
 
-  SideEffects [n is set to the number of strings in the list.]
+  @sideeffect n is set to the number of strings in the list.
 
-  SeeAlso     [readString printList]
+  @see readString printList
 
-******************************************************************************/
+*/
 static char **
 readList(
-  FILE * fp /* pointer to the file from which the list is read */,
-  int * n /* on return, number of strings in the list */)
+  FILE * fp /**< pointer to the file from which the list is read */,
+  int * n /**< on return, number of strings in the list */)
 {
     char	*savestring;
     int		length;
@@ -1360,22 +1345,20 @@ readList(
 } /* end of readList */
 
 
-/**Function********************************************************************
+/**
+  @brief Prints a list of strings to the standard output.
 
-  Synopsis    [Prints a list of strings to the standard output.]
+  @details The list is in the format created by readList.
 
-  Description [Prints a list of strings to the standard output. The list
-  is in the format created by readList.]
+  @sideeffect None
 
-  SideEffects [None]
+  @see readList Bnet_PrintNetwork
 
-  SeeAlso     [readList Bnet_PrintNetwork]
-
-******************************************************************************/
+*/
 static void
 printList(
-  char ** list /* list of pointers to strings */,
-  int  n /* length of the list */)
+  char ** list /**< list of pointers to strings */,
+  int  n /**< length of the list */)
 {
     int i;
 
@@ -1387,22 +1370,21 @@ printList(
 } /* end of printList */
 
 
-/**Function********************************************************************
+/**
+  @brief Generates n names not currently in a symbol table.
 
-  Synopsis    [Generates names not currently in a symbol table.]
+  @details The pointer to the symbol table may be NULL, in which case
+  no test is made. The names generated by the procedure are
+  unique. So, if there is no possibility of conflict with pre-existing
+  names, NULL can be passed for the hash table.
 
-  Description [Generates n names not currently in the symbol table hash.
-  The pointer to the symbol table may be NULL, in which case no test is
-  made. The names generated by the procedure are unique. So, if there is
-  no possibility of conflict with pre-existing names, NULL can be passed
-  for the hash table.  Returns an array of names if succesful; NULL
-  otherwise.]
+  @return an array of names if succesful; NULL otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
+  @see 
 
-******************************************************************************/
+*/
 static char **
 bnetGenerateNewNames(
   st_table * hash /* table of existing names (or NULL) */,
@@ -1429,27 +1411,22 @@ bnetGenerateNewNames(
 } /* bnetGenerateNewNames */
 
 
-/**Function********************************************************************
+/**
+  @brief Writes blif for the reencoding logic.
 
-  Synopsis    [Writes blif for the reencoding logic.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int
 bnetDumpReencodingLogic(
-  DdManager * dd /* DD manager */,
-  char * mname /* model name */,
-  int  noutputs /* number of outputs */,
-  DdNode ** outputs /* array of network outputs */,
-  char ** inames /* array of network input names */,
-  char ** altnames /* array of names of reencoded inputs */,
-  char ** onames /* array of network output names */,
-  FILE * fp /* file pointer */)
+  DdManager * dd /**< %DD manager */,
+  char * mname /**< model name */,
+  int  noutputs /**< number of outputs */,
+  DdNode ** outputs /**< array of network outputs */,
+  char ** inames /**< array of network input names */,
+  char ** altnames /**< array of names of reencoded inputs */,
+  char ** onames /**< array of network output names */,
+  FILE * fp /**< file pointer */)
 {
     int i;
     int retval;
@@ -1554,23 +1531,19 @@ failure:
 } /* end of bnetDumpReencodingLogic */
 
 
-/**Function********************************************************************
+/**
+  @brief Writes blif for the truth table of an n-input xnor.
 
-  Synopsis    [Writes blif for the truth table of an n-input xnor.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Writes blif for the truth table of an n-input
-  xnor. Returns 1 if successful; 0 otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 #if 0
 static int
 bnetBlifXnorTable(
-  FILE * fp /* file pointer */,
-  int  n /* number of inputs */)
+  FILE * fp /**< file pointer */,
+  int  n /**< number of inputs */)
 {
     int power;	/* 2 to the power n */
     int i,j,k;
@@ -1609,19 +1582,17 @@ bnetBlifXnorTable(
 #endif
 
 
-/**Function********************************************************************
+/**
+  @brief Writes blif for the reencoding logic.
 
-  Synopsis    [Writes blif for the reencoding logic.]
+  @details Exclusive NORs with more than two inputs are decomposed
+  into cascaded two-input gates.
 
-  Description [Writes blif for the reencoding logic. Exclusive NORs
-  with more than two inputs are decomposed into cascaded two-input
-  gates. Returns 1 if successful; 0 otherwise.]
+  @return 1 if successful; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int
 bnetBlifWriteReencode(
   DdManager * dd,
@@ -1724,17 +1695,12 @@ failure:
 } /* end of bnetBlifWriteReencode */
 
 
-/**Function********************************************************************
+/**
+  @brief Finds the support of a list of DDs.
 
-  Synopsis    [Finds the support of a list of DDs.]
+  @sideeffect None
 
-  Description []
-
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int *
 bnetFindVectorSupport(
   DdManager * dd,
@@ -1775,18 +1741,17 @@ bnetFindVectorSupport(
 } /* end of bnetFindVectorSupport */
 
 
-/**Function********************************************************************
+/**
+  @brief Builds %BDD for a XOR function.
 
-  Synopsis    [Builds BDD for a XOR function.]
+  @details Checks whether a function is a XOR with 2 or 3 inputs. If so,
+  it builds the %BDD.
 
-  Description [Checks whether a function is a XOR with 2 or 3 inputs. If so,
-  it builds the BDD. Returns 1 if the BDD has been built; 0 otherwise.]
+  @return 1 if the %BDD has been built; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int
 buildExorBDD(
   DdManager * dd,
@@ -1832,7 +1797,7 @@ buildExorBDD(
 
     /* Scan the inputs. */
     for (i = 0; i < nd->ninp; i++) {
-	if (!st_lookup(hash, nd->inputs[i], &auxnd)) {
+	if (!st_lookup(hash, nd->inputs[i], (void **) &auxnd)) {
 	    goto failure;
 	}
 	if (params == BNET_LOCAL_DD) {
@@ -1883,18 +1848,17 @@ failure:
 } /* end of buildExorBDD */
 
 
-/**Function********************************************************************
+/**
+  @brief Builds %BDD for a multiplexer.
 
-  Synopsis    [Builds BDD for a multiplexer.]
+  @details Checks whether a function is a 2-to-1 multiplexer. If so,
+  it builds the %BDD.
 
-  Description [Checks whether a function is a 2-to-1 multiplexer. If so,
-  it builds the BDD. Returns 1 if the BDD has been built; 0 otherwise.]
+  @return 1 if the %BDD has been built; 0 otherwise.
 
-  SideEffects [None]
+  @sideeffect None
 
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static int
 buildMuxBDD(
   DdManager * dd,
@@ -1905,8 +1869,8 @@ buildMuxBDD(
 {
     BnetTabline *line;
     char *values[2];
-    int mux[2];
-    int phase[2];
+    int mux[2] = {0, 0};
+    int phase[2] = {0, 0};
     int j;
     int nlines = 0;
     int controlC = -1;
@@ -1914,7 +1878,7 @@ buildMuxBDD(
     DdNode *func, *f, *g, *h;
     BnetNode *auxnd;
 
-    if (nd->ninp != 3) return(0);
+    if (nd->ninp != 3 || nd->f == NULL) return(0);
 
     for (line = nd->f; line != NULL; line = line->next) {
 	int dc = 0;
@@ -1929,6 +1893,7 @@ buildMuxBDD(
 	if (!dc) return(0);
 	nlines++;
     }
+    if (nlines != 2) return(0);
     /* At this point we know we have:
     **   3 inputs
     **   2 lines
@@ -1966,7 +1931,7 @@ buildMuxBDD(
     }
 
     /* Get the inputs. */
-    if (!st_lookup(hash, nd->inputs[controlC], &auxnd)) {
+    if (!st_lookup(hash, nd->inputs[controlC], (void **) &auxnd)) {
 	goto failure;
     }
     if (params == BNET_LOCAL_DD) {
@@ -1986,7 +1951,7 @@ buildMuxBDD(
 	}
 	f = auxnd->dd;
     }
-    if (!st_lookup(hash, nd->inputs[mux[0]], &auxnd)) {
+    if (!st_lookup(hash, nd->inputs[mux[0]], (void **) &auxnd)) {
 	goto failure;
     }
     if (params == BNET_LOCAL_DD) {
@@ -2007,7 +1972,7 @@ buildMuxBDD(
 	g = auxnd->dd;
     }
     g = Cudd_NotCond(g,phase[0]);
-    if (!st_lookup(hash, nd->inputs[mux[1]], &auxnd)) {
+    if (!st_lookup(hash, nd->inputs[mux[1]], (void **) &auxnd)) {
 	goto failure;
     }
     if (params == BNET_LOCAL_DD) {
@@ -2058,19 +2023,17 @@ failure:
 } /* end of buildExorBDD */
 
 
-/**Function********************************************************************
+/**
+  @brief Sets the level of each node.
 
-  Synopsis    [Sets the level of each node.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Sets the level of each node. Returns 1 if successful; 0
-  otherwise.]
+  @sideeffect Changes the level and visited fields of the nodes it
+  visits.
 
-  SideEffects [Changes the level and visited fields of the nodes it
-  visits.]
+  @see bnetLevelDFS
 
-  SeeAlso     [bnetLevelDFS]
-
-******************************************************************************/
+*/
 static int
 bnetSetLevel(
   BnetNetwork * net)
@@ -2098,19 +2061,17 @@ bnetSetLevel(
 } /* end of bnetSetLevel */
 
 
-/**Function********************************************************************
+/**
+  @brief Does a DFS from a node setting the level field.
 
-  Synopsis    [Does a DFS from a node setting the level field.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Does a DFS from a node setting the level field. Returns
-  1 if successful; 0 otherwise.]
+  @sideeffect Changes the level and visited fields of the nodes it
+  visits.
 
-  SideEffects [Changes the level and visited fields of the nodes it
-  visits.]
+  @see bnetSetLevel
 
-  SeeAlso     [bnetSetLevel]
-
-******************************************************************************/
+*/
 static int
 bnetLevelDFS(
   BnetNetwork * net,
@@ -2130,7 +2091,7 @@ bnetLevelDFS(
     ** increase the level. */
     node->level = 0;
     for (i = 0; i < node->ninp; i++) {
-	if (!st_lookup(net->hash, node->inputs[i], &auxnd)) {
+	if (!st_lookup(net->hash, node->inputs[i], (void **) &auxnd)) {
 	    return(0);
 	}
 	if (!bnetLevelDFS(net,auxnd)) {
@@ -2143,19 +2104,15 @@ bnetLevelDFS(
 } /* end of bnetLevelDFS */
 
 
-/**Function********************************************************************
+/**
+  @brief Orders network roots for variable ordering.
 
-  Synopsis    [Orders network roots for variable ordering.]
+  @return an array with the ordered outputs and next state variables
+  if successful; NULL otherwise.
 
-  Description [Orders network roots for variable ordering. Returns
-  an array with the ordered outputs and next state variables if
-  successful; NULL otherwise.]
+  @sideeffect None
 
-  SideEffects [None]
-
-  SeeAlso     []
-
-******************************************************************************/
+*/
 static BnetNode **
 bnetOrderRoots(
   BnetNetwork * net,
@@ -2172,14 +2129,14 @@ bnetOrderRoots(
 
     /* Find output names and levels. */
     for (i = 0; i < net->noutputs; i++) {
-	if (!st_lookup(net->hash,net->outputs[i],&node)) {
+	if (!st_lookup(net->hash,net->outputs[i],(void **)&node)) {
 	    goto endgame;
 	}
 	nodes[i] = node;
     }
 
-    qsort((void *)nodes, noutputs, sizeof(BnetNode *),
-	  (DD_QSFP)bnetLevelCompare);
+    util_qsort(nodes, noutputs, sizeof(BnetNode *),
+               (DD_QSFP)bnetLevelCompare);
     *nroots = noutputs;
     return(nodes);
 
@@ -2190,18 +2147,18 @@ endgame:
 } /* end of bnetOrderRoots */
 
 
-/**Function********************************************************************
+/**
+  @brief Comparison function used by qsort.
 
-  Synopsis    [Comparison function used by qsort.]
+  @details Used to order the variables according to the number of keys
+  in the subtables.
 
-  Description [Comparison function used by qsort to order the
-  variables according to the number of keys in the subtables.
-  Returns the difference in number of keys between the two
-  variables being compared.]
+  @return the difference in number of keys between the two variables
+  being compared.
 
-  SideEffects [None]
+  @sideeffect None
 
-******************************************************************************/
+*/
 static int
 bnetLevelCompare(
   BnetNode ** x,
@@ -2212,18 +2169,16 @@ bnetLevelCompare(
 } /* end of bnetLevelCompare */
 
 
-/**Function********************************************************************
+/**
+  @brief Does a DFS from a node ordering the inputs.
 
-  Synopsis    [Does a DFS from a node ordering the inputs.]
+  @return 1 if successful; 0 otherwise.
 
-  Description [Does a DFS from a node ordering the inputs. Returns
-  1 if successful; 0 otherwise.]
+  @sideeffect Changes visited fields of the nodes it visits.
 
-  SideEffects [Changes visited fields of the nodes it visits.]
+  @see Bnet_DfsVariableOrder
 
-  SeeAlso     [Bnet_DfsVariableOrder]
-
-******************************************************************************/
+*/
 static int
 bnetDfsOrder(
   DdManager * dd,
@@ -2253,15 +2208,15 @@ bnetDfsOrder(
     if (fanins == NULL) return(0);
 
     for (i = 0; i < node->ninp; i++) {
-	if (!st_lookup(net->hash, node->inputs[i], &auxnd)) {
+	if (!st_lookup(net->hash, node->inputs[i], (void **) &auxnd)) {
 	    FREE(fanins);
 	    return(0);
 	}
 	fanins[i] = auxnd;
     }
 
-    qsort((void *)fanins, node->ninp, sizeof(BnetNode *),
-	  (DD_QSFP)bnetLevelCompare);
+    util_qsort(fanins, node->ninp, sizeof(BnetNode *),
+               (DD_QSFP)bnetLevelCompare);
     for (i = 0; i < node->ninp; i++) {
 	/* for (i = node->ninp - 1; i >= 0; i--) { */
 	int res = bnetDfsOrder(dd,net,fanins[i]);
