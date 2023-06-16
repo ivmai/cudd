@@ -174,7 +174,7 @@
 /**
  * @brief Prints message and terminates execution.
  */
-#define fail(why) {\
+#define fail_msg(why) {\
     (void) fprintf(stderr, "Fatal error: file %s, line %d\n%s\n",\
 	__FILE__, __LINE__, why);\
     (void) fflush(stdout);\
